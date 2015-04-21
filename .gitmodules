@@ -1,3 +1,15 @@
 [submodule "require/rplib"]
 	path = require/rplib
 	url = https://github.com/ryo33/ryo33PHPlib.git
+[submodule "js/lwjste"]
+	path = js/lwjste
+	url = https://github.com/ryo33/LWJSTE.git
+[submodule "require/vardb"]
+	path = require/vardb
+	url = https://github.com/ryo33/VariablesDB-php.git
+[submodule "require/tediff"]
+	path = require/tediff
+	url = https://github.com/ryo33/lwjste-diff-php.git
+[submodule "require/diffdb"]
+	path = require/diffdb
+	url = https://github.com/ryo33/DiffDB-php.git

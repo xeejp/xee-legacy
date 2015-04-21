@@ -1,0 +1,3 @@
+[submodule "require/rplib"]
+	path = require/rplib
+	url = https://github.com/ryo33/ryo33PHPlib.git

@@ -1,0 +1,15 @@
+[submodule "js/lwte"]
+	path = js/lwte
+	url = https://github.com/ryo33/LWTE.js.git
+[submodule "require/rplib"]
+	path = require/rplib
+	url = https://github.com/ryo33/ryo33PHPlib.git
+[submodule "require/diffdb"]
+	path = require/diffdb
+	url = https://github.com/ryo33/DiffDB-php.git
+[submodule "require/vardb"]
+	path = require/vardb
+	url = https://github.com/ryo33/VariablesDB-php.git
+[submodule "require/tediff"]
+	path = require/tediff
+	url = https://github.com/ryo33/lwte-diff-php.git

@@ -3,8 +3,8 @@
 if($_request->request_method === Request::GET){
     $_tmpl = new Template();
     //$tmpl->add_script();
-    if($_user->is_login()){
-        $_user->logout();
+    if($_host->is_login()){
+        $_host->logout();
     }
     $token = get_token('signin');
     $_tmpl->add(<<<HTML
@@ -24,9 +24,9 @@ HTML
         ($password = $_request->get_string('password')) &&
         ($id = $_host_model->check_login($name, $password)) !== null
     ){
-        $_user->login($id);
+        $_host->login($id);
         if($_request->get_string('remember', false) === 'true'){
-            $_user->enable_auto_login();
+            $_host->enable_auto_login();
         }
     }
     redirect_uri(_URL);

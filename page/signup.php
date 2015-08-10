@@ -3,8 +3,8 @@
 if($_request->request_method === Request::GET){
     $_tmpl = new Template();
     //$tmpl->add_script();
-    if($_user->is_login()){
-        $_user->logout();
+    if($_host->is_login()){
+        $_host->logout();
     }
     $token = get_token('signup');
     $_tmpl->add(<<<HTML
@@ -26,7 +26,7 @@ HTML
         ($_host_model->check_available($name, $password))
     ){
         $result = $_host_model->insert($name, $password);
-        $_user->login($result);
+        $_host->login($result);
     }
     redirect_uri(_URL);
 }

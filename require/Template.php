@@ -36,6 +36,7 @@ DESC;
 <meta name="description" content="{$this->description}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="{$_(_URL)}js/jquery-2.1.3.min.js"></script>
+<script src="{$_(_URL)}js/lwte/lwte.js"></script>
 </head>
 <body>
 <div id="container">

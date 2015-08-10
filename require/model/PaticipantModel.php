@@ -1,21 +1,21 @@
 <?php
 
-class HostModel extends Model{
+class ParticipantModel{
 
     const NAME_MIN = 1, NAME_MAX = 32, PASSWORD_MIN = 4, PASSWORD_MAX = 64;
 
-    private static $salt = 'iaw$#ji!""fd;-';
-    private static $salt2 = 'llll#"fwwFSElll$#JI!';
+    function __construct($con, $experiment_id){
+    }
 
     function exist_id($id){
-        if($this->con->get_count('host', ['id' => $id]) === 1){
+        if($this->con->get_count('participant', ['id' => $id]) === 1){
             return true;
         }
         return false;
     }
 
     function exist_name($name){
-        if($this->con->get_count('host', ['name' => $name]) === 1){
+        if($this->con->get_count('participant', ['name' => $name]) === 1){
             return true;
         }
         return false;
@@ -33,7 +33,7 @@ class HostModel extends Model{
     }
 
     function check_login($name, $password){
-        $result = $this->con->fetch('SELECT COUNT(`id`), `id` FROM `host` WHERE `name` = ? AND `password` = ?', [$name, $this->hash($name, $password)]);
+        $result = $this->con->fetch('SELECT COUNT(`id`), `id` FROM `participant` WHERE `name` = ? AND `password` = ?', [$name, $this->hash($name, $password)]);
         if($result['COUNT(`id`)'] === '1'){
             return $result['id'];
         }
@@ -41,21 +41,21 @@ class HostModel extends Model{
     }
 
     function insert($name, $password){
-        return $this->con->insert('host', ['name' => $name, 'password' => $this->hash($name, $password)], true);
+        return $this->con->insert('participant', ['name' => $name, 'password' => $this->hash($name, $password)], true);
     }
 
     function create_auto_login_key(){
         do{
             $key = random_str(32);
-        }while($this->con->get_count('host', ['auto' => $key]) > 0);
+        }while($this->con->get_count('participant', ['auto' => $key]) > 0);
         return $key;
     }
 
     function check_auto_login($key){
-        $result = $this->con->fetch('SELECT COUNT(`id`), `id` FROM `host` WHERE `auto` = ?', sha256($key . self::$salt2));
+        $result = $this->con->fetch('SELECT COUNT(`id`), `id` FROM `participant` WHERE `auto` = ?', sha256($key . self::$salt2));
         if($result['COUNT(`id`)'] === '1'){
             $new_key = $this->create_auto_login_key();
-            $this->con->update('host', ['auto' => sha256($new_key . self::$salt2)], '`id` = ?', $result['id']);
+            $this->con->update('participant', ['auto' => sha256($new_key . self::$salt2)], '`id` = ?', $result['id']);
             return [$result['id'], $new_key];
         }
         return null;
@@ -64,5 +64,5 @@ class HostModel extends Model{
     function hash($name, $password){
         return sha256($password . self::$salt . $name);
     }
-
+    
 }

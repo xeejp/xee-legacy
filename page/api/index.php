@@ -1,3 +1,3 @@
 <?php
 
-echo 'api';
+if(

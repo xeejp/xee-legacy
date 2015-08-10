@@ -19,7 +19,7 @@ HTML
 );
     echo $_tmpl->display();
 }else{
-    if(check_token('signin', $_request->get_string(_TOKEN)) &&
+    if(!check_token('signin', $_request->get_string(_TOKEN)) &&
         ($name = $_request->get_string('name')) &&
         ($password = $_request->get_string('password')) &&
         ($id = $_host_model->check_login($name, $password)) !== null

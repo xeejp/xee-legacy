@@ -29,4 +29,5 @@ $_ddb = new DiffDB($_pdo);
 foreach($_tables as $name => $structure){
     $_ddb->addTable($name, $structure);
 }
+$_vdb->setup($_ddb);
 $_ddb->updateDB();

@@ -19,7 +19,7 @@ HTML
     );
     echo $_tmpl->display();
 }else{
-    if(check_token('signup', $_request->get_string(_TOKEN)) &&
+    if(!check_token('signup', $_request->get_string(_TOKEN)) &&
         ($name = $_request->get_string('name')) &&
         ($password = $_request->get_string('password')) &&
         ($password === $_request->get_string('password2')) &&

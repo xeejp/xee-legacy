@@ -29,6 +29,7 @@ $_loader->register();
 $_pdo = new EasySql(Setting::$_database_dsn, Setting::$_database_user, Setting::$_database_password);
 //$_pdo->debug(true);
 Setting::$_database_dsn = Setting::$_database_user = Setting::$_database_password = null;
+$_vdb = new VarDB($_pdo, null);
 
 require __DIR__ . '/tables.php';
 

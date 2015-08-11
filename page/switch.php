@@ -13,6 +13,9 @@ case 'signin':
 case 'signup':
     require __DIR__ . '/signup.php';
     break;
+case 'signout':
+    require __DIR__ . '/signout.php';
+    break;
 case 'api':
     $_api = true;
 case 'game':

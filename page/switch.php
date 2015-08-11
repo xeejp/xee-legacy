@@ -16,6 +16,9 @@ case 'signin':
 case 'signup':
     require __DIR__ . '/signup.php';
     break;
+case 'signout':
+    require __DIR__ . '/signout.php';
+    break;
 case 'game':
     require __DIR__ . '/game.php';
     break;

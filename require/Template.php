@@ -21,7 +21,7 @@ DESC;
     }
 
     function lwte_add($name, $template){
-        $template = str_replace('"', '\\"', str_replace("\n", "\\n", $template));
+        $template = str_replace('"', '\\"', str_replace("\n", "", $template));
         $this->add_script(<<<JS
 lwte.addTemplate("$name", "$template");
 JS
@@ -54,6 +54,11 @@ JS
 <script src="{$_(_URL)}js/jquery-2.1.3.min.js"></script>
 <script src="{$_(_URL)}js/lwte/lwte.js"></script>
 <script> lwte = new LWTE();</script>
+
+<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css" />
+<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+
 </head>
 <body>
 <div id="container">
@@ -70,4 +75,9 @@ FOOT;
         return implode('', $display);
     }
 
+    static function load_template($file_name){
+        ob_start();
+        require DIR_ROOT . $file_name;
+        return ob_get_clean();
+    }
 }

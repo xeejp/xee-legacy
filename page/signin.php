@@ -11,7 +11,7 @@ if($_request->request_method === Request::GET){
     <form method="POST" action="{$_(_URL)}signin">
     <input type="text" name="name">
     <input type="password" name="password">
-    <input type="radio" name="remember" value="true">
+    <input type="checkbox" name="remember" value="true">
     <button type="submit">Signin</button>
     <input type="hidden" name="{$_(_TOKEN)}" value="$token">
     </form>

@@ -42,11 +42,13 @@ $_host_session = new User($_session, $_cookie, 'host',
     function($a)use($_host_model){
         return $_host_model->exist_id($a);
     },
-    function($a)use($_host_model){
-        return $_host_model->check_auto_login($a);
+    function($id, $key)use($_host_model){
+        return $_host_model->check_auto_login($id, $key);
     },
-    function()use($_host_model){
-        return $_host_model->create_auto_login_key();
+    function($id)use($_host_model){
+        $key = $_host_model->create_auto_login_key();
+        $_host_model->update_auto_login_key($id, $key);
+        return $key;
     }
 );
 $_participant_session = new User($_session, $_cookie, 'participant',

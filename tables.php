@@ -1,4 +1,4 @@
-<?php                    
+<?php
 $_tables = [
     'host' => [
         'id' => 'INT PRIMARY KEY AUTO_INCREMENT',
@@ -16,10 +16,12 @@ $_tables = [
         'host_id' => 'INT',
         'game_id' => 'INT',
         'password' => 'VARCHAR(64)', //hashed by sha256
+        'status' => 'TINYINT'
         ],
     'participant' => [
         'id' => 'INT PRIMARY KEY AUTO_INCREMENT',
         'experiment_id' => 'INT',
+        'last_access' => 'INT'
         ]
 ];
 

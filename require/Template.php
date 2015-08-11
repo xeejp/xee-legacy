@@ -20,6 +20,22 @@ DESC;
         $this->scripts[] = $script;
     }
 
+    function lwte_add($name, $template){
+        $template = str_replace('"', '\\"', str_replace("\n", "\\n", $template));
+        $this->add_script(<<<JS
+lwte.addTemplate("$name", "$template");
+JS
+    );
+    }
+
+    function lwte_use($selector, $name, $data){
+        $data = json_encode($data, true);
+        $this->add_script(<<<JS
+$("$selector").html(lwte.useTemplate("$name", $data));
+JS
+    );
+    }
+
     function display(){
         global $_;
         if(strlen($this->title) !== 0){
@@ -37,6 +53,7 @@ DESC;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="{$_(_URL)}js/jquery-2.1.3.min.js"></script>
 <script src="{$_(_URL)}js/lwte/lwte.js"></script>
+<script> lwte = new LWTE();</script>
 </head>
 <body>
 <div id="container">

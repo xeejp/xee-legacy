@@ -20,6 +20,10 @@ class ExperimentModel extends Model{
         return $this->con->fetch('SELECT `id`, `host_id`, `game_id`, `status` FROM `experiment` WHERE `id` = ?', $id);
     }
 
+    function get_all_by_host($host_id){
+        return $this->con->fetchAll('SELECT `id`, `host_id`, `game_id` FROM `experiment` WHERE `host_id` = ?', $host_id);
+    }
+
     function get_experiment($password){
         return $this->con->fetch('SELECT `id`, `host_id`, `game_id`, `status` FROM `experiment` WHERE `password` = ?', $this->hash_password($password));
     }

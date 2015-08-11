@@ -37,7 +37,7 @@ $_session = new Session();
 $_cookie = new Cookie();
 $_host_model = new HostModel($_pdo);
 //host
-$_host = new User($_session, $_cookie, 'host',
+$_host_session = new User($_session, $_cookie, 'host',
     function($a)use($_host_model){
         return $_host_model->exist_id($a);
     },
@@ -48,15 +48,15 @@ $_host = new User($_session, $_cookie, 'host',
         return $_host_model->create_auto_login_key();
     }
 );
-$_participant = new User($_session, $_cookie, 'participant',
+$_participant_session = new User($_session, $_cookie, 'participant',
     function($a)use($_host_model){
         return $_host_model->exist_id($a);
     },
     function($a)use($_host_model){
-        return $_host_model->check_auto_login($a);
+        return false;
     },
     function()use($_host_model){
-        return $_host_model->create_auto_login_key();
+        return null;
     }
 );
 

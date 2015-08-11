@@ -2,8 +2,8 @@
 
 if($_participant_session->is_login){
     $_game_model = new GameModel($_pdo);
-    $_experiment_model = new GameModel($_pdo);
-    $_participant_model = new GameModel($_pdo);
+    $_experiment_model = new ExperimentModel($_pdo);
+    $_participant_model = new ParticipantModel($_pdo);
 
     $_participant = $_participant_model->get($_participant_session->user_id);
     $_experiment = $_experiment_model->get($_participant['experiment_id']);

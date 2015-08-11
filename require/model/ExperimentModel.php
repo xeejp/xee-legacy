@@ -12,8 +12,16 @@ class ExperimentModel extends Model{
         return ['id' => $this->con->insert('experiment', ['host_id' => $host_id, 'game_id' => $game_id, 'password' => $this->hash_password($password)], true), 'password' => $password];
     }
 
+    function get_all(){
+        return $this->con->fetchAll('SELECT `id`, `host_id`, `game_id` FROM `experiment`');
+    }
+
+    function get($id){
+        return $this->con->fetch('SELECT `id`, `host_id`, `game_id`, `status` FROM `experiment` WHERE `id` = ?', $id);
+    }
+
     function get_experiment($password){
-        return $this->con->fetch('SELECT `host_id`, `game_id`, `id` FROM `experiment` WHERE `password` = ?', $this->hash_password($password));
+        return $this->con->fetch('SELECT `id`, `host_id`, `game_id`, `status` FROM `experiment` WHERE `password` = ?', $this->hash_password($password));
     }
 
     function hash_password($password){

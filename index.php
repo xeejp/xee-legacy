@@ -16,7 +16,7 @@ require __DIR__ . '/require/rplib/ClassLoader.php';
 require __DIR__ . '/require/rplib/functions.php';
 require __DIR__ . '/require/exceptions.php';
 
-define('DIR_ROOT', __DIR__);
+define('DIR_ROOT', __DIR__ . '/');
 
 $_loader = new ClassLoader();
 $_loader->register_directory(__DIR__ . '/require');

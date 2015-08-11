@@ -47,18 +47,26 @@ class HostModel extends Model{
     function create_auto_login_key(){
         do{
             $key = random_str(32);
-        }while($this->con->get_count('host', ['auto' => $key]) > 0);
+        }while($this->con->get_count('host', ['auto' => $this->hash_auto_login_key($key)]) > 0);
         return $key;
     }
 
-    function check_auto_login($key){
-        $result = $this->con->fetch('SELECT COUNT(`id`), `id` FROM `host` WHERE `auto` = ?', sha256($key . self::$salt2));
-        if($result['COUNT(`id`)'] === '1'){
+    function update_auto_login_key($id, $key){
+        $this->con->update('host', ['auto' => $this->hash_auto_login_key($key)], '`id` = ?', [$id]);
+    }
+
+    function check_auto_login($id, $key){
+        $result = $this->con->fetchColumn('SELECT COUNT(`id`) FROM `host` WHERE `id` = ? AND `auto` = ?', [$id, $this->hash_auto_login_key($key)]);
+        if($result === '1'){
             $new_key = $this->create_auto_login_key();
-            $this->con->update('host', ['auto' => sha256($new_key . self::$salt2)], '`id` = ?', $result['id']);
-            return [$result['id'], $new_key];
+            $this->update_auto_login_key($id, $new_key);
+            return $new_key;
         }
         return null;
+    }
+
+    function hash_auto_login_key($key){
+        return sha256($key . self::$salt2);
     }
 
     function hash($name, $password){

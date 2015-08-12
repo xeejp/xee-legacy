@@ -16,5 +16,5 @@ if($_request->request_method === Request::GET){
     ){
         $_participant_session->login($id);
     }
-    redirect_uri(_URL);
+    redirect_uri(_URL . 'game');
 }

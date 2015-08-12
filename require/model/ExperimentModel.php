@@ -4,6 +4,7 @@ class ExperimentModel extends Model{
 
     const PASSWORD_LENGTH = 6;
     const PASSWORD_ALPHABET = 'abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ'; //'l' and 'O' is excluded
+    const S_RESERVED = '0', S_RUNNING = '1', S_FINISHED = '2', S_REMOVED = '3';
 
     private static $salt = 'bhi87fe';
 
@@ -40,6 +41,13 @@ class ExperimentModel extends Model{
             $password = random_str(self::PASSWORD_LENGTH, self::PASSWORD_ALPHABET);
         }while($this->check_password($password));
         return $password;
+    }
+
+    function exist_id($id){
+        if($this->con->get_count('experiment', ['id' => $id]) === 1){
+            return true;
+        }
+        return false;
     }
 
 }

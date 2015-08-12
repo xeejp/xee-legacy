@@ -1,6 +1,6 @@
 <?php
 
-class GameModel{
+class GameModel extends Model{
 
     function get_all(){
         return $this->con->fetchAll('SELECT `id`, `name`, `directory` FROM `game`');
@@ -10,6 +10,5 @@ class GameModel{
         return $this->con->fetch('SELECT `id`, `name`, `directory` FROM `game` WHERE `id` = ?', $id);
     }
 
-    function 
 
 }

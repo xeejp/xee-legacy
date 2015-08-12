@@ -11,6 +11,7 @@ if($_request->request_method === Request::GET){
 }else{
     if(!check_token('top', $_request->get_string(_TOKEN)) &&
         ($experiment_id = $_request->get_string('experiment_id')) &&
+        ($_experiment_model->exist_id($experiment_id)) &&
         ($name = $_request->get_string('name')) &&
         ($id = $_participant_model->check_login($experiment_id, $name)) !== null
     ){

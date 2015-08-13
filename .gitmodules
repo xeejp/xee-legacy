@@ -13,3 +13,6 @@
 [submodule "require/tediff"]
 	path = require/tediff
 	url = https://github.com/ryo33/lwte-diff-php.git
+[submodule "require/modui"]
+	path = require/modui
+	url = https://github.com/ryo33/ModUI-php.git

@@ -24,6 +24,8 @@ $_loader->register_directory(__DIR__ . '/require/model');
 $_loader->register_directory(__DIR__ . '/require/rplib');
 $_loader->register_directory(__DIR__ . '/require/diffdb');
 $_loader->register_directory(__DIR__ . '/require/vardb');
+$_loader->register_directory(__DIR__ . '/require/modui');
+$_loader->register_directory(__DIR__ . '/modui_components');
 $_loader->register();
 
 $_pdo = new EasySql(Setting::$_database_dsn, Setting::$_database_user, Setting::$_database_password);

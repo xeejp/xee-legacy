@@ -7,6 +7,10 @@ class HostModel extends Model{
     private static $salt = 'iaw$#ji!""fd;-';
     private static $salt2 = 'llll#"fwwFSElll$#JI!';
 
+    function get($id){
+        return $this->con->fetch('SELECT `id`, `name` FROM `host` WHERE `id` = ?', $id);
+    }
+
     function exist_id($id){
         if($this->con->get_count('host', ['id' => $id]) === 1){
             return true;

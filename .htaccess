@@ -1,3 +1,4 @@
 RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !^(.*)\.(html|js|css|ico)$
+RewriteCond %{REQUEST_FILENAME} !^(.*)\.(otf|eot|svg|ttf|woff|woff2)$
 RewriteRule ^(.*)$ index.php

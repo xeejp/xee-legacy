@@ -4,6 +4,7 @@ class ExperimentModel extends Model{
 
     const PASSWORD_LENGTH = 6;
     const PASSWORD_ALPHABET = 'abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ'; //'l' and 'O' is excluded
+    const S_RESERVED = '0', S_RUNNING = '1', S_FINISHED = '2', S_REMOVED = '3';
 
     private static $salt = 'bhi87fe';
 
@@ -18,6 +19,10 @@ class ExperimentModel extends Model{
 
     function get($id){
         return $this->con->fetch('SELECT `id`, `host_id`, `game_id`, `status` FROM `experiment` WHERE `id` = ?', $id);
+    }
+
+    function get_all_by_host($host_id){
+        return $this->con->fetchAll('SELECT `id`, `host_id`, `game_id` FROM `experiment` WHERE `host_id` = ?', $host_id);
     }
 
     function get_experiment($password){
@@ -40,6 +45,13 @@ class ExperimentModel extends Model{
             $password = random_str(self::PASSWORD_LENGTH, self::PASSWORD_ALPHABET);
         }while($this->check_password($password));
         return $password;
+    }
+
+    function exist_id($id){
+        if($this->con->get_count('experiment', ['id' => $id]) === 1){
+            return true;
+        }
+        return false;
     }
 
 }

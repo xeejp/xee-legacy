@@ -38,6 +38,9 @@ $_request = new Request(_URL);
 $_session = new Session();
 $_cookie = new Cookie();
 $_host_model = new HostModel($_pdo);
+$_participant_model = new ParticipantModel($_pdo);
+$_game_model = new GameModel($_pdo);
+$_experiment_model = new ExperimentModel($_pdo);
 //host
 $_host_session = new User($_session, $_cookie, 'host',
     function($a)use($_host_model){
@@ -53,13 +56,13 @@ $_host_session = new User($_session, $_cookie, 'host',
     }
 );
 $_participant_session = new User($_session, $_cookie, 'participant',
-    function($a)use($_host_model){
-        return $_host_model->exist_id($a);
+    function($a){
+        return true;
     },
-    function($a)use($_host_model){
+    function($a){
         return false;
     },
-    function()use($_host_model){
+    function(){
         return null;
     }
 );

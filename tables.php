@@ -21,6 +21,7 @@ $_tables = [
     'participant' => [
         'id' => 'INT PRIMARY KEY AUTO_INCREMENT',
         'experiment_id' => 'INT',
+        'name' => 'VARCHAR(32)',
         'last_access' => 'INT'
         ]
 ];

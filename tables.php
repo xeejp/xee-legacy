@@ -31,4 +31,6 @@ foreach($_tables as $name => $structure){
     $_ddb->addTable($name, $structure);
 }
 $_vdb->setup($_ddb);
+$_tediff = new TEDiff($_pdo, null);
+$_tediff->setup($_ddb);
 $_ddb->updateDB();

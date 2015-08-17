@@ -1,14 +1,15 @@
 <?php
 
 if($_host_session->is_login){
-    $_experiment_id = $request->get_uri(0, 1);
+    $_experiment_id = $_request->get_uri(0, 1);
     if($_experiment_id !== false){
         $_experiment = $_experiment_model->get($_experiment_id);
         if($_host_session->user_id !== $_experiment['host_id']){
             redirect_uri(_URL);
         }
         $_modui = new ModUI('test', new NormalContainer());
-        require DIR_ROOT . 'game/' . $_game_id . '/admin.php';
+        $_game = $_game_model->get($_experiment['game_id']);
+        require DIR_ROOT . 'game/' . $_game['directory'] . '/admin.php';
         if($_request->request_method === Request::GET){
             $_modui->enable_auto_reload(5000, <<<JS
 function(){
@@ -22,15 +23,15 @@ function(){
 }
 JS
         );
-            $result = $modui->display();
+            $_result = $_modui->display();
 
-            $tmpl = new Template();
-            foreach($result['templates'] as $key => $template){
-                $tmpl->lwte_add($key, $template);
+            $_tmpl = new Template();
+            foreach($_result['templates'] as $key => $template){
+                $_tmpl->lwte_add($key, $template);
             }
-            $tmpl->lwte_use('#container', 'test', $result['values']);
-            $tmpl->add_script($result['script']);
-            $tmpl->add_script(<<<JS
+            $_tmpl->lwte_use('#container', 'test', $_result['values']);
+            $_tmpl->add_script($_result['script']);
+            $_tmpl->add_script(<<<JS
 function update_modui(name, value){
     $.ajax({
         url: window.location.pathname,
@@ -45,9 +46,9 @@ console.log(data);
 }
 JS
         );
-            echo $tmpl->display();
+            echo $_tmpl->display();
         }else{
-            $modui->input($_POST);
+            $_modui->input($_POST);
         }
     }
 }else{

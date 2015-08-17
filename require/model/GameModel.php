@@ -10,5 +10,10 @@ class GameModel extends Model{
         return $this->con->fetch('SELECT `id`, `name`, `directory` FROM `game` WHERE `id` = ?', $id);
     }
 
-
+    function exist_id($id){
+        if($this->con->get_count('game', ['id' => $id]) === 1){
+            return true;
+        }
+        return false;
+    }
 }

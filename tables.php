@@ -15,7 +15,7 @@ $_tables = [
         'id' => 'INT PRIMARY KEY AUTO_INCREMENT',
         'host_id' => 'INT',
         'game_id' => 'INT',
-        'password' => 'VARCHAR(64)', //hashed by sha256
+        'password' => 'VARCHAR(6)',
         'status' => 'TINYINT'
         ],
     'participant' => [

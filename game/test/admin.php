@@ -1,3 +1,3 @@
 <?php
 
-$_modui->add(new StringUI('test'));
+$_con->add_component(new StringUI('test'));

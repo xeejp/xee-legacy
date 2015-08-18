@@ -34,4 +34,4 @@ TMPL;
 
 }
 
-$_modui->add(new TestUI('It\'s a test.'));
+$_con->add_component(new TestUI('It\'s a test.'));

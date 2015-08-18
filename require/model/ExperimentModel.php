@@ -10,7 +10,7 @@ class ExperimentModel extends Model{
 
     function insert($host_id, $game_id){
         $password = $this->create_password();
-        return ['id' => $this->con->insert('experiment', ['host_id' => $host_id, 'game_id' => $game_id, 'password' => $this->hash_password($password)], true), 'password' => $password];
+        return $this->con->insert('experiment', ['host_id' => $host_id, 'game_id' => $game_id, 'password' => $password], true);
     }
 
     function get_all(){
@@ -18,11 +18,15 @@ class ExperimentModel extends Model{
     }
 
     function get($id){
-        return $this->con->fetch('SELECT `id`, `host_id`, `game_id`, `status` FROM `experiment` WHERE `id` = ?', $id);
+        return $this->con->fetch('SELECT `id`, `host_id`, `game_id`, `password`, `status` FROM `experiment` WHERE `id` = ?', $id);
     }
 
     function get_all_by_host($host_id){
         return $this->con->fetchAll('SELECT `id`, `host_id`, `game_id` FROM `experiment` WHERE `host_id` = ?', $host_id);
+    }
+
+    function get_by_password($password){
+        return $this->con->fetch('SELECT `id`, `host_id`, `game_id` FROM `experiment` WHERE `password` = ?', $password);
     }
 
     function get_experiment($password){
@@ -30,11 +34,11 @@ class ExperimentModel extends Model{
     }
 
     function hash_password($password){
-        return sha256($password + self::$salt);
+        return sha256($password . self::$salt);
     }
 
     function check_password($password){
-        if($this->con->get_count('experiment', ['password' => $this->hash_password($password)]) === 0){
+        if($this->con->get_count('experiment', ['password' => $password]) === 0){
             return false;
         }
         return true;
@@ -54,4 +58,14 @@ class ExperimentModel extends Model{
         return false;
     }
 
+    function exist_password($password){
+        if($this->con->get_count('experiment', ['password' => $password]) === 1){
+            return true;
+        }
+        return false;
+    }
+
+    function set_status($id, $status){
+        return $this->con->update('experiment', ['status' => $status], '`id` = ?', [$id]);
+    }
 }

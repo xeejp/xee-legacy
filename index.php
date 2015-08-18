@@ -23,7 +23,6 @@ $_loader->register_directory(__DIR__ . '/require');
 $_loader->register_directory(__DIR__ . '/require/model');
 $_loader->register_directory(__DIR__ . '/require/rplib');
 $_loader->register_directory(__DIR__ . '/require/diffdb');
-$_loader->register_directory(__DIR__ . '/require/tediff');
 $_loader->register_directory(__DIR__ . '/require/vardb');
 $_loader->register_directory(__DIR__ . '/require/modui');
 $_loader->register_directory(__DIR__ . '/modui_components');

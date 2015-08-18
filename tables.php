@@ -15,7 +15,7 @@ $_tables = [
         'id' => 'INT PRIMARY KEY AUTO_INCREMENT',
         'host_id' => 'INT',
         'game_id' => 'INT',
-        'password' => 'VARCHAR(64)', //hashed by sha256
+        'password' => 'VARCHAR(6)',
         'status' => 'TINYINT'
         ],
     'participant' => [
@@ -31,6 +31,4 @@ foreach($_tables as $name => $structure){
     $_ddb->addTable($name, $structure);
 }
 $_vdb->setup($_ddb);
-$_tediff = new TEDiff($_pdo, null);
-$_tediff->setup($_ddb);
 $_ddb->updateDB();

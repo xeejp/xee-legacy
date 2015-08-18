@@ -2,11 +2,13 @@
 define('NEXT_DEFAULT', 5000);
 
 $_vdb = new VarDB($_pdo, 'experiment-' . $_experiment['id']);
-//$_page = $_vdb->get('_page');
-$_page = 'a';
-$_modui = new ModUI('modbom', new NormalContainer());
-require DIR_ROOT . 'game/' . $_game['directory'] . '/index.php';
+$_modui = new ModUI('game', new NormalContainer());
+$con = new Controller($_vdb, $_modui, 'default');
+call_user_func(function($_con, $_require_dir){
+    require $_require_dir;
+}, $con, './game/' . $_game['directory'] . '/index.php');
 if($_request->request_method === Request::GET){
+    $page = $con->get_page();
     $_modui->enable_auto_reload(5000, <<<JS
 function(){
     $.ajax({
@@ -18,7 +20,7 @@ function(){
         if(data == 'reload'){
             location.reload(true);
         }else{
-            update_auto('modbom', data, lwte);
+            update_auto('game', data, lwte);
         }
     });
 }
@@ -29,7 +31,7 @@ JS
     foreach($_result['templates'] as $key => $template){
         $_tmpl->lwte_add($key, $template);
     }
-    $_tmpl->lwte_use('#container', 'modbom', $_result['values']);
+    $_tmpl->lwte_use('#container', 'game', $_result['values']);
     $_tmpl->add_script($_result['script']);
     $_tmpl->add_script(<<<JS
 function update_modui(name, value){
@@ -39,10 +41,10 @@ function update_modui(name, value){
         dataType: "json",
         data: { "name": name, "value": JSON.stringify(value)}
     }).done(function(data){
-        $("#container").html(lwte.useTemplate('modbom', data));
+        $("#container").html(lwte.useTemplate('game', data));
     });
 }
-current_page = "$_page";
+current_page = "$page";
 JS
     );
     echo $_tmpl->display();

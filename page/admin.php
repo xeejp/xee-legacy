@@ -39,8 +39,6 @@ function update_modui(name, value){
         dataType: "json",
         data: { "name": name, "value": JSON.stringify(value)}
     }).done(function(data){
-console.log(lwte);
-console.log(data);
         $("#container").html(lwte.useTemplate("test", data));
     });
 }

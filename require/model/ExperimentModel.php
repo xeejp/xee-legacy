@@ -25,6 +25,10 @@ class ExperimentModel extends Model{
         return $this->con->fetchAll('SELECT `id`, `host_id`, `game_id` FROM `experiment` WHERE `host_id` = ?', $host_id);
     }
 
+    function get_by_password($password){
+        return $this->con->fetch('SELECT `id`, `host_id`, `game_id` FROM `experiment` WHERE `password` = ?', $password);
+    }
+
     function get_experiment($password){
         return $this->con->fetch('SELECT `id`, `host_id`, `game_id`, `status` FROM `experiment` WHERE `password` = ?', $this->hash_password($password));
     }
@@ -49,6 +53,13 @@ class ExperimentModel extends Model{
 
     function exist_id($id){
         if($this->con->get_count('experiment', ['id' => $id]) === 1){
+            return true;
+        }
+        return false;
+    }
+
+    function exist_password($password){
+        if($this->con->get_count('experiment', ['password' => $password]) === 1){
             return true;
         }
         return false;

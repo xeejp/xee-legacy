@@ -10,12 +10,11 @@ if($_request->request_method === Request::GET){
     echo $_tmpl->display();
 }else{
     if(!check_token('top', $_request->get_string(_TOKEN)) &&
-        ($experiment_id = $_request->get_string('experiment_id')) &&
-        ($_experiment_model->exist_id($experiment_id)) &&
-        ($name = $_request->get_string('name')) &&
-        ($id = $_participant_model->check_login($experiment_id, $name)) !== null
-    ){
-        $_participant_session->login($id);
+            ($_password = $_request->get_string('password')) &&
+            (($_experiment = $_experiment_model->get_by_password($_password)) !== null) &&
+            ($_name = $_request->get_string('name')) &&
+            ($_id = $_participant_model->check_login($_experiment['id'], $_name)) !== null){
+        $_participant_session->login($_id);
     }
     redirect_uri(_URL . 'game');
 }

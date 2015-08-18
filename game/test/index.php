@@ -26,7 +26,7 @@ TMPL;
     }
 
     public function get_scripts($name){
-        return ["function(selector){return $(\"#$name\").val();}", "$(\"$name-button\").click(update);"];
+        return ['function(selector){return $("#" + selector).val();}', 'function(update, selector){$(document).on("click", "#" + selector + "-button", update);}'];
     }
 
     public function input($name, $value){

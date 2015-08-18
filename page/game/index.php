@@ -41,7 +41,7 @@ function update_modui(name, value){
         dataType: "json",
         data: { "name": name, "value": JSON.stringify(value)}
     }).done(function(data){
-        $("#container").html(lwte.useTemplate('game', data));
+        update_auto('game', data, lwte);
     });
 }
 current_page = "$page";

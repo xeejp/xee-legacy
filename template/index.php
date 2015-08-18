@@ -12,9 +12,10 @@
             <h2>Login</h2>
             <div>
 				<form action="top" method="post">
-                <input name="experiment_id" type="text" placeholder="実験番号" onkeypress="check_values();">
-                <input name="name" type="text" placeholder="ID/学籍番号" onkeypress="check_values();">
+                <input name="password" type="text" placeholder="実験番号" onkeypress=";">
+                <input name="name" type="text" placeholder="ID/学籍番号" onkeypress=";">
                 <button id="button1" class="btn btn-default wide hidden"><span class="fa fa-check med"></span></button>
+                <input type="submit" id="lock1" class="fa medhidden redborder">　実験に参加！</span>
                　<span id="lock1" class="fa medhidden redborder">　実験に参加！</span>
                 <input type="hidden" name="{token_name}" value="{TOKEN}">
 			   </form>

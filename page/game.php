@@ -14,14 +14,7 @@ if($_participant_session->is_login){
         break;
     case ExperimentModel::S_RUNNING:
         $_game = $_game_model->get($_experiment['game_id']);
-        if($_api){
-            $vdb = new VarDB($_pdo, '_experiment_' . $experiment_id);
-            require DIR_ROOT . 'game/' . $_game['directory'] . '/api.php';
-        }else{
-            $_tmpl = new Template();
-            $_tmpl->add('<script src="' . _URL . 'js/game.js' . '"></script>');
-            echo $_tmpl->display();
-        }
+        require DIR_ROOT . 'page/game/index.php';
         break;
     }
 }else{

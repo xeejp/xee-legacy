@@ -7,9 +7,12 @@ if($_host_session->is_login){
         if($_host_session->user_id !== $_experiment['host_id']){
             redirect_uri(_URL);
         }
-        $_modui = new ModUI('test', new NormalContainer());
+        $_modui = new ModUI('admin', new NormalContainer());
         $_game = $_game_model->get($_experiment['game_id']);
-        require DIR_ROOT . 'game/' . $_game['directory'] . '/admin.php';
+        $con = new Controller($_vdb, $_modui, 'default');
+        call_user_func(function($_con, $_require_dir){
+            require $_require_dir;
+        }, $con, './game/' . $_game['directory'] . '/admin.php');
         if($_request->request_method === Request::GET){
             $_modui->enable_auto_reload(5000, <<<JS
 function(){
@@ -18,7 +21,7 @@ function(){
         method: "POST",
         dataType: "json",
     }).done(function(data){
-        update_auto('test', data, lwte);
+        update_auto('admin', data, lwte);
     });
 }
 JS
@@ -29,7 +32,7 @@ JS
             foreach($_result['templates'] as $key => $template){
                 $_tmpl->lwte_add($key, $template);
             }
-            $_tmpl->lwte_use('#container', 'test', $_result['values']);
+            $_tmpl->lwte_use('#container', 'admin', $_result['values']);
             $_tmpl->add_script($_result['script']);
             $_tmpl->add_script(<<<JS
 function update_modui(name, value){
@@ -39,7 +42,7 @@ function update_modui(name, value){
         dataType: "json",
         data: { "name": name, "value": JSON.stringify(value)}
     }).done(function(data){
-        $("#container").html(lwte.useTemplate("test", data));
+        $("#container").html(lwte.useTemplate("admin", data));
     });
 }
 JS

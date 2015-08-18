@@ -35,7 +35,7 @@ function update_modui(name, value){
         dataType: "json",
         data: { "name": name, "value": JSON.stringify(value)}
     }).done(function(data){
-        $("#container").html(lwte.useTemplate("debug", data));
+        update_auto('debug', data, lwte);
     });
 }
 JS

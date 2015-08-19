@@ -2,13 +2,12 @@
 
 class Controller{
 
-    private $vdb, $modui, $page;
+    private $vdb, $modui;
     const PAGE = '_page';
 
-    public function __construct($vdb, $modui, $page='default'){
+    public function __construct($vdb, $modui){
         $this->vdb = $vdb;
         $this->modui = $modui;
-        $this->page = $page;
     }
 
     public function set_page($page){

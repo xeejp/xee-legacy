@@ -6,28 +6,15 @@ div#editBox{
     float:left;
 }
 
-div#space{
-    height:90%;
-    border:#999 solid 2px;
-}
-
-div#last{
-    clear:left;
-}
-
-div#last button{
-    width:100px;
-    height: 50px;
-}
-
-.cleditorMain{float:left;}
-
 div.preview{
     width:640px;
     height:800px;
     border: solid 1px #999999;
     float:left;
 }
+
+.cleditorMain{float:left;}
+
 div#under{
     clear:left;
 }

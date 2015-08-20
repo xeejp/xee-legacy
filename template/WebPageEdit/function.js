@@ -3,10 +3,13 @@ $(document).ready(function() {
         width: 400,
         height:800,
     });
-    String.prototype.splice = function(idx, rem, s) {
+
+    //文字挿入関数
+    String.prototype.splice = function(idx, rem, s) { 
         return (this.slice(0, idx) + s + this.slice(idx + Math.abs(rem)));
     };
 
+    //左側入力フォームの内容を右側に表示する内容に加工
     function processHtml(override_html){
         var str = '';
         var span_str = '"border-style: solid;border-width: 1px"';
@@ -58,6 +61,7 @@ $(document).ready(function() {
         return str;
     }
 
+
     var refreshText = function() {
         // cleditorを取得し、編集内容を一旦確定。
         // 表示上、隠れているinputareaの内容を更新する。
@@ -77,6 +81,7 @@ $(document).ready(function() {
     // 入力領域にフォーカスが戻ってくるイベントも監視しておく
     $( $(".cleditorMain iframe").contentWindow ).focus(refreshText);
 
+    //「追加」をクリックした際に出てくるポップアップ関連
     (function($){
         $(function(){
             $(document)

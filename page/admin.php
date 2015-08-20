@@ -12,8 +12,8 @@ if($_host_session->is_login){
         $_vdb = new VarDB($_pdo, 'experiment-' . $_experiment['id']);
         $properties = [
             'game' => $_game,
-            'experiment' => $_experiment
-            //TODO ,'participants' => $participants
+            'experiment' => $_experiment,
+            'participants' => $_participant_model->get_all($_experiment['id'])
         ];
         modui($_request, 'game', $_vdb, './game/' . $_game['directory'] . '/index.php', 5000, $properties);
     }

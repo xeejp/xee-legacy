@@ -44,12 +44,12 @@ TMPL;
                 if((($_experiment_id = $_request->get_string('experiment_id')) !== null) &&
                         ($_experiment_model->exist_id($_experiment_id))){
                     $_experiment_model->set_status($_experiment_id, ExperimentModel::S_RUNNING);
-                    redirect_uri(_URL . 'admin/' . $_exiperient_id);
+                    redirect_uri(_URL . 'admin/' . $_experiment_id);
                 }
                 break;
             }
-            redirect_uri(_URL . 'host');
         }
+        redirect_uri(_URL . 'host');
     }
 }else{
     //game list

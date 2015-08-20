@@ -15,7 +15,7 @@ if($_host_session->is_login){
             'experiment' => $_experiment
             //TODO ,'participants' => $participants
         ];
-        modui($_request, 'game', $_vdb, './game/' . $_game['directory'] . '/index.php', $properties);
+        modui($_request, 'game', $_vdb, './game/' . $_game['directory'] . '/index.php', 5000, $properties);
     }
 }else{
     redirect_uri(_URL);

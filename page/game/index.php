@@ -6,4 +6,4 @@ $properties = [
     'experiment' = $_experiment,
     'participant' = $_participant
 ];
-modui($_request, 'game', $_vdb, './game/' . $_game['directory'] . '/index.php', $properties);
+modui($_request, 'game', $_vdb, './game/' . $_game['directory'] . '/index.php', 5000, $properties);

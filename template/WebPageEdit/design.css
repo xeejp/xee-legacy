@@ -1,0 +1,33 @@
+div#editBox{
+    width:500px;
+    height:2000px;
+    border:#999 solid 2px;
+    padding:10px;
+    float:left;
+}
+
+div#space{
+    height:90%;
+    border:#999 solid 2px;
+}
+
+div#last{
+    clear:left;
+}
+
+div#last button{
+    width:100px;
+    height: 50px;
+}
+
+.cleditorMain{float:left;}
+
+div.preview{
+    width:640px;
+    height:800px;
+    border: solid 1px #999999;
+    float:left;
+}
+div#under{
+    clear:left;
+}

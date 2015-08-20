@@ -22,12 +22,10 @@ class StaticUI extends ModUIComponent{
     }
 
     public function get_scripts($name){
-        return ['value' => 'function(selector){return $("#" + selector).val();}', 'event' => 'function(selector, update){$(document).on("click", "#" + selector + "-b", update);}'];
+        return [];
     }
 
     public function input($name, $value){
-        dump($value, true);
-        $this->_con->set('a', $value);
     }
 
 }

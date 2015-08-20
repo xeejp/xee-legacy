@@ -15,7 +15,7 @@ if($_host_session->is_login){
             'experiment' => $_experiment,
             'participants' => $_participant_model->get_all($_experiment['id'])
         ];
-        modui($_request, 'game', $_vdb, './game/' . $_game['directory'] . '/index.php', 5000, $properties);
+        modui($_request, 'game', $_vdb, './game/' . $_game['directory'] . '/admin.php', 5000, $properties);
     }
 }else{
     redirect_uri(_URL);

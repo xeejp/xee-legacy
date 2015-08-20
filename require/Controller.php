@@ -3,19 +3,10 @@
 class Controller{
 
     private $vdb, $modui;
-    const PAGE = '_page';
 
     public function __construct($vdb, $modui){
         $this->vdb = $vdb;
         $this->modui = $modui;
-    }
-
-    public function set_page($page){
-        $this->set(self::PAGE, $page);
-    }
-
-    public function get_page($page='default'){
-        $this->get(self::PAGE, $page);
     }
 
     public function get($name, $default=null){

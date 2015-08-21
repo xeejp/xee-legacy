@@ -8,6 +8,7 @@ if($_host_session->is_login){
         $_data['games'] = $_games;
         $_data['experiments'] = $_experiments;
         $_template = '';
+        $running = ExperimentModel::S_RUNNING;
         $_template .= <<<TMPL
 [games]<br/>
 <form action="./host/games" method="post">
@@ -21,7 +22,10 @@ ID: {id}, name: {name};
 <form action="./host/experiments" method="post">
 {each experiments}
 ID: {id} , gameID: {game_id};
+{switch status}
+{case $running}
 <a href="./admin/{id}">admin</a>
+{/switch}
 <input type="submit" name="experiment_id" value="{id}"></input><br/>
 {/each}
 <input type="hidden" name="{token_name}" value="{token}"></input>
@@ -44,7 +48,7 @@ TMPL;
                 if((($_experiment_id = $_request->get_string('experiment_id')) !== null) &&
                         ($_experiment_model->exist_id($_experiment_id))){
                     $_experiment_model->set_status($_experiment_id, ExperimentModel::S_RUNNING);
-                    redirect_uri(_URL . 'admin/' . $_exiperient_id);
+                    redirect_uri(_URL . 'admin/' . $_experiment_id);
                 }
                 break;
             }

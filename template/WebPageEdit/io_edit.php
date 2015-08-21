@@ -33,8 +33,9 @@
     </div>
     <div id="overlay"></div>
 
-    <input type="submit" id="btn" value="決定"></input>
+    <!--<input type="submit" id="btn" value="決定"></input>-->
 
+    <button id="btn">決定</button>
     <h2>変数リスト<h2>
     <ul id="list">
         

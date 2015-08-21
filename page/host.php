@@ -52,8 +52,8 @@ TMPL;
                 }
                 break;
             }
-            redirect_uri(_URL . 'host');
         }
+        redirect_uri(_URL . 'host');
     }
 }else{
     //game list

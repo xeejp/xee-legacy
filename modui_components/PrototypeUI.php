@@ -2,10 +2,7 @@
 
 class PrototypeUI extends ModUIComponent{
 
-    public $_con;
-
-    public function __construct($con, $args){
-        $this->_con = $con;
+    public function __construct($args){
         foreach($args as $key => $arg){
             $this->$key = $arg;
         }

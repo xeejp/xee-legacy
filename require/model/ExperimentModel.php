@@ -14,7 +14,7 @@ class ExperimentModel extends Model{
     }
 
     function get_all(){
-        return $this->con->fetchAll('SELECT `id`, `host_id`, `game_id` FROM `experiment`');
+        return $this->con->fetchAll('SELECT `id`, `host_id`, `game_id`, `status` FROM `experiment`');
     }
 
     function get($id){
@@ -22,11 +22,11 @@ class ExperimentModel extends Model{
     }
 
     function get_all_by_host($host_id){
-        return $this->con->fetchAll('SELECT `id`, `host_id`, `game_id` FROM `experiment` WHERE `host_id` = ?', $host_id);
+        return $this->con->fetchAll('SELECT `id`, `host_id`, `game_id`, `status` FROM `experiment` WHERE `host_id` = ?', $host_id);
     }
 
     function get_by_password($password){
-        return $this->con->fetch('SELECT `id`, `host_id`, `game_id` FROM `experiment` WHERE `password` = ?', $password);
+        return $this->con->fetch('SELECT `id`, `host_id`, `game_id`, `status` FROM `experiment` WHERE `password` = ?', $password);
     }
 
     function get_experiment($password){

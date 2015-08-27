@@ -8,6 +8,7 @@ if($_host_session->is_login){
         $_data['games'] = $_games;
         $_data['experiments'] = $_experiments;
         $_template = '';
+        $running = ExperimentModel::S_RUNNING;
         $_template .= <<<TMPL
 [games]<br/>
 <form action="./host/games" method="post">
@@ -20,8 +21,11 @@ ID: {id}, name: {name};
 [experiments]<br/>
 <form action="./host/experiments" method="post">
 {each experiments}
-ID: {id} , gameID: {game_id};
+ID: {id}, gameID: {game_id}, {password}
+{switch status}
+{case $running}
 <a href="./admin/{id}">admin</a>
+{/switch}
 <input type="submit" name="experiment_id" value="{id}"></input><br/>
 {/each}
 <input type="hidden" name="{token_name}" value="{token}"></input>

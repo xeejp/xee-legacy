@@ -2,7 +2,7 @@
 
 $games = [
     [
-        'directory' => 'double_auction'
+        'directory' => 'double_auction',
         'name' => 'Double Auction',
     ]
 ];

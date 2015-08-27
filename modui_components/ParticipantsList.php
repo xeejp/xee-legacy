@@ -12,7 +12,7 @@ class ParticipantsList extends ModUIComponent{
         return [$this->get_template_name($name) => <<<TMPL
 <p>人数：{count}</p>
 {each participants}
-<p>id: {id}</p>
+<p>id: {id}, name: {name}</p>
 {/each}
 
 TMPL

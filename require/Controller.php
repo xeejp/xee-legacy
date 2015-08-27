@@ -10,7 +10,7 @@ class Controller{
     }
 
     public function get_personal($name, $default=null, $id=null){
-        $this->get('_participant_' . ($id != null ? $id : $this->participant['id']) . '_' . $name, $default);
+        return $this->get('_participant_' . ($id != null ? $id : $this->participant['id']) . '_' . $name, $default);
     }
 
     public function set_personal($name, $value, $id=null){
@@ -55,10 +55,10 @@ class Controller{
             foreach($args as $name){
                 if(is_array($name)){
                     $this->participants[$key][$name[0]] = $this->get_personal($name[0], $name[1], $participant['id']);
-                    if(isset($this->participant) && $this->participant['id'] === $participant['id']) $this->{$name[0]} = $this->participants[$key][$name[0]];
+                    if(isset($this->participant) && $this->participant['id'] === $participant['id']) $this->participant[$name[0]] = $this->participants[$key][$name[0]];
                 }else{
                     $this->participants[$key][$name] = $this->get_personal($name, null, $participant['id']);
-                    if(isset($this->participant) && $this->participant['id'] === $participant['id']) $this->$name = $this->participants[$key][$name];
+                    if(isset($this->participant) && $this->participant['id'] === $participant['id']) $this->participant[$name] = $this->participants[$key][$name];
                 }
             }
         }

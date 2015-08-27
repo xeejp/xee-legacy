@@ -21,7 +21,7 @@ ID: {id}, name: {name};
 [experiments]<br/>
 <form action="./host/experiments" method="post">
 {each experiments}
-ID: {id} , gameID: {game_id};
+ID: {id}, gameID: {game_id}, {password}
 {switch status}
 {case $running}
 <a href="./admin/{id}">admin</a>

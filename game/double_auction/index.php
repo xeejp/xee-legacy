@@ -19,9 +19,9 @@ TMPL
     },
     'values' => function($obj, $name){
         return [
-            'buyer' => $obj->_con->buyer,
-            'money' => $obj->_con->money,
-            'buyer' => $obj->_con->money2 == null ? false : $obj->_con->money2,
+            'buyer' => $obj->_con->participant['buyer'],
+            'money' => $obj->_con->participant['money'],
+            'money2' => $obj->_con->participant['money2'] == null ? false : $obj->_con->participant['money2'],
         ];
     }
 ]));
@@ -43,13 +43,13 @@ TMPL
     'values' => function($obj, $name){
         return [
             'list1' => ['list' => $obj->_con->filter_participants(function($_con, $participant){
-                if($participant['buyer'] == $_con->buyer){
+                if($participant['buyer'] == $_con->participant['buyer']){
                     return [];
                 }
-                return ['buyer', ['money', $participant['money2']], ['button', call_user_func($_con->check_money, $_con, $participant)]];
+                return ['buyer', ['money', $participant['money2']], ['button', call_user_func($_con->check_money, [$_con, $participant])]];
             })],
             'list2' => ['list' => $obj->_con->filter_participants(function($_con, $participant){
-                if($participant['buyer'] != $_con->buyer){
+                if($participant['buyer'] != $_con->participant['buyer']){
                     return [];
                 }
                 return ['buyer', 'money'];

@@ -9,41 +9,45 @@ class ParticipantsManagement extends ModUIComponent{
     }
     public function get_templates($name){
         $template = <<<TMPL
-		    <div class="row colored">
-		<div class="col-xs-6 col-sm-6 col-md-6">
-			<div class="left" id="box" ondragover="f_dragover(event)" ondrop="f_drop_l(event)">
-				<p align="center">参加者</p>
-				{each participants}
-					{if active}
-					<div id="{id}" draggable='true'ondragstart='f_dragstart(event)'><p>{name}</p></div>
-						{/if}
-					{/each}
-			</div>
-		</div>
-		<div class="col-xs-6 col-sm-6 col-md-6">
-		<div class="right" id="box" ondragover="f_dragover(event)" ondrop="f_drop_r(event)">
-			<p align="center">不参加者</p>
-					{each participants}
-					{if active}{else}
-					<div id="{id}" draggable='true'ondragstart='f_dragstart(event)'><p>{name}</p></div>
-						{/if}
-					{/each}
-			<div align="right">
-				<div class="controls">
-					<input type="button" value="確認" id="{_name}">
-				</div>
-			</div>
-			
-		</div>
-		</div>
-	
-	</div>
-
+<div class="row colored">
+    <div class="col-xs-6 col-sm-6 col-md-6">
+        <div class="left" id="box" ondragover="f_dragover(event)" ondrop="f_drop_l(event)">
+            <p align="center">参加者</p>
+            {each participants}
+                {if active}
+                    <div id="{id}" draggable='true'ondragstart='f_dragstart(event)'><p>{name}</p></div>
+                {/if}
+            {/each}
+        </div>
+    </div>
+    <div class="col-xs-6 col-sm-6 col-md-6">
+        <div class="right" id="box" ondragover="f_dragover(event)" ondrop="f_drop_r(event)">
+            <p align="center">不参加者</p>
+                {each participants}
+                    {if active}{else}
+                        <div id="{id}" draggable='true'ondragstart='f_dragstart(event)'><p>{name}</p></div>
+                    {/if}
+                {/each}
+            <div align="right">
+                <div class="controls">
+                    <input type="button" value="確認" id="{_name}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 TMPL;
-        return [get_template_name($name) => $template];
+        return [$this->get_template_name($name) => $template];
     }
     public function get_values($name){
-        return ['value' => $this->_con->get('a')];
+        return [
+            'participants' => [
+                ['id' => 1, 'name' => '橋口１', 'active' => true],
+                ['id' => 2, 'name' => '橋口２', 'active' => false],
+                ['id' => 3, 'name' => '橋口３', 'active' => true],
+                ['id' => 4, 'name' => '橋口４', 'active' => false]
+            ]
+        ];
     }
     public function get_scripts($name){
         return ['value' => <<<JS
@@ -121,5 +125,6 @@ JS
 ];
     }
     public function input($name, $value){
+        dump($value, true);
     }
 }

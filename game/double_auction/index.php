@@ -46,7 +46,7 @@ TMPL
                 if($participant['buyer'] == $_con->buyer){
                     return [];
                 }
-                return ['buyer', ['money', $participant['money2']], ['button', call_user_func($_con->check_money, $_con, $participant)]];
+                return ['buyer', ['money', $participant['money2']], ['button', call_user_func($_con->check_money, [$_con, $participant])]];
             })],
             'list2' => ['list' => $obj->_con->filter_participants(function($_con, $participant){
                 if($participant['buyer'] != $_con->buyer){

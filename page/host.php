@@ -9,23 +9,33 @@ if($_host_session->is_login){
         $_data['experiments'] = $_experiments;
         $_template = '';
         $_template .= <<<TMPL
-[games]<br/>
-<form action="./host/games" method="post">
+<h2>game</h2>
+<form class="pure-form" action="./host/games" method="post">
+<table class="pure-table">
+<thead>
+<tr><th>ID</th><th>Name</th><th>Reserve</th></tr>
+</thead>
+<tbody>
 {each games}
-ID: {id}, name: {name};
-<input type="submit" name="game_id" value="{id}"></input><br/>
+<tr><td>{id}</td><td>{name}</td>
+<td><input class="pure-button" type="submit" name="game_id" value="{id}"></input></td></tr>
 {/each}
+</tbody>
+</table>
 <input type="hidden" name="{token_name}" value="{token}"></input>
 </form>
-[experiments]<br/>
-<form action="./host/experiments" method="post">
+<h2>experiments</h2>
+<form class="pure-form" action="./host/experiments" method="post">
+<table class="pure-table">
+<thead>
+<tr><th>ID</th><th>ID2</th><th>Admin Page</th><th>Start</th></tr>
+</thead>
+<tbody>
 {each experiments}
-ID: {id} , gameID: {game_id};
-<a href="./admin/{id}">admin</a>
-<input type="submit" name="experiment_id" value="{id}"></input><br/>
+<tr><td>{id}</td><td>{game_id}</td><td><a class="pure-button" href="./admin/{id}">admin</a></td><td><input class="pure-button" type="submit" name="experiment_id" value="{id}"></input></td></tr>
 {/each}
-<input type="hidden" name="{token_name}" value="{token}"></input>
-</form><br/>
+</tbody>
+</table>
 TMPL;
         $_tmpl = new Template();
         $_tmpl->lwte_add('host', $_template);
@@ -60,10 +70,17 @@ TMPL;
     }
     $_tmpl = new Template();
     $_tmpl->lwte_add('host', <<<TMPL
-[games]<br/>
+<h2>game</h2>
+<table class="pure-table">
+<thead>
+<tr><th>ID</th><th>Name</th></tr>
+</thead>
+<tbody>
 {each games}
-ID: {id}, name: {name};<br/>
+<tr><td>{id}</td><td>{name}</td></tr>
 {/each}
+</tbody>
+</table>
 TMPL
     );
     $_tmpl->lwte_use('#container', 'host', $_data);

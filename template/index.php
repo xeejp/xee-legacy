@@ -5,23 +5,15 @@
 </div>
 
 <!-- Interactive Login - START -->
-<div class="container">
-    <div class="row colored">
-        <div id="contentdiv" class="contcustom">
-            <span class="fa fa-user bigicon"></span>
-            <h2>Login</h2>
+<div style="width: 320px; margin: auto">
             <div>
-				<form action="top" method="post">
-                <input name="password" type="text" placeholder="実験番号" onkeypress=";">
-                <input name="name" type="text" placeholder="ID/学籍番号" onkeypress=";">
-                <button id="button1" class="btn btn-default wide hidden"><span class="fa fa-check med"></span></button>
-                <input type="submit" id="lock1" class="fa medhidden redborder">　実験に参加！</span>
-               　<span id="lock1" class="fa medhidden redborder">　実験に参加！</span>
+                <form class="pure-form pure-form-stacked" action="top" method="post">
+                <input name="password" type="text" placeholder="実験番号" style="width: 100%">
+                <input name="name" type="text" placeholder="ID/学籍番号" style="width: 100%">
+                <input class="pure-button pure-button-primary" type="submit" id="lock1" class="fa medhidden redborder" value="実験に参加！" style="width: 100%">
                 <input type="hidden" name="{token_name}" value="{TOKEN}">
-			   </form>
+               </form>
             </div>
-        </div>
-    </div>
 </div>
 
 
@@ -29,6 +21,6 @@
 
 <!-- Interactive Login - END -->
 <div align="right" valign="bottom">
-<button type="button" class="btn btn-default">実験作成</button>
+<button type="button" class="pure-button pure-warning">実験作成</button>
 </div>
 </div>

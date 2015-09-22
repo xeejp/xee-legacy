@@ -10,7 +10,7 @@ class ParticipantsManagement extends ModUIComponent{
     public function get_templates($name){
         $template = <<<TMPL
 <div class="row colored">
-    <div class="col-xs-6 col-sm-6 col-md-6">
+    <div class="pure-u-11-24">
         <div class="left" id="box" ondragover="f_dragover(event)" ondrop="f_drop_l(event)">
             <p align="center">参加者</p>
             {each participants}
@@ -20,7 +20,7 @@ class ParticipantsManagement extends ModUIComponent{
             {/each}
         </div>
     </div>
-    <div class="col-xs-6 col-sm-6 col-md-6">
+    <div class="pure-u-11-24">
         <div class="right" id="box" ondragover="f_dragover(event)" ondrop="f_drop_r(event)">
             <p align="center">不参加者</p>
                 {each participants}
@@ -30,7 +30,7 @@ class ParticipantsManagement extends ModUIComponent{
                 {/each}
             <div align="right">
                 <div class="controls">
-                    <input type="button" value="確認" id="{_name}">
+                    <button class="pure-button" id="{_name}">確認</button>
                 </div>
             </div>
         </div>

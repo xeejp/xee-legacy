@@ -7,12 +7,15 @@ if($_request->request_method === Request::GET){
         $_host_session->logout();
     }
     $_tmpl->lwte_add('signup', <<<HTML
-<form method="POST" action="{$_(_URL)}signup">
-<input type="text" name="name">
-<input type="password" name="password">
-<input type="password" name="password2">
-<button type="submit">Signup</button>
+<div style="margin: auto; width: 320px">
+<form class="pure-form pure-form-stacked" method="POST" action="{$_(_URL)}signup">
+<fieldset>
+<input type="text" name="name" style="width: 100%" placeholder="ID">
+<input type="password" name="password" style="width: 100%" placeholder="password">
+<input type="password" name="password2" style="width: 100%" placeholder="password(confirm)">
+<button class="pure-button pure-button-primary" type="submit" style="width: 100%">Signup</button>
 <input type="hidden" name="{$_(_TOKEN)}" value="{token}">
+</fieldset>
 </form>
 {if error}
 <p>
@@ -23,6 +26,7 @@ if($_request->request_method === Request::GET){
 {/switch}
 </p>
 {/if}
+</div>
 HTML
     );
     $_tmpl->lwte_use('#container', 'signup', ['token' => get_token('signup'), 'error' => $_request->get_int('error', null)]);

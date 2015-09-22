@@ -7,12 +7,15 @@ if($_request->request_method === Request::GET){
         $_host_session->logout();
     }
     $_tmpl->lwte_add('signin', <<<HTML
-<form method="POST" action="{$_(_URL)}signin">
-<input type="text" name="name">
-<input type="password" name="password">
-<input type="checkbox" name="remember" value="true">
-<button type="submit">Signin</button>
+<div style="margin: auto; width: 320px">
+<form class="pure-form pure-form-stacked" method="POST" action="{$_(_URL)}signin">
+<fieldset>
+<input type="text" name="name" style="width: 100%" placeholder="ID">
+<input type="password" name="password" style="width: 100%" placeholder="password">
+<lable class="pure-checkbox" style="width: 100%"><input type="checkbox" name="remember" value="true">Remember Me</lable>
+<button class="pure-button pure-button-primary" type="submit" style="width: 100%">Signin</button>
 <input type="hidden" name="{$_(_TOKEN)}" value="{token}">
+</fieldset>
 </form>
 {if error}
 <p>
@@ -22,6 +25,7 @@ if($_request->request_method === Request::GET){
 {/switch}
 </p>
 {/if}
+</div>
 HTML
 );
     $_tmpl->lwte_use('#container', 'signin', ['token' => get_token('signin'), 'error' => $_request->get_int('error', null)]);

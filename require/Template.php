@@ -53,6 +53,9 @@ JS
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="{$_(_URL)}js/jquery-2.1.3.min.js"></script>
 <script src="{$_(_URL)}js/lwte/lwte.js"></script>
+<script src="{$_(_URL)}js/CLEditor/jquery.cleditor.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{$_(_URL)}js/CLEditor/jquery.cleditor.css" />
+
 <script> lwte = new LWTE();</script>
 
 <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css" />

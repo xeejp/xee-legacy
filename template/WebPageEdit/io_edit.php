@@ -1,17 +1,18 @@
-<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> 
 <link rel="stylesheet" type="text/css" href="popup_design.css" />
 <link rel="stylesheet" type="text/css" href="design.css"/>
 <link rel="stylesheet" type="text/css" href="CLEditor/jquery.cleditor.css" />
 <script type="text/javascript" src="CLEditor/jquery.cleditor.min.js"></script>
-<script type="text/javascript" src="function.js"></script>-->
+<script type="text/javascript" src="function.js"></script>
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 <h1>Webページ編集</h1>
+<h5>注意:変数内での改行は禁止です</h5>
     
 <textarea class="editor" id = "comment" name="comment" cols="60" rows="8"></textarea>
 <div class="preview" id="target"></div>
 
 <div id="under">
-    <a href="#popup1" class="popup_btn">追加</a>
-
+    <button href="#popup1" class="popup_btn pure-button">追加</button>
     <div id="popup1" class="popup">
         <div class="popup_inner">
             <h4>変数追加</h4>
@@ -26,18 +27,48 @@
                 <option value="bool">bool</option>
             </select>
             <div>
-                <a href="#decide_btn" class="decide_btn">決定</a>
-                <a href="#close_btn" class="close_btn">閉じる</a>
+                <button href="#decide_btn" class="decide_btn pure-button">決定</button>
+                <button href="#close_btn" class="close_btn pure-button">閉じる</button>
             </div>
         </div>
     </div>
+    <div id="popup2" class="popup">
+        <div class="popup_inner">
+            <h4>変数編集</h4>
+            <p>変数名</p>
+            <p id="hensu_name_edit"></p>
+            <p>変数説明</p>
+            <input type="text" id="hensu_desc_edit" />
+            <p>型</p>
+            <select id="hensu_type_edit">
+                <option value="string">string</option>
+                <option value="int">int</option>
+                <option value="bool">bool</option>
+            </select>
+            <div>
+                <button href="#decide_btn" class="decide_btn_edit pure-button">決定</button>
+                <button href="#close_btn" class="close_btn_edit pure-button">閉じる</button>
+            </div>
+        </div>
+    </div>
+
     <div id="overlay"></div>
 
     <!--<input type="submit" id="btn" value="決定"></input>-->
 
-    <button id="btn">決定</button>
-    <h2>変数リスト<h2>
-    <ul id="list">
-        
-    </ul>
+    <button id="btn" class="pure-button">決定</button>
+    <h2>変数リスト</h2>
+    <table id="list" class="pure-table pure-table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>変数名</th>
+                <th>変数の説明</th>
+                <th>変数の型</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            
+        </tbody>
+    </table>
 </div>

@@ -42,5 +42,6 @@ JS
 );
     echo $_tmpl->display();
 }else{
+    dump($_POST,true);
     $_modui->input($_POST);
 }

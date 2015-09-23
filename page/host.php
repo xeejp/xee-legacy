@@ -39,6 +39,8 @@ if($_host_session->is_login){
 {/each}
 </tbody>
 </table>
+<input type="hidden" name="{token_name}" value="{token}"></input>
+</form>
 TMPL;
         $_tmpl = new Template();
         $_tmpl->lwte_add('host', $_template);

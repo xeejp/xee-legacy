@@ -57,7 +57,7 @@ JS
 <script src="{$_(_URL)}js/lwte/lwte.min.js"></script>
 <script> lwte = new LWTE();</script>
 
-<link rel="stylesheet" href="yui.yahooapis.com/pure/0.6.0/pure-min.css">
+<link rel="stylesheet" href="//yui.yahooapis.com/pure/0.6.0/pure-min.css">
 
 </head>
 <body>

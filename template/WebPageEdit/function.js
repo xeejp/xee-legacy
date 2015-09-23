@@ -41,6 +41,10 @@ $(document).ready(function() {
         }
     });
 
+    function insertHtml(str){
+        editor.execCommand('inserthtml', '{' + str + "}", false);
+    }
+
     //変数をチェックする
     function checkHensu(override_html){
         var use_hensu = new Array();
@@ -49,6 +53,7 @@ $(document).ready(function() {
         var len = override_html.length;
         var list_len = $('#tableBody').length;
         for(var i = 0;i < list_len;i++){
+            $('tbody#tableBody_hensu_add').empty();
             $('tbody#tableBody').empty();
         }
         for( var i = 0; i < len; i ++){
@@ -118,16 +123,43 @@ $(document).ready(function() {
             eTr.appendChild(elemThType);
             var eThLeft = document.getElementById("buttonEdit" + name);
             var elemButtonEdit = document.createElement('button');
-            elemButtonEdit.href = "#popup1";
+            elemButtonEdit.textContent = "編集";
+            elemButtonEdit.value = "#popup2";
+            elemButtonEdit.className = "pure-button popup_btn_edit";
             elemButtonEdit.id="a" + name;
             eThLeft.appendChild(elemButtonEdit);
-            var eButton = document.getElementById("a" + name);
-            var elemA = document.createElement('a');
-            elemA.href="#popup2";
-            elemA.className="popup_btn_edit";
-            elemA.textContent = "編集";
-            elemA.id = "id" + name;
-            eButton.appendChild(elemA);
+            
+            //H27_9_23 定義済みの変数を追加するボタンをつくる
+
+            var e = document.getElementById('tableBody_hensu_add');
+            var elemLi = document.createElement('tr');
+            elemLi.id = "tr" + name;
+            e.appendChild(elemLi);
+            var eTr = document.getElementById("tr" + name);
+            var elemTh = document.createElement('th');
+            elemTh.id="th" + name;
+            eTr.appendChild(elemTh);
+            var eTh = document.getElementById("th" + name);
+            var elemBtn = document.createElement('button');
+            elemBtn.textContent = name;
+            elemBtn.id= "button" + name;
+            elemBtn.className="pure-button btn_add";                
+            if(hensu_array[name].getDesc() != ""){
+                switch(hensu_array[name].getType()){
+                    case "string":
+                        elemBtn.style.backgroundColor = '#FA8072';
+                        break;
+                    case "int":
+                        elemBtn.style.backgroundColor = '#87CEFA';
+                        break;
+                    case "bool":
+                        elemBtn.style.backgroundColor = '#98FB98';
+                        break;
+                    default:
+                        
+                }
+            }
+            eTh.appendChild(elemBtn);
         }
     }
 
@@ -250,8 +282,7 @@ $(document).ready(function() {
                     }
                     hensu_array[arr["hensu_name"]] = new Hensu(arr["hensu_name"],arr["hensu_desc"],arr["hensu_type"]);
                     $('.popup, #overlay').hide();
-                    var v = $(".editor").val();
-                    editor.execCommand('inserthtml', '{' + hensu_array[arr["hensu_name"]].getName() + "}", false);
+                    insertHtml(arr["hensu_name"]);
                     alert("変数" + arr["hensu_name"] + "を追加しました");
                     refreshText();
                     var eName = document.getElementById('hensu_name');
@@ -268,7 +299,7 @@ $(document).ready(function() {
         $(function(){
             $(document)
                 .on('click', '.popup_btn_edit', function(){
-                     var $popup = $($(this).attr('href'));
+                     var $popup = $($(this).attr('value'));
 
                      // ポップアップの幅と高さからmarginを計算する
                      var mT = ($popup.outerHeight() / 2) * (-1) + 'px';
@@ -282,7 +313,7 @@ $(document).ready(function() {
                          }).show();
                      $('#overlay').show();
                          var eSelect = $(this).attr('id');
-                         eSelect = eSelect.substr(2);
+                         eSelect = eSelect.substr(1);
                          var eName = document.getElementById("hensu_name_edit");
                          var eDesc = document.getElementById("hensu_desc_edit");
                          var eType = document.getElementById("hensu_type_edit");
@@ -310,6 +341,19 @@ $(document).ready(function() {
                     eDesc.value = "";
                     
                     return true;
+                });
+        });
+    })(jQuery);
+
+    //H27_9_23 右の変数追加ボタン関連
+    (function($){
+        $(function(){
+            $(document)
+                .on('click', '.btn_add', function(){
+                     var eSelect = $(this).attr('id');
+                     eSelect = eSelect.substr(6);
+                     insertHtml(eSelect);
+                     refreshText();
                 });
         });
     })(jQuery);  

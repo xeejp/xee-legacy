@@ -10,12 +10,22 @@
     
 <textarea class="editor" id = "comment" name="comment" cols="60" rows="8"></textarea>
 <div class="preview" id="target"></div>
+<table id="hensu_add" class="pure-table">
+    <thead>
+        <tr>
+            <th>変数追加ボタン</th>
+        </tr>
+    </thead>
+    <tbody id="tableBody_hensu_add">
+        
+    </tbody>
+</table>
 
 <div id="under">
-    <button href="#popup1" class="popup_btn pure-button">追加</button>
+    <button href="#popup1" class="popup_btn pure-button">新規変数追加</button>
     <div id="popup1" class="popup">
         <div class="popup_inner">
-            <h4>変数追加</h4>
+            <h4>新規変数追加</h4>
             <p>変数名</p>
             <input type="text" id="hensu_name" />
             <p>変数説明</p>

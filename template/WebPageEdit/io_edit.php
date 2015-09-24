@@ -6,14 +6,18 @@
 <script type="text/javascript" src="function.js"></script>
 <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 <h1>Webページ編集</h1>
-<h5>注意:変数内での改行は禁止です</h5>
+<h5>
+    注意:変数は0~9で始まらない半角英数文字で記述してください。</br>
+        また、変数内で使える文字はa~z,A~Z,$,_(アンダーバー)です。</br>
+        変数内での改行は禁止されています。
+</h5>
     
 <textarea class="editor" id = "comment" name="comment" cols="60" rows="8"></textarea>
 <div class="preview" id="target"></div>
 <table id="hensu_add" class="pure-table">
     <thead>
         <tr>
-            <th>変数追加ボタン</th>
+            <th>変数追加ボタンリスト</th>
         </tr>
     </thead>
     <tbody id="tableBody_hensu_add">

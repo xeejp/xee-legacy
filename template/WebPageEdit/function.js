@@ -59,7 +59,7 @@ $(document).ready(function() {
         for( var i = 0; i < len; i ++){
             if(override_html.charAt(i) == '{' && override_html.charAt(i - 1) != '/'){
                 for( var j = i + 1;j < len;j ++){
-                    if(override_html.charAt(j) == ' ' || override_html.charAt(j) == '' || override_html.charAt(j) == '  ' || override_html.charAt(j) == '"' || override_html.charAt(j) == '¥' || override_html.charAt(j) == "'"){
+                    if(override_html.charAt(j) == ' ' || override_html.charAt(j) == '' || override_html.charAt(j) == '　' || override_html.charAt(j) == '"' || override_html.charAt(j) == '¥' || override_html.charAt(j) == "'"){//修正必要
                                 alert("その入力は禁止されています : " + override_html.charAt(j));
                     }else{
                         if(override_html.charAt(j) == '}'){

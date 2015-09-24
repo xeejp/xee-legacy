@@ -1,0 +1,67 @@
+/* settings */
+/* xflow */
+#xflow {
+	position: relative;
+	border: solid 1px;
+	height: 90%;
+}
+
+.node, .receiver, .sender, .link {
+	position: absolute;
+}
+
+.node {
+	width : 100px;
+	height: 100px;
+	border: solid 1px;
+}
+
+.receiver, .sender {
+	width : 10px;
+	height: 10px;
+	border: solid 1px;
+	border-radius: 5px;
+}
+
+.receiver {
+	top: 0;
+	left: 0;
+	right: 0;
+	margin:0 auto;
+	background-color: #FFFFFF;
+}
+
+.sender {
+	bottom: 0;
+	background-color: #000000;
+}
+
+.link {
+	height: 1px;
+	border-top: solid 1px;
+	transform-origin: 0 0;
+}
+
+.prefab {
+	margin: 5px;
+}
+
+#xflow, #xflow-ui {
+	margin: 5px;
+}
+
+/* area */
+#content-area {
+	display: flex;
+	flex-direction: row;
+	padding-left: 5%;
+	padding-right: 5%;
+}
+#tool-area, #edit-area {
+	border: solid 1px;
+	padding: 5px;
+}
+#edit-area {
+	display: inline;
+	width: 100%;
+}

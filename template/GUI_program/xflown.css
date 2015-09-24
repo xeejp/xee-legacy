@@ -1,0 +1,91 @@
+/* settings */
+/* xflow */
+*{	
+	color:#FFFFFF;
+	font-weight: bold;
+	border-radius: 10px;
+}
+#xflow {
+	position: relative;
+	//border: solid 1px;
+	height: 90%;
+	background-color:#1C4076;
+	min-height: 300px;
+
+}
+
+#xflow-ui{
+	background-color:#677B99;
+}
+
+.node, .receiver, .sender, .link {
+	position: absolute;
+}
+
+.node {
+	width : 150px;
+	height: 100px;
+	background-color:#45F1FF;
+	z-index:10;
+}
+
+.receiver, .sender {
+	width : 10px;
+	height: 10px;
+	border-radius: 5px;
+}
+
+.receiver {
+	top: 0;
+	left: 0;
+	right: 0;
+	margin:0 auto;
+	background-color: #FFAADC;
+	z-index:30;
+}
+
+.sender {
+	bottom: 0;
+	background-color: #CC4B97;
+	z-index:40;
+}
+
+.link {
+	height: 0px;
+	border-top:solid 7px;
+	transform-origin: 0% 50%;
+	border-color:#FFFFFF;
+	z-index: 20;
+}
+
+.prefab {
+	margin: 5px;
+}
+
+#xflow, #xflow-ui {
+	padding: 5px;
+	margin: 5px;
+}
+
+.pure-button,.pure-form{
+	color:#000000;
+}
+
+/* area */
+#content-area {
+	display: flex;
+	flex-direction: row;
+	padding-left: 5%;
+	padding-right: 5%;
+}
+#tool-area, #edit-area {
+	padding: 5px;
+}
+
+#tool-area{
+	background-color:#FFA585 ;
+}
+#edit-area {
+	display: inline;
+	width: 100%;
+}

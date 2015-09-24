@@ -1,10 +1,3 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> 
-<link rel="stylesheet" type="text/css" href="popup_design.css" />
-<link rel="stylesheet" type="text/css" href="design.css"/>
-<link rel="stylesheet" type="text/css" href="CLEditor/jquery.cleditor.css" />
-<script type="text/javascript" src="CLEditor/jquery.cleditor.min.js"></script>
-<script type="text/javascript" src="function.js"></script>
-<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 <h1>Webページ編集</h1>
 <h5>
     注意:変数は0~9で始まらない半角英数文字で記述してください。</br>

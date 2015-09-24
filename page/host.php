@@ -7,6 +7,9 @@ if($_host_session->is_login){
         $_data = ['token_name' => _TOKEN, 'token' => get_token('host')];
         $_data['games'] = $_games;
         $_data['experiments'] = $_experiments;
+        foreach($_experiments as $key => $exp){
+            $_data['experiments'][$key]['game_name'] = $_game_model->get($exp['game_id'])['name'];
+        }
         $_template = '';
         $running = ExperimentModel::S_RUNNING;
         $_template .= <<<TMPL
@@ -19,7 +22,7 @@ if($_host_session->is_login){
 <tbody>
 {each games}
 <tr><td>{id}</td><td>{name}</td>
-<td><input class="pure-button" type="submit" name="game_id" value="{id}"></input></td></tr>
+<td><button class="pure-button" type="submit" name="game_id" value="{id}">reserve</button></td></tr>
 {/each}
 </tbody>
 </table>
@@ -29,13 +32,13 @@ if($_host_session->is_login){
 <form class="pure-form" action="./host/experiments" method="post">
 <table class="pure-table">
 <thead>
-<tr><th>ID</th><th>ID2</th><th>Admin Page</th><th>Start</th></tr>
+<tr><th>ID</th><th>ID2</th><th>Game Name</th><th>Admin Page</th><th>Start</th></tr>
 </thead>
 <tbody>
 {each experiments}
-<tr><td>{id}</td><td>{game_id}</td><td>
+<tr><td>{id}</td><td>{game_id}</td><td>{game_name}</td><td>
 {switch status} {case $running} <a class="pure-button" href="./admin/{id}">admin</a> {/switch}
-</td><td><input class="pure-button" type="submit" name="experiment_id" value="{id}"></input></td></tr>
+</td><td><button class="pure-button" type="submit" name="experiment_id" value="{id}">start</button></td></tr>
 {/each}
 </tbody>
 </table>

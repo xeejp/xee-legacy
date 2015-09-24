@@ -8,30 +8,31 @@ class ParticipantsManagement extends ModUIComponent{
         return $name;
     }
     public function get_templates($name){
+        // IEではdragoverに加えてdragenterもキャンセルしなければdropイベントが発生しないためondragenterを追加
         $template = <<<TMPL
 <div class="row colored">
     <div class="pure-u-11-24">
-        <div class="left" id="box" ondragover="f_dragover(event)" ondrop="f_drop_l(event)">
-            <p align="center">参加者</p>
+        <p align="center">参加者</p>
+        <div class="left" id="box" ondragover="f_dragover(event)" ondragenter="f_dragover(event)" ondrop="f_drop_l(event)">
             {each participants}
                 {if active}
-                    <div id="{id}" draggable='true'ondragstart='f_dragstart(event)'><p>{name}</p></div>
+                    <div id="{id}" draggable="true" ondragstart="f_dragstart(event)"><p>{name}</p></div>
                 {/if}
             {/each}
         </div>
     </div>
     <div class="pure-u-11-24">
-        <div class="right" id="box" ondragover="f_dragover(event)" ondrop="f_drop_r(event)">
-            <p align="center">不参加者</p>
-                {each participants}
-                    {if active}{else}
-                        <div id="{id}" draggable='true'ondragstart='f_dragstart(event)'><p>{name}</p></div>
-                    {/if}
-                {/each}
-            <div align="right">
-                <div class="controls">
-                    <button class="pure-button" id="{_name}">確認</button>
-                </div>
+        <p align="center">不参加者</p>
+        <div class="right" id="box_r" ondragover="f_dragover(event)" ondragenter="f_dragover(event)" ondrop="f_drop_r(event)">
+            {each participants}
+                {if active}{else}
+                    <div id="{id}" draggable="true" ondragstart="f_dragstart(event)"><p>{name}</p></div>
+                {/if}
+            {/each}
+        </div>
+        <div align="right">
+            <div class="controls">
+                <button class="pure-button" id="{_name}">確認</button>
             </div>
         </div>
     </div>
@@ -50,34 +51,34 @@ TMPL;
         ];
     }
     public function get_scripts($name){
-        return ['value' => <<<JS
-	function(selector){
-	var l=0;
-	var r=0;
-	for(l=0;l<l_elm.length;l++){//r_elmとl_elmの被りをなくす
-			for(r=0;r<r_elm.length;r++){
-				if(l_elm[l] == r_elm[r]){
-					l_elm.splice(l,1);
-					r_elm.splice(r,1);
-					r--;
-					l--;
-				}
-			}
-		}	
-		
-		return [l_elm,r_elm];}
+        return [
+            'value' => <<<JS
+function(selector){
+var l=0;
+var r=0;
+for(l=0;l<l_elm.length;l++){//r_elmとl_elmの被りをなくす
+	for(r=0;r<r_elm.length;r++){
+		if(l_elm[l] == r_elm[r]){
+			l_elm.splice(l,1);
+			r_elm.splice(r,1);
+			r--;
+			l--;
+		}
+	}
+}
+return [l_elm,r_elm];}
 JS
-		, 'event' => 'function(selector, update){$(document).on("click", "#" + selector , update);}',
-		'other' => <<<JS
-		    jQuery(function ($) {
-        function check_values() {
-            if ($("#username").val().length != 0 && $("#password").val().length != 0) {
-                $("#button1").removeClass("hidden").animate({ left: '250px' });
-                $("#lock1").addClass("hidden").animate({ left: '250px' });
-            }
+,           'event' => 'function(selector, update){$(document).on("click", "#" + selector , update);}',
+            'other' => <<<JS
+jQuery(function ($) {
+    function check_values() {
+        if ($("#username").val().length != 0 && $("#password").val().length != 0) {
+            $("#button1").removeClass("hidden").animate({ left: '250px' });
+            $("#lock1").addClass("hidden").animate({ left: '250px' });
         }
-    });
-	
+    }
+});
+
 //空の配列宣言
 var l_elm =[];
 var r_elm =[];
@@ -108,7 +109,7 @@ function f_drop_l(event){
 }
 /***** rightドロップ時の処理 *****/
 function f_drop_r(event){
-　　//空の配列宣言
+  //空の配列宣言
   //var out_name = [];
   //ドラッグされたデータのid名をDataTransferオブジェクトから取得。
   var id_name = event.dataTransfer.getData("text");
@@ -122,7 +123,7 @@ function f_drop_r(event){
   event.preventDefault();
 }
 JS
-];
+        ];
     }
     public function input($name, $value){
         dump($value, true);

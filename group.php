@@ -1,10 +1,12 @@
 <?php
-   $url = "data/json.json";
+   $url = "json.json";
    $json_c = "";
    $json_c = file_get_contents($url);//ファイルの内容を全て文字列に読み込む
    $array = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $json_c),true); //jsonを配列に変換http://qiita.com/doima_/items/a8069fddf12ce10ede76 
    $array_length = count($array);
    $group_lenght = floor($array_length / 3); //切捨て割り算
+   $group_excess = $array_length % 3;
+   $ID_check=1;
    $lathai = join("," , $array); // $arrayという配列をカンマ区切りで展開して、$lathaiに代入
 ?>
 
@@ -18,11 +20,6 @@
 <script type="text/javascript" src="http://alphasis.info/library/javascript/jquery/plugin/jquery.cookie.js"></script>
 </head>
 <body>
-
-
-<p><?php echo $array_length; echo "+"; echo $group_lenght;?></p>
-
-
 <script>
 jQuery( function() {  
 	//複数のリストを超えて並び替え
@@ -131,34 +128,44 @@ li.border-color-green {
 </style>
 <li>グループA</li>
 <ul id="jquery-ui-sortable1" class="jquery-ui-sortable">
-<li id="1" class="ui-state-default border-color-red">ID:<span>1</span></li>
-<li id="2" class="ui-state-default border-color-red">ID:<span>2</span></li>
-<li id="3" class="ui-state-default border-color-red">ID:<span>3</span></li>
-<li id="4" class="ui-state-default border-color-red">ID:<span>4</span></li>
-<li id="5" class="ui-state-default border-color-red">ID:<span>5</span></li>
-<li id="6" class="ui-state-default border-color-red">ID:<span>6</span></li>
-<li id="7" class="ui-state-default border-color-red">ID:<span>7</span></li>
+<?php
+	for($i=1;$i<=$group_lenght;$i++){
+		$participant ="<li id=\"";
+		$participant.=$ID_check;
+		$participant.="\" class=\"ui-state-default border-color-red\">ID:<span>";
+		$participant.=$ID_check;
+		$participant.="</span></li>\n";
+		echo $participant;
+		$ID_check++;
+	}
+?>
 </ul>
 <li>グループB</li>
 <ul id="jquery-ui-sortable2" class="jquery-ui-sortable">
-<li id="8" class="ui-state-default border-color-blue">ID:<span>8</span></li>
-<li id="9" class="ui-state-default border-color-blue">ID:<span>9</span></li>
-<li id="10" class="ui-state-default border-color-blue">ID:<span>10</span></li>
-<li id="11" class="ui-state-default border-color-blue">ID:<span>11</span></li>
-<li id="12" class="ui-state-default border-color-blue">ID:<span>12</span></li>
-<li id="13" class="ui-state-default border-color-blue">ID:<span>13</span></li>
-<li id="14" class="ui-state-default border-color-blue">ID:<span>14</span></li>
-</ul>
+<?php
+	for($i=1;$i<=$group_lenght;$i++){
+		$participant ="<li id=\"";
+		$participant.=$ID_check;
+		$participant.="\" class=\"ui-state-default border-color-blue\">ID:<span>";
+		$participant.=$ID_check;
+		$participant.="</span></li>\n";
+		echo $participant;
+		$ID_check++;
+	}
+?></ul>
 <li>グループC</li>
 <ul id="jquery-ui-sortable3" class="jquery-ui-sortable">
-<li id="15" class="ui-state-default border-color-green">ID:<span>15</span></li>
-<li id="16" class="ui-state-default border-color-green">ID:<span>16</span></li>
-<li id="17" class="ui-state-default border-color-green">ID:<span>17</span></li>
-<li id="18" class="ui-state-default border-color-green">ID:<span>18</span></li>
-<li id="19" class="ui-state-default border-color-green">ID:<span>19</span></li>
-<li id="20" class="ui-state-default border-color-green">ID:<span>20</span></li>
-<li id="21" class="ui-state-default border-color-green">ID:<span>21</span></li>
-</ul>
+<?php
+	for($i=1;$i<=($group_lenght + $group_excess);$i++){
+		$participant ="<li id=\"";
+		$participant.=$ID_check;
+		$participant.="\" class=\"ui-state-default border-color-green\">ID:<span>";
+		$participant.=$ID_check;
+		$participant.="</span></li>\n";
+		echo $participant;
+		$ID_check++;
+	}
+?></ul>
 <div style="clear: both;"></div>
 <p><input type="button" id="submitSortable" value="この並び順を送信">　　<button id="reset">クッキー消去</button>　　<input type="button" value="このページを再読込" onclick="location.reload();"></p>
 <!--<script src="http://localhost/empty.js"></script>-->

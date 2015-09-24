@@ -1,5 +1,6 @@
 <?php
 $_con->load_personal_all('buyer', 'money', 'money2');
+$_con->add_component(new StaticUI('<p>実験番号 : ' . $_con->experiment['password'] .'</p>'));
 $_con->add_component(new ParticipantsList($_con));
 $_con->add_component($page = new PageContainer($_con->get('status', 'matching')));
 $page->add('matching', $matching = new NormalContainer());
@@ -25,6 +26,7 @@ $matching->add(new MatchingButton($_con,
         return $result;
     })
 );
+$matching->add(new ParticipantsManagement($_con));
 $game->add(new ButtonUI($_con,
     function($_con){
         return "再マッチング";

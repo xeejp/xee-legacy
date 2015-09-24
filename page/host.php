@@ -6,7 +6,7 @@ if($_host_session->is_login !== true){
 
 switch(explode('/', $_request->get_uri(0, 1))[0]){
 case 'create':
-    require DIR_ROOT . 'page/host/create.php';
+    require DIR_ROOT . 'page/host/create_modui.php';
     break;
 case 'management':
     require DIR_ROOT . 'page/host/management.php';

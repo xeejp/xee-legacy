@@ -34,10 +34,9 @@ $(document).ready(function() {
         return true;
     }
     //(未実装)変数名の中でenterを押したときにalertをだす(予定)
-    $(document).on("keypress", "#comment",function(e){
-        if(e.keyCode == 13 && enterFlag == false){
-            enterFlag = true;
-            alert("注意！変数内での改行はしないようにお願いします。");
+    $( $(".cleditorMain iframe")[0].contentWindow.document ).bind('keydown', function(e) {
+        if (e.which == 13) {
+            return false;
         }
     });
 
@@ -57,28 +56,22 @@ $(document).ready(function() {
             $('tbody#tableBody').empty();
         }
         for( var i = 0; i < len; i ++){
-            if(override_html.charAt(i) == '{' && override_html.charAt(i - 1) != '/'){
+            if(override_html.charAt(i) == '{' && override_html.charAt(i - 1) != '/' && override_html.charAt(i + 1) != '}'){
                 for( var j = i + 1;j < len;j ++){
-                    if(override_html.charAt(j) == ' ' || override_html.charAt(j) == '' || override_html.charAt(j) == '　' || override_html.charAt(j) == '"' || override_html.charAt(j) == '¥' || override_html.charAt(j) == "'"){//修正必要
-                                alert("その入力は禁止されています : " + override_html.charAt(j));
-                    }else{
-                        if(override_html.charAt(j) == '}'){
-                            if(override_html.charAt(j - 1) != '/'){
-                                //リストに変数名strが存在するか確認する
-                                //もしあったら、そのまま。
-                                //なかったら、リストに自動追加。ただし、説明等は自分で編集する必要あり(未実装)
-                                
-                                //H27_9_22 まず使われている変数名を取得し、すでにリストアップされている分の変数と比較する。合わないものは新規作成or削除をしてからリストアップする。
-                                var isSame = false;
-                                isSame = checkListSame(str,use_hensu);
+                    if(override_html.charAt(j) == '}'){
+                        if(override_html.charAt(j - 1) != '/'){
+                                                        
+                            //H27_9_22 まず使われている変数名を取得し、すでにリストアップされている分の変数と比較する。合わないものは新規作成or削除をしてからリストアップする。
+                            var isSame = false;
+                            isSame = checkListSame(str,use_hensu);
 
-                                if(!isSame){
-                                    use_hensu.push(str);
-                                }
+                            if(!isSame){
+                                use_hensu.push(str);
                             }
-                            break;
                         }
+                        break;
                     }
+                    
                     str += override_html.charAt(j);
                 }
                 str = '';
@@ -90,12 +83,12 @@ $(document).ready(function() {
                 break;
             }
         }
-        for(var i = 0;i < use_hensu.length;i++){
-            if(use_hensu.indexOf(hensu_array[use_hensu[i]].getName()) < 0){//use_hensuにhensu_array[use_hensu[i]].getName()が存在しない
-                delete hensu_array[use_hensu[i]];
-                hensu_length--;
+        for(var key in hensu_array){
+            if(use_hensu.indexOf(key) < 0){//use_hensuにhensu_array[use_hensu[i]].getName()が存在しない
+                delete hensu_array[key];
             }
-        }
+        }        
+
         for(var i = 0;i < use_hensu.length;i++){
             var name = hensu_array[use_hensu[i]].getName();
             var desc = hensu_array[use_hensu[i]].getDesc();
@@ -189,7 +182,7 @@ $(document).ready(function() {
                 str += '/';
                 continue;
             }
-            if(override_html.charAt(i) == '{' && flag == false){
+            if(override_html.charAt(i) == '{' && flag == false && override_html.charAt(i + 1) != '}'){
                 for( var j = i;j < len;j ++){
                     if(override_html.charAt(j) == '}'){
                         if(override_html.charAt(j - 1) != '/'){
@@ -356,6 +349,36 @@ $(document).ready(function() {
                      refreshText();
                 });
         });
-    })(jQuery);  
+    })(jQuery);
+
+    //H27_9_25 決定ボタン関連
+    (function($){
+        $(function(){
+            $(document)
+                .on('click', '#btn', function(){
+                    for(var key in hensu_array){
+                        var p = new RegExp('^[ -~｡-ﾟ]*$','gi');
+                        var result = p.test(hensu_array[key].getName());
+                        if(result){
+                            var pSpace = new RegExp(' ','gi');
+                            var resultSpace = pSpace.test(hensu_array[key].getName());
+                            if(!resultSpace){
+                                var pJudge = new RegExp('^[a-zA-Z_]','gi');
+                                var resultJudge = pJudge.test(hensu_array[key].getName());
+                                if(resultJudge){
+                                    alert("OK!");
+                                }else{
+                                    alert("NGJudge");
+                                }
+                            }else{
+                                alert("NGSoace");
+                            }
+                        }else{
+                            alert("NGResult");
+                        }
+                    }
+                });
+        });
+    })(jQuery);
 
 });

@@ -12,7 +12,7 @@
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <link rel="stylesheet" href="http://alphasis.info/library/javascript/jquery/ui/themes/base/jquery.ui.all.css">
 <script type="text/javascript" src="http://alphasis.info/library/javascript/jquery/jquery-1.4.2.js"></script>
@@ -20,25 +20,35 @@
 <script type="text/javascript" src="http://alphasis.info/library/javascript/jquery/plugin/jquery.cookie.js"></script>
 </head>
 <body>
+
 <script>
-jQuery( function() {  
+jQuery( function() {
+
+	
 	//複数のリストを超えて並び替え
 	jQuery( ".jquery-ui-sortable" ) . sortable( {
 		connectWith: ".jquery-ui-sortable"
 	} );
 	jQuery( '.jquery-ui-sortable' ) . disableSelection();
 	var array=jQuery('.jquery-ui-sortable').get;
+
 	//リストの順番をURLに表示
 	jQuery( '#submitSortable' ) . click( function() {
-		var itemNames = '';
-		var itemIDs = '';
-			jQuery( '.jquery-ui-sortable li' ) . map( function() {
-			itemNames += jQuery( this ) . text() + '\n';
-			itemIDs += jQuery( this ) .children( 'span' ) . text() + ',';
+		
+		var itemIDs_1 = '';
+		var itemIDs_2 = ''; //並び替えた後データ
+		var itemIDs_3 = '';
+			
+		jQuery( '#jquery-ui-sortable1 li' ) . map( function() {
+				itemIDs_1 += jQuery( this ) .children( 'span' ) . text() + ',';
 		} );
-		if( confirm( itemNames + '【この順番でよろしいですか？】' ) ){
-			location . href = '#itemIDs=' + itemIDs;
-		}
+		jQuery( '#jquery-ui-sortable2 li' ) . map( function() {
+				itemIDs_2 += jQuery( this ) .children( 'span' ) . text() + ',';
+		} );
+		jQuery( '#jquery-ui-sortable3 li' ) . map( function() {
+				itemIDs_3 += jQuery( this ) .children( 'span' ) . text() + ',';
+		} );
+
 	} );
 	//変更をクッキーに保存
 	jQuery( '#jquery-ui-sortable1' ) . sortable();
@@ -94,7 +104,9 @@ jQuery( function() {
 	})
 
 } );
-</script></p>
+</script>
+
+
 <style>
 <!--
 ul.jquery-ui-sortable {
@@ -126,6 +138,7 @@ li.border-color-green {
 }
 -->
 </style>
+<div class="pure-u-7-24">
 <li>グループA</li>
 <ul id="jquery-ui-sortable1" class="jquery-ui-sortable">
 <?php
@@ -140,6 +153,8 @@ li.border-color-green {
 	}
 ?>
 </ul>
+</div>
+<div class="pure-u-7-24">
 <li>グループB</li>
 <ul id="jquery-ui-sortable2" class="jquery-ui-sortable">
 <?php
@@ -153,6 +168,8 @@ li.border-color-green {
 		$ID_check++;
 	}
 ?></ul>
+</div>
+<div class="pure-u-7-24">
 <li>グループC</li>
 <ul id="jquery-ui-sortable3" class="jquery-ui-sortable">
 <?php
@@ -166,8 +183,11 @@ li.border-color-green {
 		$ID_check++;
 	}
 ?></ul>
+</div>
+<div align="center">
 <div style="clear: both;"></div>
 <p><input type="button" id="submitSortable" value="この並び順を送信">　　<button id="reset">クッキー消去</button>　　<input type="button" value="このページを再読込" onclick="location.reload();"></p>
 <!--<script src="http://localhost/empty.js"></script>-->
+</div>
 </body>
 </html>

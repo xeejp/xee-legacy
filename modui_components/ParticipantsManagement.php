@@ -5,7 +5,7 @@ class ParticipantsManagement extends ModUIComponent{
         $this->_con = $con;
     }
     public function get_template_name($name){
-        return $name;
+        return 'participantsManager';
     }
     public function get_templates($name){
         // IEではdragoverに加えてdragenterもキャンセルしなければdropイベントが発生しないためondragenterを追加
@@ -13,7 +13,7 @@ class ParticipantsManagement extends ModUIComponent{
 <div class="row colored">
     <div class="pure-u-11-24">
         <p align="center">参加者</p>
-        <div class="left" id="box" ondragover="f_dragover(event)" ondragenter="f_dragover(event)" ondrop="f_drop_l(event)">
+        <div class="left" id="box" ondragover="f_dragover(event)" ondragenter="f_dragover(event)" ondrop="f_drop_l(event)" style="min-height: 50px;border: solid 1px;">
             {each participants}
                 {if active}
                     <div id="{id}" draggable="true" ondragstart="f_dragstart(event)"><p>{name}</p></div>
@@ -23,7 +23,7 @@ class ParticipantsManagement extends ModUIComponent{
     </div>
     <div class="pure-u-11-24">
         <p align="center">不参加者</p>
-        <div class="right" id="box_r" ondragover="f_dragover(event)" ondragenter="f_dragover(event)" ondrop="f_drop_r(event)">
+        <div class="right" id="box_r" ondragover="f_dragover(event)" ondragenter="f_dragover(event)" ondrop="f_drop_r(event)" style="min-height: 50px;border: solid 1px;">
             {each participants}
                 {if active}{else}
                     <div id="{id}" draggable="true" ondragstart="f_dragstart(event)"><p>{name}</p></div>
@@ -32,7 +32,7 @@ class ParticipantsManagement extends ModUIComponent{
         </div>
         <div align="right">
             <div class="controls">
-                <button class="pure-button" id="{_name}">確認</button>
+                <button class="pure-button" id="{_name}">決定</button>
             </div>
         </div>
     </div>
@@ -41,35 +41,41 @@ TMPL;
         return [$this->get_template_name($name) => $template];
     }
     public function get_values($name){
-        return [
-            'participants' => [
-                ['id' => 1, 'name' => '橋口１', 'active' => true],
-                ['id' => 2, 'name' => '橋口２', 'active' => false],
-                ['id' => 3, 'name' => '橋口３', 'active' => true],
-                ['id' => 4, 'name' => '橋口４', 'active' => false]
-            ]
-        ];
+        $values = [];
+        foreach ($this->_con->participants as $participant) {
+            $values['participants'][] = [
+                'id' => $participant['id'],
+                'name' => $participant['name'],
+                'active' => $this->_con->get_personal('active', false, $participant['id'])
+            ];
+        }
+        return $values;
     }
     public function get_scripts($name){
         return [
             'value' => <<<JS
 function(selector){
-var l=0;
-var r=0;
-for(l=0;l<l_elm.length;l++){//r_elmとl_elmの被りをなくす
-	for(r=0;r<r_elm.length;r++){
-		if(l_elm[l] == r_elm[r]){
-			l_elm.splice(l,1);
-			r_elm.splice(r,1);
-			r--;
-			l--;
-		}
-	}
+    var l=0;
+    var r=0;
+    for(l=0;l<l_elm.length;l++){//r_elmとl_elmの被りをなくす
+        for(r=0;r<r_elm.length;r++){
+            if(l_elm[l] == r_elm[r]){
+                l_elm.splice(l,1);
+                r_elm.splice(r,1);
+                r--;
+                l--;
+            }
+        }
+    }
+    return [l_elm,r_elm];
 }
-return [l_elm,r_elm];}
 JS
-,           'event' => 'function(selector, update){$(document).on("click", "#" + selector , update);}',
-            'other' => <<<JS
+,           'event' => <<<JS
+function(selector, update){
+    $(document).on("click", "#" + selector , update);
+}
+JS
+,           'other' => <<<JS
 jQuery(function ($) {
     function check_values() {
         if ($("#username").val().length != 0 && $("#password").val().length != 0) {
@@ -126,6 +132,11 @@ JS
         ];
     }
     public function input($name, $value){
-        dump($value, true);
+        foreach($value[0] as $id){
+            $this->_con->set_personal('active', true, $id);
+        }
+        foreach($value[1] as $id){
+            $this->_con->set_personal('active', false, $id);
+        }
     }
 }

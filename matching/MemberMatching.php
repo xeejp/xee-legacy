@@ -1,5 +1,7 @@
 <?php
-if(isset($_POST['number'])){
+if(isset($_REQUEST['number'])){
+$number=intval($_REQUEST['number']);
+if($number>0){	
    $url = "json.json";
    $json_c = file_get_contents($url);//ファイルの内容を全て文字列に読み込む
    $array = json_decode($json_c,true); //jsonを配列に変換
@@ -7,10 +9,10 @@ if(isset($_POST['number'])){
    $array_length = count($array);
    $member=array();
    $dt=0;
-   $member_number = floor($array_length / $_POST['number']);
+   $member_number = floor($array_length / $_REQUEST['number']);
    
 	for($q=0;$q<$member_number;$q++){
-	   for($i=0;$i<$_POST['number'];$i++){
+	   for($i=0;$i<$_REQUEST['number'];$i++){
 		$member[$q][$i]=$array[$dt];
 		$dt++;
 
@@ -21,6 +23,7 @@ if(isset($_POST['number'])){
 	print "</pre>";
 
 }  
+}
 ?>
 
 <!DOCTYPE html>
@@ -29,7 +32,7 @@ if(isset($_POST['number'])){
 <meta charset="utf-8">
 </head>
 <body>
-<form method="post" action"">
+<form method="REQUEST" action"">
 	１グループの人数<input type="number" name="number"　min="1" max="1000">
 	<input type = "submit" name="exe" value = "送信">
 </form>

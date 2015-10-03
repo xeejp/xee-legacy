@@ -1,5 +1,7 @@
 <?php
 if(isset($_POST['number'])){
+$number=intval($_POST['number']);
+if($number>0){	
    $url = "json.json";
    $json_c = file_get_contents($url);//ファイルの内容を全て文字列に読み込む
    $array = json_decode($json_c,true); //jsonを配列に変換
@@ -21,6 +23,7 @@ if(isset($_POST['number'])){
 	print "</pre>";
 
 }  
+}
 ?>
 
 <!DOCTYPE html>

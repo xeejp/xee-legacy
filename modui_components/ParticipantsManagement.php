@@ -5,7 +5,7 @@ class ParticipantsManagement extends ModUIComponent{
         $this->_con = $con;
     }
     public function get_template_name($name){
-        return 'participantsManager';
+        return 'participantsManagement';
     }
     public function get_templates($name){
         // IEではdragoverに加えてdragenterもキャンセルしなければdropイベントが発生しないためondragenterを追加
@@ -42,6 +42,7 @@ TMPL;
     }
     public function get_values($name){
         $values = [];
+        $values['participants'] = [];
         foreach ($this->_con->participants as $participant) {
             $values['participants'][] = [
                 'id' => $participant['id'],

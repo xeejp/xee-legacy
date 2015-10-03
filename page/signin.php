@@ -43,5 +43,5 @@ HTML
     if($_request->get_string('remember', false) === 'true'){
         $_host_session->enable_auto_login();
     }
-    redirect_uri(_URL);
+    redirect_uri(_URL . 'host');
 }

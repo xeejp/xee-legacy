@@ -98,7 +98,7 @@ $page_form->add(new SendingUI('決定', function($value)use($_con){
         $_con->set_personal('money', $_con->get_personal('money', 0, $id) - $value, $id);
         $_con->set_personal('finish', true, $id);
         $_con->set_personal('price', 0);
-        $_con->set_personal('money', $_con->get_personal('money') + $value);
+        $_con->set_personal('money', $_con->get_personal('money', 0) + $value);
         $_con->set_personal('finish', true);
         break;
     case 'buyer':
@@ -106,10 +106,10 @@ $page_form->add(new SendingUI('決定', function($value)use($_con){
         if ($value = current($market) > $price) return;
         $id = key($market);
         $_con->set_personal('price', 0);
-        $_con->set_personal('money', $_con->get_personal('money', 0, $id) - $price);
+        $_con->set_personal('money', $_con->get_personal('money', 0) - $price);
         $_con->set_personal('finish', true);
         $_con->set_personal('price', 0, $id);
-        $_con->set_personal('money', $_con->get_personal('money') + $price, $id);
+        $_con->set_personal('money', $_con->get_personal('money', 0, $id) + $price, $id);
         $_con->set_personal('finish', true, $id);
         break;
     }

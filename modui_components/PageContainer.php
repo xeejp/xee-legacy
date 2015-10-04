@@ -9,11 +9,11 @@ class PageContainer extends NormalContainer{
         $this->page = $page;
     }
 
-    public function setPage($page){
+    public function set_page($page){
         $this->page = $page;
     }
 
-    public function add($page, $component, $hook_function=null){
+    public function add_page($page, $component, $hook_function=null){
         $this->components[$page] = $component;
         if($hook_function !== null){
             $this->hooks[$page] = $hook_function;

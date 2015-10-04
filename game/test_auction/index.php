@@ -8,7 +8,7 @@ $pages['experiment'] = new NormalContainer();
 $pages['result'] = new TemplateUI(<<<TMPL
 最終利得 : {score}円<br/>
 TMPL
-, ['score' => $_con->get_personal('money') - $_con->get_personal('cost')]);
+, ['score' => $_con->get_personal('money', 0) - $_con->get_personal('cost', 0)]);
 
 // 実験画面
 switch ($_con->get_personal('role')) {
@@ -124,6 +124,6 @@ $pages['experiment']->add($page_form);
 // add pages
 $_con->add_component($_page = new PageContainer($_con->get_personal('page', 'wait')));
 foreach ($pages as $key => $value) {
-    $_page->add($key, $value);
+    $_page->add_page($key, $value);
 }
 

@@ -12,7 +12,7 @@ $container->add(new ParticipantsList($_con));
 $container->add(new ParticipantsManagement($_con));
 
 $container->add($modulator = new PageContainer($_con->get('status', 'wait')));
-$modulator->add('wait', new MatchingButton($_con,
+$modulator->add_page('wait', new MatchingButton($_con,
     function($con){
         $num = 0;
         foreach ($con->participants as $participant) {
@@ -41,7 +41,7 @@ $modulator->add('wait', new MatchingButton($_con,
         return $result;
     }
 ));
-$modulator->add('ready', $_ready = new NormalContainer());
+$modulator->add_page('ready', $_ready = new NormalContainer());
 $_ready->add(new ButtonUI($_con,
     function($_con){ return "再マッチング"; },
     function($_con){ $_con->set('status', 'wait'); }
@@ -58,7 +58,7 @@ $_ready->add(new ButtonUI($_con,
         }
     }
 ));
-$modulator->add('experiment', new ButtonUI($_con,
+$modulator->add_page('experiment', new ButtonUI($_con,
     function($_con){ return 'リセット'; },
     function($_con){
         $_con->set('status', 'wait');

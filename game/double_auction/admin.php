@@ -3,9 +3,9 @@ $_con->load_personal_all('buyer', 'money', 'money2');
 $_con->add_component(new StaticUI('<p>実験番号 : ' . $_con->experiment['password'] .'</p>'));
 $_con->add_component(new ParticipantsList($_con));
 $_con->add_component($page = new PageContainer($_con->get('status', 'matching')));
-$page->add('matching', $matching = new NormalContainer());
-$page->add('game', $game = new NormalContainer());
-$page->add('ranking', $ranking = new NormalContainer());
+$page->add_page('matching', $matching = new NormalContainer());
+$page->add_page('game', $game = new NormalContainer());
+$page->add_page('ranking', $ranking = new NormalContainer());
 
 $matching->add(new MatchingButton($_con,
     function($con){

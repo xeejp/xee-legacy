@@ -1,16 +1,12 @@
 <?php
 
-$_loader = new ClassLoader();
-$_loader->register_directory(__DIR__ . '/com');
-$_loader->register();
-
 // page settings
 $pages = [];
 $pages['reject'] = new RedirectUI(_URL, $_con->get_personal('page', 'wait') == 'reject');
 $pages['wait']   = new StaticUI('<br/><br/><center>Waiting now</center>');
 $pages['experiment'] = new NormalContainer();
 $pages['result'] = new TemplateUI(<<<TMPL
-最終利得 : {score}円
+最終利得 : {score}円<br/>
 TMPL
 , ['score' => $_con->get_personal('money') - $_con->get_personal('cost')]);
 
@@ -116,9 +112,10 @@ $page_form->add(new SendingUI('決定', function($value)use($_con){
     $_con->set_personal('page', 'result');
     $_con->set_personal('page', 'result', $id);
 }));
-$page_form->add(new EventButton('キャンセル'), function()use($_con){
-    $_con->set_personal('price', 0);
-});
+$page_form->add(new ButtonUI($_con,
+    function($_con){ return '取り消し'; },
+    function($_con){ $_con->set_personal('price', 0); }
+));
 
 $pages['experiment']->add($page_head);
 $pages['experiment']->add($page_list);

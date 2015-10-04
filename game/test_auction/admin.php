@@ -1,9 +1,5 @@
 <?php
 
-$_loader = new ClassLoader();
-$_loader->register_directory(__DIR__ . '/com');
-$_loader->register();
-
 $container = new NormalContainer();
 // options
 $container->add(new StaticUI('[設定]<br/>'));

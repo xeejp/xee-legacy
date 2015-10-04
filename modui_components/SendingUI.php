@@ -13,7 +13,7 @@ class SendingUI extends ModUIComponent{
     public function get_templates($name){
         $template = <<<TMPL
 <input id="{_name}" type="text" value="">
-<button id="{_name}-b">{$this->btn}</button><br/>
+<button id="{_name}-b">{$this->btn}</button>
 TMPL;
         return [$this->get_template_name($name) => $template];
     }

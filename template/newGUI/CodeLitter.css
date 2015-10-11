@@ -1,0 +1,50 @@
+.code_litter {
+/* require */
+
+/* options */
+border: solid 1px;
+}
+
+.list {
+/* require */
+position: absolute;
+display: inline-block;
+padding: 0px;
+/* options */
+min-height: 50px;
+min-width: 300px;
+border: solid 1px;
+}
+
+.root {
+/* require */
+position: relative;
+/* options */
+}
+
+.item {
+/* require */
+list-style: none;
+/* options */
+border: solid 1px;
+border-radius: 5px;
+margin: 10px 5px;
+padding:3px;
+}
+
+.code {
+/* require */
+/* options */
+}
+
+.toggle {
+/* require */
+cursor: pointer;
+position: absolute;
+right: 0;
+/* options */
+border: solid 1px;
+border-radius: 50%;
+background-color: black;
+color: white;
+}

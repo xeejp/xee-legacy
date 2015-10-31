@@ -9,6 +9,10 @@ $games = [
         'directory' => 'test_auction',
         'name' => 'Test Auction',
     ],
+    [
+        'directory' => 'kage_exp',
+        'name' => 'KAGE Experiment',
+    ],
 ];
 
 foreach($games as $game){

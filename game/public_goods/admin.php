@@ -17,7 +17,7 @@ $modulator->add_page('wait', new MatchingButton($_con,
             if ($con->get_personal('active', false, $participant['id']))
                 $num++;
         }
-        return ($num == 4);
+        return ($num == 2);
     },
     function($con) {
         $result = [];
@@ -30,7 +30,8 @@ $modulator->add_page('wait', new MatchingButton($_con,
             $con->set_personal('sum_pt', 0, $participant['id']);
             $con->set_personal('invest_pt', 0, $participant['id']);
             $con->set_personal('punish_pt', 0, $participant['id']);
-            $con->set_personal('punish_id', 0, $participant['id']);
+            $con->set_personal('punish_id', 0, $participant['id']); 
+            $con->set_personal('ready', false, $participant['id']);
         }
         $con->set('status', 'ready');
 

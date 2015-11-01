@@ -10,8 +10,8 @@ $games = [
         'name' => 'Test Auction',
     ],
     [
-        'directory' => 'kage_exp',
-        'name' => 'KAGE Experiment',
+        'directory' => 'public_goods',
+        'name' => 'Public Goods Experiment',
     ],
 ];
 

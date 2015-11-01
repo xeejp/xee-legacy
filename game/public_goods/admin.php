@@ -70,7 +70,7 @@ $modulator->add_page('experiment', new ButtonUI($_con,
     function($_con) {
         $_con->set('status', 'wait');
         foreach ($_con->participants as $participant) {
-            $_con->set_personal('page', 'reject', $participant['id']);
+            $_con->set_personal('page', 'wait', $participant['id']);
         }
     }
 ));

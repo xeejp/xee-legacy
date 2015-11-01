@@ -33,6 +33,7 @@ $modulator->add_page('wait', new MatchingButton($_con,
             $con->set_personal('punish_id', 0, $participant['id']); 
             $con->set_personal('ready', false, $participant['id']);
         }
+        $con->set('turn', 1);
         $con->set('status', 'ready');
 
         return $result;

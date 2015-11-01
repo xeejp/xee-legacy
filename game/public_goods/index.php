@@ -2,126 +2,153 @@
 
 // page settings
 $pages = [];
-$pages['reject'] = new RedirectUI(_URL, $_con->get_personal('page', 'wait') == 'reject');
-$pages['wait']   = new StaticUI('<br/><br/><center>Waiting now</center>');
-$pages['experiment'] = new NormalContainer();
-$pages['result'] = new TemplateUI(<<<TMPL
-最終利得 : {score}円<br/>
-TMPL
-, ['score' => $_con->get_personal('money', 0) - $_con->get_personal('cost', 0)]);
+$pages['reject']        = new RedirectUI(_URL, $_con->get_personal('page', 'wait') == 'reject');
+$pages['wait']          = new StaticUI('<br/><br/><center>Waiting now</center>');
+$pages['experiment']    = new NormalContainer();
+$pages['wait_action']   = new NormalContainer();
+$pages['middle_result'] = new NormalContainer();
+$pages['final_result']  = new NormalContainer();
+    
 
-// 実験画面
-switch ($_con->get_personal('role')) {
-case 'seller':
-    $page_head = new TemplateUI(<<<'TMPL'
-あなたは{role}です<br/>
-仕入値 : {cost}円<br/>
-TMPL
-,   ['role' => '売り手', 'cost' => $_con->get_personal('cost')]);
-    break;
-case 'buyer':
-    $page_head = new TemplateUI(<<<'TMPL'
-あなたは{role}です<br/>
-所持金 : {money}円<br/>
-TMPL
-,   ['role' => '買い手', 'money' => $_con->get_personal('money')]);
-    break;
-default:
-    $page_head = new StaticUI('');
+function setValueToAllUsers($con, $id, $val)
+{
+    foreach ( $con->participants as $participant ) {
+        $con->set_personal($id, $val, $participant['id']);
+    }
 }
 
-$page_list = new TemplateUI(<<<TMPL
-販売価格<br/>
-{each sell_list}
-<span>売値 : {price} 円</span><br/>
-{/each}
-買取価格<br/>
-{each buy_list}
-<span>買値 : {price} 円</span><br/>
-{/each}
-TMPL
-,   call_user_func(function($con){
-        $sell_list = [];
-        $buy_list = [];
-        foreach ($con->participants as $participant) {
-            if (($price = $con->get_personal('price', 0, $participant['id'])) <= 0)
-                continue;
-            switch ($con->get_personal('role', null, $participant['id'])) {
-            case 'seller':
-                $sell_list[] = ['price' => $price];
-                break;
-            case 'buyer':
-                $buy_list[] = ['price' => $price];
-                break;
-            }
+function calc_num_not_ready_user($con) {
+    $num_not_ready_user = 0;
+    foreach ( $con->participants as $participant ) {
+        $is_ready = $con->get_personal('ready', false, $participant['id']);
+        if ( !$is_ready ) {
+            ++$num_not_ready_user;
         }
-        return ['sell_list' => $sell_list, 'buy_list' => $buy_list];
-    }, $_con)
-);
+    }
+    
+    return $num_not_ready_user;
+}
 
-$page_form = new NormalContainer();
-$page_form->add(new SendingUI('決定', function($value)use($_con){
-    if (($price = intval($value)) <= 0) return;
-    if ($_con->get('allow_loss', 'false') != 'true') {
-        switch($_con->get_personal('role')) {
-        case 'seller':
-            if ($price < $_con->get_personal('cost'))
-                return;
-            break;
-        case 'buyer':
-            if ($price > $_con->get_personal('money'))
-                return;
-            break;
-        }
+function redirectAllUsers($con, $page_id)
+{
+    foreach( $con->participants as $participant ) {
+        $con->set_personal('status', $page_id, $participant['id']);
+        $con->set_personal('page', $page_id, $participant['id']);
     }
-    $_con->set_personal('price', $price);
-    // trade
-    $market = [];
-    foreach ($_con->participants as $participant) {
-        if ($_con->get_personal('role') == $_con->get_personal('role', null, $participant['id'])
-                || ($value = $_con->get_personal('price', 0, $participant['id'])) <= 0)
-            continue;
-        $market[$participant['id']] = $value;
-    }
-    if ($market == []) return;
-    // success
-    switch($_con->get_personal('role')) {
-    case 'seller':
-        arsort($market);
-        if (($value = current($market)) < $price) return;
-        $id = key($market);
-        $_con->set_personal('price', 0, $id);
-        $_con->set_personal('money', $_con->get_personal('money', 0, $id) - $value, $id);
-        $_con->set_personal('finish', true, $id);
-        $_con->set_personal('price', 0);
-        $_con->set_personal('money', $_con->get_personal('money', 0) + $value);
-        $_con->set_personal('finish', true);
-        break;
-    case 'buyer':
-        asort($market);
-        if ($value = current($market) > $price) return;
-        $id = key($market);
-        $_con->set_personal('price', 0);
-        $_con->set_personal('money', $_con->get_personal('money', 0) - $price);
-        $_con->set_personal('finish', true);
-        $_con->set_personal('price', 0, $id);
-        $_con->set_personal('money', $_con->get_personal('money', 0, $id) + $price, $id);
-        $_con->set_personal('finish', true, $id);
-        break;
-    }
-    $_con->set_personal('page', 'result');
-    $_con->set_personal('page', 'result', $id);
-}));
-$page_form->add(new ButtonUI($_con,
-    function($_con){ return '取り消し'; },
-    function($_con){ $_con->set_personal('price', 0); }
+}
+
+function redirectCurrentUser($con, $page_id)
+{
+    $con->set_personal('status', $page_id);
+    $con->set_personal('page', $page_id);
+}
+
+$pages['experiment']->add(new TemplateUI(<<<TMPL
+Turn: {turn}<br/>
+You have {cur_pt} points.<br/>
+What point do you invest?<br/>
+TMPL
+,   ['turn' => $_con->get('turn', 0), 'cur_pt' => $_con->get_personal('cur_pt')]
 ));
 
-$pages['experiment']->add($page_head);
-$pages['experiment']->add($page_list);
-$pages['experiment']->add($page_form);
+$pages['experiment']->add(new SendingUI('invest', 
+    function($value)use($_con) {
+        $invest_pt = intval($value);
+        $cur_pt = $_con->get_personal('cur_pt');
+        if ( $invest_pt < 0 || $invest_pt > $cur_pt ) {
+            return;
+        }
 
-// add pages
+        $_con->set_personal('invest_pt', $invest_pt);
+        $_con->set_personal('ready', true);
+
+        $num_not_ready_user = calc_num_not_ready_user($_con);
+        if ( $num_not_ready_user == 0 ) {
+            if ( turn < 6 ) {
+                redirectAllUsers($_con, 'middle_result');
+            } else {
+                redirectAllUsers($_con, 'final_result'); 
+            }
+            setValueToAllUsers($_con, 'ready', false);
+        } else {
+            redirectCurrentUser($_con, 'wait_action');
+        }
+    }
+));
+
+
+$pages['wait_action']->add(new TemplateUI(<<<TMPL
+Waiting for {num_not_ready_user} users...<br/>
+TMPL
+,   call_user_func(function($con) { 
+        $num_not_ready_user = calc_num_not_ready_user($con);
+
+        return ['num_not_ready_user' => $num_not_ready_user];
+    }, $_con)
+));
+
+
+$pages['middle_result']->add(new TemplateUI(<<<TMPL
+Middle Result<br/>
+{each invest_list}
+<span>ID:{id} Investment Point:{pt}</span><br/>
+{/each}
+TMPL
+,   call_user_func(function($con) {
+        $invest_list = [];
+        foreach ( $con->participants as $participant ) {
+            $id = $participant['id'];
+            $pt = $con->get_personal('invest_pt', 0, $id);
+            $invest_list[] = ['id' => $id, 'pt' => $pt];
+        } 
+
+        return ['invest_list' => $invest_list];
+    }, $_con)
+));
+
+function calcTotalInvestment($con)
+{
+    $total = 0;
+    foreach ( $con->participants as $participant ) {
+        $total += $con->get_personal('invest_pt', 0, $participant['id']);
+    }
+
+    return $total;
+}
+
+function calcProfit($con, $total_investment, $id)
+{
+    $cur_pt = $con->get_person('cur_pt', 20, $id);
+    $invest_pt = $con->get_person('invest_pt', 0, $id);
+
+    return $cur_pt - $invest_pt + 0.4*$total_investment;
+}
+
+$pages['middle_result']->add(new SendingUI('OK_Result', 
+    function($value)use($_con) {
+        $total = calcTotalInvestment($_con);
+        foreach ( $_con->participants as $participant ) { 
+            $id = $participant['id'];
+            $profit = calcProfit($_con, $total, $id);
+            $_con->set_person('sum_pt', $profit, $id);
+        }
+        setValueToAllUsers($_con, 'cur_pt', 20);
+        setValueToAllUsers($_con, 'invest_pt', 0);
+
+        $turn = $_con->get('turn', 1);
+        $_con->set('turn', ++$turn);
+
+        redirectAllUsers($_con, 'wait'); 
+    }
+));
+
+$pages['middle_result']->add(new StaticUI('UNKO'));
+
+
+$pages['final_result']->add(new StaticUI('Final Result'));
+
+
+// add all pages
 $_con->add_component($_page = new PageContainer($_con->get_personal('page', 'wait')));
 foreach ($pages as $key => $value) {
     $_page->add_page($key, $value);

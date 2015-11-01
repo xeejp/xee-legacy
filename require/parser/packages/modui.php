@@ -12,7 +12,12 @@ return [
     'WebPageEdit' => function () use ($controller) {
         $controller->add_component(new WebPageEdit());
     },
-    'OptionUI' => function () use ($controller) {
-        $controller->add_component(new OptionUI($controller, 'test', null));
+    'OptionUI' => function ($var_name) use ($controller) {
+        $controller->add_component(new OptionUI($controller, $var_name, ''));
+    },
+    'SendingUI' => function ($label, $var_name) use ($controller) {
+        $controller->add_component(new SendingUI($label, function ($value) use ($var_name) {
+            $controller->set($var_name, $value);
+        }));
     },
 ];

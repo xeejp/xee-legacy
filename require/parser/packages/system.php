@@ -1,8 +1,9 @@
 <?php
 // package: system
 return [
-    'echo' => function ($var) {
-        echo $var;
+    'echo' => function () {
+        foreach($args = func_get_args() as $arg)
+            echo $arg;
     },
     'execute' => function ($function) {
         return call_user_func($function);

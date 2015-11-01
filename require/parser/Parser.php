@@ -10,8 +10,9 @@ class Parser {
     public function __construct ($con) {
         $this->controller = $con;
         $this->use_type('constant');
-        $this->use_type('procedure');
+        $this->use_type('variable');
         $this->use_type('function');
+        $this->use_type('procedure');
         $this->use_type('user_function');
         $this->use_package('system');
     }

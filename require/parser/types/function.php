@@ -3,13 +3,13 @@
 return function ($parser, $data) {
     list($package_name, $function_name) = explode('::', $data['name'], 2);
     $function = $parser->get_function($package_name, $function_name);
-    foreach ($data['args'] as $arg) {
+    $args = [];
+    foreach ($data['args'] as $arg)
         $args[] = $parser->parse($arg);
-    }
     return function () use ($function, $args){
-        foreach ($args as $arg) {
+        $arguments = [];
+        foreach ($args as $arg)
             $arguments[] = call_user_func($arg);
-        }
         return call_user_func_array($function, $arguments);
     };
 };

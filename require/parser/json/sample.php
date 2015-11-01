@@ -357,7 +357,7 @@ return $dice_game =
       'name' => 'system::loop',
       'args' => [
         [ 'type' => 'constant',
-          'value' => 10,
+          'value' => 5,
         ],
         [ 'type' => 'user_function',
           'descriptions' => [

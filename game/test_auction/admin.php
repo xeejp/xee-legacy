@@ -2,10 +2,12 @@
 
 $container = new NormalContainer();
 // options
-$container->add(new StaticUI('[設定]<br/>'));
+$container->add(new StaticUI('[Configuration]<br/>'));
 $container->add(new StaticUI('ExpID : '. $_con->experiment['password'] .'<br/>'));
-$container->add(new StaticUI('損失を許可する : '));
-$container->add(new OptionUI($_con, 'allow_loss', $_con->get('allow_loss')));
+$container->add(new StaticUI('Permit even if profit < 0 (default is null, if else 1) : '));
+$container->add(new OptionUI($_con, 'allow_loss', $_con->get('allow_loss', false)));
+$container->add(new StaticUI('Tax (default is 0) : '));
+$container->add(new OptionUI($_con, 'tax', $_con->get('tax', 0)));
 
 // participants
 $container->add(new ParticipantsList($_con));
@@ -43,11 +45,11 @@ $modulator->add_page('wait', new MatchingButton($_con,
 ));
 $modulator->add_page('ready', $_ready = new NormalContainer());
 $_ready->add(new ButtonUI($_con,
-    function($_con){ return "再マッチング"; },
+    function($_con){ return "Rematch"; },
     function($_con){ $_con->set('status', 'wait'); }
 ));
 $_ready->add(new ButtonUI($_con,
-    function($_con){ return "開始"; },
+    function($_con){ return "Start"; },
     function($_con){
         $_con->set('status', 'experiment');
         foreach ($_con->participants as $participant) {
@@ -59,7 +61,7 @@ $_ready->add(new ButtonUI($_con,
     }
 ));
 $modulator->add_page('experiment', new ButtonUI($_con,
-    function($_con){ return 'リセット'; },
+    function($_con){ return 'Reset'; },
     function($_con){
         $_con->set('status', 'wait');
         foreach ($_con->participants as $participant) {

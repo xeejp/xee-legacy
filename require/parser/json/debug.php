@@ -1,7 +1,5 @@
 <?php
-return $json =
-[ 'type' => 'procedure',
-  'descriptions' => [
+$json = [
     [ 'type' => 'package',
       'name' => 'function::define',
       'args' => [
@@ -108,5 +106,5 @@ return $json =
         ],
       ],
     ],
-  ],
 ];
+return json_encode($json);

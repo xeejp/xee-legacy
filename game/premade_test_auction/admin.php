@@ -4,9 +4,9 @@ $container = new NormalContainer();
 // options
 $container->add(new StaticUI('[Configuration]<br/>'));
 $container->add(new StaticUI('ExpID : '. $_con->experiment['password'] .'<br/>'));
-$container->add(new StaticUI('Admit loss trade : '));
+$container->add(new StaticUI('Permit even if profit < 0 (default is null, if else 1) : '));
 $container->add(new OptionUI($_con, 'allow_loss', $_con->get('allow_loss', false)));
-$container->add(new StaticUI('Tax[constant] : '));
+$container->add(new StaticUI('Tax (default is 0) : '));
 $container->add(new OptionUI($_con, 'tax', $_con->get('tax', 0)));
 
 // participants

@@ -1,20 +1,18 @@
 <?php
-return $dice_game =
-[ 'type' => 'procedure',
-  'descriptions' => [
+$json = [
 // 1から6までのランダムな数値を変数[[rand_name]]に代入するサブルーチンを定義
-    [ 'type' => 'function',
+    [ 'type' => 'package',
       'name' => 'function::define',
       'args' => [
         [ 'type' => 'constant',
           'value' => 'u_get_rand'
         ],
-        [ 'type' => 'user_function',
+        [ 'type' => 'function',
           'descriptions' => [
-            [ 'type' => 'function',
+            [ 'type' => 'package',
               'name' => 'db::set',
               'args' => [
-                [ 'type' => 'function',
+                [ 'type' => 'package',
                   'name' => 'db::get',
                   'args' => [
                     [ 'type' => 'constant',
@@ -22,7 +20,7 @@ return $dice_game =
                     ],
                   ],
                 ],
-                [ 'type' => 'function',
+                [ 'type' => 'package',
                   'name' => 'system::mt_rand',
                   'args' => [
                     [ 'type' => 'constant',
@@ -40,18 +38,18 @@ return $dice_game =
       ],
     ],
 // 変数[[result_name]]を加算
-    [ 'type' => 'function',
+    [ 'type' => 'package',
       'name' => 'function::define',
       'args' => [
         [ 'type' => 'constant',
           'value' => 'u_add_result'
         ],
-        [ 'type' => 'user_function',
+        [ 'type' => 'function',
           'descriptions' => [
-            [ 'type' => 'function',
+            [ 'type' => 'package',
               'name' => 'db::set',
               'args' => [
-                [ 'type' => 'function',
+                [ 'type' => 'package',
                   'name' => 'db::get',
                   'args' => [
                     [ 'type' => 'constant',
@@ -59,13 +57,13 @@ return $dice_game =
                     ],
                   ],
                 ],
-                [ 'type' => 'function',
+                [ 'type' => 'package',
                   'name' => 'system::calc',
                   'args' => [
-                    [ 'type' => 'function',
+                    [ 'type' => 'package',
                       'name' => 'db::get',
                       'args' => [
-                        [ 'type' => 'function',
+                        [ 'type' => 'package',
                           'name' => 'db::get',
                           'args' => [
                             [ 'type' => 'constant',
@@ -90,16 +88,16 @@ return $dice_game =
       ],
     ],
 // 1ゲーム分のサブルーチン
-    [ 'type' => 'function',
+    [ 'type' => 'package',
       'name' => 'function::define',
       'args' => [
         [ 'type' => 'constant',
           'value' => 'game',
         ],
-        [ 'type' => 'user_function',
+        [ 'type' => 'function',
           'descriptions' => [
             // サイコロを振る (player)
-            [ 'type' => 'function',
+            [ 'type' => 'package',
               'name' => 'db::set',
               'args' => [
                 [ 'type' => 'constant',
@@ -110,7 +108,7 @@ return $dice_game =
                 ],
               ],
             ],
-            [ 'type' => 'function',
+            [ 'type' => 'package',
               'name' => 'function::execute',
               'args' => [
                 [ 'type' => 'constant',
@@ -119,7 +117,7 @@ return $dice_game =
               ],
             ],
             // サイコロを振る (enemy)
-            [ 'type' => 'function',
+            [ 'type' => 'package',
               'name' => 'db::set',
               'args' => [
                 [ 'type' => 'constant',
@@ -130,7 +128,7 @@ return $dice_game =
                 ],
               ],
             ],
-            [ 'type' => 'function',
+            [ 'type' => 'package',
               'name' => 'function::execute',
               'args' => [
                 [ 'type' => 'constant',
@@ -139,13 +137,13 @@ return $dice_game =
               ],
             ],
             // 出目を表示
-            [ 'type' => 'function',
+            [ 'type' => 'package',
               'name' => 'modui::StaticUI',
               'args' => [
                 [ 'type' => 'constant',
                   'value' => 'あなたの目は',
                 ],
-                [ 'type' => 'function',
+                [ 'type' => 'package',
                   'name' => 'db::get',
                   'args' => [
                     [ 'type' => 'constant',
@@ -159,7 +157,7 @@ return $dice_game =
                 [ 'type' => 'constant',
                   'value' => '相手の目は',
                 ],
-                [ 'type' => 'function',
+                [ 'type' => 'package',
                   'name' => 'db::get',
                   'args' => [
                     [ 'type' => 'constant',
@@ -173,13 +171,13 @@ return $dice_game =
               ],
             ],
             // 結果
-            [ 'type' => 'function',
+            [ 'type' => 'package',
               'name' => 'system::if',
               'args' => [
-                [ 'type' => 'function',
+                [ 'type' => 'package',
                   'name' => 'system::bool',
                   'args' => [
-                    [ 'type' => 'function',
+                    [ 'type' => 'package',
                       'name' => 'db::get',
                       'args' => [
                         [ 'type' => 'constant',
@@ -190,7 +188,7 @@ return $dice_game =
                     [ 'type' => 'constant',
                       'value' => '>'
                     ],
-                    [ 'type' => 'function',
+                    [ 'type' => 'package',
                       'name' => 'db::get',
                       'args' => [
                         [ 'type' => 'constant',
@@ -200,9 +198,9 @@ return $dice_game =
                     ],
                   ],
                 ],
-                [ 'type' => 'user_function',
+                [ 'type' => 'function',
                   'descriptions' => [
-                    [ 'type' => 'function',
+                    [ 'type' => 'package',
                       'name' => 'modui::StaticUI',
                       'args' => [
                         [ 'type' => 'constant',
@@ -210,7 +208,7 @@ return $dice_game =
                         ],
                       ],
                     ],
-                    [ 'type' => 'function',
+                    [ 'type' => 'package',
                       'name' => 'db::set',
                       'args' => [
                         [ 'type' => 'constant',
@@ -223,15 +221,15 @@ return $dice_game =
                     ],
                   ],
                 ],
-                [ 'type' => 'user_function',
+                [ 'type' => 'function',
                   'descriptions' => [
-                    [ 'type' => 'function',
+                    [ 'type' => 'package',
                       'name' => 'system::if',
                       'args' => [
-                        [ 'type' => 'function',
+                        [ 'type' => 'package',
                           'name' => 'system::bool',
                           'args' => [
-                            [ 'type' => 'function',
+                            [ 'type' => 'package',
                               'name' => 'db::get',
                               'args' => [
                                 [ 'type' => 'constant',
@@ -242,7 +240,7 @@ return $dice_game =
                             [ 'type' => 'constant',
                               'value' => '<'
                             ],
-                            [ 'type' => 'function',
+                            [ 'type' => 'package',
                               'name' => 'db::get',
                               'args' => [
                                 [ 'type' => 'constant',
@@ -252,9 +250,9 @@ return $dice_game =
                             ],
                           ],
                         ],
-                        [ 'type' => 'user_function',
+                        [ 'type' => 'function',
                           'descriptions' => [
-                            [ 'type' => 'function',
+                            [ 'type' => 'package',
                               'name' => 'modui::StaticUI',
                               'args' => [
                                 [ 'type' => 'constant',
@@ -262,7 +260,7 @@ return $dice_game =
                                 ],
                               ],
                             ],
-                            [ 'type' => 'function',
+                            [ 'type' => 'package',
                               'name' => 'db::set',
                               'args' => [
                                 [ 'type' => 'constant',
@@ -282,13 +280,13 @@ return $dice_game =
               ],
             ],
             // 引分ならもう一回
-            [ 'type' => 'function',
+            [ 'type' => 'package',
               'name' => 'system::if',
               'args' => [
-                [ 'type' => 'function',
+                [ 'type' => 'package',
                   'name' => 'system::bool',
                   'args' => [
-                    [ 'type' => 'function',
+                    [ 'type' => 'package',
                       'name' => 'db::get',
                       'args' => [
                         [ 'type' => 'constant',
@@ -299,7 +297,7 @@ return $dice_game =
                     [ 'type' => 'constant',
                       'value' => '=='
                     ],
-                    [ 'type' => 'function',
+                    [ 'type' => 'package',
                       'name' => 'db::get',
                       'args' => [
                         [ 'type' => 'constant',
@@ -309,9 +307,9 @@ return $dice_game =
                     ],
                   ],
                 ],
-                [ 'type' => 'user_function',
+                [ 'type' => 'function',
                   'descriptions' => [
-                    [ 'type' => 'function',
+                    [ 'type' => 'package',
                       'name' => 'modui::StaticUI',
                       'args' => [
                         [ 'type' => 'constant',
@@ -319,7 +317,7 @@ return $dice_game =
                         ],
                       ],
                     ],
-                    [ 'type' => 'function',
+                    [ 'type' => 'package',
                       'name' => 'function::execute',
                       'args' => [
                         [ 'type' => 'constant',
@@ -336,7 +334,7 @@ return $dice_game =
       ],
     ],
 // 説明表示
-    [ 'type' => 'function',
+    [ 'type' => 'package',
       'name' => 'modui::StaticUI',
       'args' => [
         [ 'type' => 'constant',
@@ -345,7 +343,7 @@ return $dice_game =
       ],
     ],
 // ゲームを数回行う
-    [ 'type' => 'function',
+    [ 'type' => 'package',
       'name' => 'modui::StaticUI',
       'args' => [
         [ 'type' => 'constant',
@@ -353,15 +351,15 @@ return $dice_game =
         ],
       ],
     ],
-    [ 'type' => 'function',
+    [ 'type' => 'package',
       'name' => 'system::loop',
       'args' => [
         [ 'type' => 'constant',
           'value' => 5,
         ],
-        [ 'type' => 'user_function',
+        [ 'type' => 'function',
           'descriptions' => [
-            [ 'type' => 'function',
+            [ 'type' => 'package',
               'name' => 'function::execute',
               'args' => [
                 [ 'type' => 'constant',
@@ -369,7 +367,7 @@ return $dice_game =
                 ],
               ],
             ],
-            [ 'type' => 'function',
+            [ 'type' => 'package',
               'name' => 'modui::StaticUI',
               'args' => [
                 [ 'type' => 'constant',
@@ -382,7 +380,7 @@ return $dice_game =
       ],
     ],
 // 結果処理
-    [ 'type' => 'function',
+    [ 'type' => 'package',
       'name' => 'function::execute',
       'args' => [
         [ 'type' => 'constant',
@@ -391,16 +389,16 @@ return $dice_game =
       ],
     ],
 // 勝率計算
-    [ 'type' => 'function',
+    [ 'type' => 'package',
       'name' => 'modui::StaticUI',
       'args' => [
         [ 'type' => 'constant',
           'value' => '勝率 : ',
         ],
-        [ 'type' => 'function',
+        [ 'type' => 'package',
           'name' => 'system::calc',
           'args' => [
-            [ 'type' => 'function',
+            [ 'type' => 'package',
               'name' => 'db::get',
               'args' => [
                 [ 'type' => 'constant',
@@ -411,10 +409,10 @@ return $dice_game =
             [ 'type' => 'constant',
               'value' => '/',
             ],
-            [ 'type' => 'function',
+            [ 'type' => 'package',
               'name' => 'system::calc',
               'args' => [
-                [ 'type' => 'function',
+                [ 'type' => 'package',
                   'name' => 'db::get',
                   'args' => [
                     [ 'type' => 'constant',
@@ -425,7 +423,7 @@ return $dice_game =
                 [ 'type' => 'constant',
                   'value' => '+',
                 ],
-                [ 'type' => 'function',
+                [ 'type' => 'package',
                   'name' => 'db::get',
                   'args' => [
                     [ 'type' => 'constant',
@@ -439,6 +437,5 @@ return $dice_game =
         ],
       ],
     ],
-// end
-  ],
 ];
+return json_encode($json);

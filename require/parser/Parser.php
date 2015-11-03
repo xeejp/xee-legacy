@@ -37,13 +37,13 @@ class Parser {
         return function () use ($functions) {
             try {
                 foreach ($functions as $function)
-                    call_user_func)($function);
+                    call_user_func($function);
             } catch (ReturnNotException $result) {
                 return $result->get_result();
             } catch (Exception $e) {
                 echo($e->getMessage());
             }
-        }
+        };
     }
 
     public function parse ($data) {

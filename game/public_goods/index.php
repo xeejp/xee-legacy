@@ -5,9 +5,9 @@ $pages = [];
 $pages['reject']        = new RedirectUI(_URL, $_con->get_personal('page', 'wait') == 'reject');
 $pages['wait']          = new StaticUI('<br/><br/><center>Waiting now</center>');
 $pages['experiment']    = new NormalContainer();
-$pages['wait_action']   = new NormalContainer();
-$pages['middle_result'] = new NormalContainer();
-$pages['final_result']  = new NormalContainer();
+$pages['waitAction']    = new NormalContainer();
+$pages['middleResult']  = new NormalContainer();
+$pages['finalResult']   = new NormalContainer();
     
 
 function setValueToAllUsers($con, $id, $val)
@@ -32,23 +32,24 @@ function calc_num_not_ready_user($con) {
 function redirectAllUsers($con, $page_id)
 {
     foreach( $con->participants as $participant ) {
-        $con->set_personal('status', $page_id, $participant['id']);
+        // $con->set_personal('status', $page_id, $participant['id']);
         $con->set_personal('page', $page_id, $participant['id']);
     }
 }
 
 function redirectCurrentUser($con, $page_id)
 {
-    $con->set_personal('status', $page_id);
+    // $con->set_personal('status', $page_id);
     $con->set_personal('page', $page_id);
 }
 
 $pages['experiment']->add(new TemplateUI(<<<TMPL
 Turn: {turn}<br/>
 You have {cur_pt} points.<br/>
+And, your sum of profit is {sum_pt} points.<br/>
 What point do you invest?<br/>
 TMPL
-,   ['turn' => $_con->get('turn', 0), 'cur_pt' => $_con->get_personal('cur_pt')]
+,   ['turn' => $_con->get('turn', 0), 'cur_pt' => $_con->get_personal('cur_pt'), 'sum_pt' => $_con->get_personal('sum_pt')]
 ));
 
 $pages['experiment']->add(new SendingUI('invest', 
@@ -62,22 +63,22 @@ $pages['experiment']->add(new SendingUI('invest',
         $_con->set_personal('invest_pt', $invest_pt);
         $_con->set_personal('ready', true);
 
+        $turn = $_con->get('turn', 1);
+
         $num_not_ready_user = calc_num_not_ready_user($_con);
         if ( $num_not_ready_user == 0 ) {
-            if ( turn < 6 ) {
-                redirectAllUsers($_con, 'middle_result');
-            } else {
-                redirectAllUsers($_con, 'final_result'); 
-            }
+            redirectAllUsers($_con, 'middleResult');
             setValueToAllUsers($_con, 'ready', false);
         } else {
-            redirectCurrentUser($_con, 'wait_action');
+            redirectCurrentUser($_con, 'waitAction');
         }
+
+        //dump('pushed invest button', true);
     }
 ));
 
 
-$pages['wait_action']->add(new TemplateUI(<<<TMPL
+$pages['waitAction']->add(new TemplateUI(<<<TMPL
 Waiting for {num_not_ready_user} users...<br/>
 TMPL
 ,   call_user_func(function($con) { 
@@ -88,7 +89,7 @@ TMPL
 ));
 
 
-$pages['middle_result']->add(new TemplateUI(<<<TMPL
+$pages['middleResult']->add(new TemplateUI(<<<TMPL
 Middle Result<br/>
 {each invest_list}
 <span>ID:{id} Investment Point:{pt}</span><br/>
@@ -118,34 +119,47 @@ function calcTotalInvestment($con)
 
 function calcProfit($con, $total_investment, $id)
 {
-    $cur_pt = $con->get_person('cur_pt', 20, $id);
-    $invest_pt = $con->get_person('invest_pt', 0, $id);
+    $cur_pt = $con->get_personal('cur_pt', 20, $id);
+    $invest_pt = $con->get_personal('invest_pt', 0, $id);
 
     return $cur_pt - $invest_pt + 0.4*$total_investment;
 }
 
-$pages['middle_result']->add(new SendingUI('OK_Result', 
-    function($value)use($_con) {
-        $total = calcTotalInvestment($_con);
-        foreach ( $_con->participants as $participant ) { 
+
+$pages['middleResult']->add(new ButtonUI($_con,
+    function($con) {
+        return 'OK';
+    },
+    function($con) {
+        $total = calcTotalInvestment($con);
+        foreach ( $con->participants as $participant ) { 
             $id = $participant['id'];
-            $profit = calcProfit($_con, $total, $id);
-            $_con->set_person('sum_pt', $profit, $id);
+            $profit = calcProfit($con, $total, $id); 
+            $con->set_personal('sum_pt', $profit, $id);
         }
-        setValueToAllUsers($_con, 'cur_pt', 20);
-        setValueToAllUsers($_con, 'invest_pt', 0);
 
-        $turn = $_con->get('turn', 1);
-        $_con->set('turn', ++$turn);
-
-        redirectAllUsers($_con, 'wait'); 
+        $con->set_personal('ready', true);
+        $num_not_ready_user = calc_num_not_ready_user($con);
+        if ( $num_not_ready_user == 0 ) {
+            $turn = $con->get('turn', 1);
+            $con->set('turn', ++$turn);
+            setValueToAllUsers($con, 'cur_pt', 20);
+            setValueToAllUsers($con, 'invest_pt', 0);
+            setValueToAllUsers($con, 'ready', false);
+            if ( $turn <= 3 ) {
+                redirectAllUsers($con, 'experiment');
+                setValueToAllUsers($con, 'ready', false);
+            } else {
+                redirectAllUsers($con, 'finalResult'); 
+            }
+        } else {
+            redirectCurrentUser($con, 'waitAction');
+        }
     }
 ));
 
-$pages['middle_result']->add(new StaticUI('UNKO'));
 
-
-$pages['final_result']->add(new StaticUI('Final Result'));
+$pages['finalResult']->add(new StaticUI('Final Result'));
 
 
 // add all pages

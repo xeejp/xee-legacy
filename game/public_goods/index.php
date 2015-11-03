@@ -19,16 +19,16 @@ function setValueToAllUsers($con, $id, $val)
     }
 }
 
-function calcNumNotReadyUser($con) {
-    $num_not_ready_user = 0;
+function calcNumReadyUser($con) {
+    $num_ready_user = 0;
     foreach ( $con->participants as $participant ) {
         $is_ready = $con->get_personal(VAR_READY, false, $participant[VAR_ID]);
-        if ( !$is_ready ) {
-            ++$num_not_ready_user;
+        if ( $is_ready ) {
+            ++$num_ready_user;
         }
     }
     
-    return $num_not_ready_user;
+    return $num_ready_user;
 }
 
 function redirectAllUsers($con, $page_id)
@@ -65,8 +65,8 @@ $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest',
         $_con->set_personal(VAR_INVEST_PT, $invest_pt);
         $_con->set_personal(VAR_READY, true);
 
-        $num_not_ready_user = calcNumNotReadyUser($_con);
-        if ( $num_not_ready_user == 0 ) {
+        $num_ready_user = calcNumReadyUser($_con);
+        if ( $num_ready_user == NUM_PLAYER ) {
             setValueToAllUsers($_con, VAR_READY, false);
             redirectAllUsers($_con, PAGE_MIDDLE_RESULT);
         } else {
@@ -80,7 +80,8 @@ $pages[PAGE_WAIT_ACTION]->add(new TemplateUI(<<<TMPL
 Waiting for {num_not_ready_user} users...<br/>
 TMPL
 ,   function()use($_con) { 
-        $num_not_ready_user = calcNumNotReadyUser($_con);
+        $num_ready_user = calcNumReadyUser($_con);
+        $num_not_ready_user = NUM_PLAYER - $num_ready_user;
 
         return ['num_not_ready_user' => $num_not_ready_user];
     }
@@ -135,8 +136,8 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
         $con->set_personal(VAR_SUM_PROFIT, $cur_sum_profit + $profit);
 
         $con->set_personal(VAR_READY, true);
-        $num_not_ready_user = calcNumNotReadyUser($con);
-        if ( $num_not_ready_user == 0 ) {
+        $num_ready_user = calcNumReadyUser($con);
+        if ( $num_ready_user == NUM_PLAYER ) {
             $turn = $con->get(VAR_TURN, 1);
             $con->set(VAR_TURN, ++$turn);
             if ( $turn <= 3 ) {

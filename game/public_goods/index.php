@@ -44,7 +44,7 @@ function redirectCurrentUser($con, $page_id)
 }
 
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
-Turn: {turn}<br/>
+Turn:{turn}<br/>
 You have {cur_pt} points.<br/>
 And, your sum of profit is {sum_profit} points.<br/>
 What point do you invest?<br/>
@@ -92,12 +92,14 @@ TMPL
 
 
 $pages[PAGE_MIDDLE_RESULT]->add(new TemplateUI(<<<TMPL
+Turn:{turn}<br/>
 Middle Result<br/>
 {each invest_list}
 <span>ID:{id} Investment Point:{pt}</span><br/>
 {/each}
 TMPL
 ,   function()use($_con) {
+        $turn = $_con->get(VAR_TURN, 1);
         $invest_list = [];
         foreach ( $_con->participants as $participant ) {
             $id = $participant[VAR_ID];
@@ -105,7 +107,7 @@ TMPL
             $invest_list[] = [VAR_ID => $id, 'pt' => $pt];
         } 
 
-        return ['invest_list' => $invest_list];
+        return ['turn' => $turn, 'invest_list' => $invest_list];
     }
 ));
 

@@ -13,7 +13,7 @@ $container->add(new ParticipantsManagement($_con));
 
 $container->add($modulator = new PageContainer(
     function()use($_con) {
-        return $_con->get(VAR_STATUS, PAGE_WAIT); 
+        return $_con->get(VAR_PAGE, PAGE_WAIT); 
     }
 ));
 
@@ -30,8 +30,6 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
         return ($num == 2);
     },
     function($con) {
-        dump('matching ga okonawareta kei', true);
-
         $result = [];
         foreach ( $con->participants as $participant ) {
             $active = $con->get_personal(VAR_ACTIVE, false, $participant[VAR_ID]);
@@ -47,7 +45,7 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
             $con->set_personal(VAR_READY, false, $participant[VAR_ID]);
         }
         $con->set(VAR_TURN, 1);
-        $con->set(VAR_STATUS, 'ready');
+        $con->set(VAR_PAGE, 'ready');
 
         return $result;
     }
@@ -59,7 +57,7 @@ $_ready->add(new ButtonUI($_con,
         return "再マッチング"; 
     },
     function($_con) { 
-        $_con->set(VAR_STATUS, PAGE_WAIT);
+        $_con->set(VAR_PAGE, PAGE_WAIT);
     }
 ));
 $_ready->add(new ButtonUI($_con,
@@ -67,7 +65,7 @@ $_ready->add(new ButtonUI($_con,
         return "開始"; 
     },
     function($_con) {
-        $_con->set(VAR_STATUS, PAGE_EXPERIMENT);
+        $_con->set(VAR_PAGE, PAGE_EXPERIMENT);
         foreach ($_con->participants as $participant) {
             if ($_con->get_personal(VAR_ACTIVE, false, $participant[VAR_ID])) {
                 $_con->set_personal(VAR_PAGE, PAGE_EXPERIMENT, $participant[VAR_ID]);

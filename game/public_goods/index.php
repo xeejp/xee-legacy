@@ -34,14 +34,12 @@ function calc_num_not_ready_user($con) {
 function redirectAllUsers($con, $page_id)
 {
     foreach( $con->participants as $participant ) {
-        // $con->set_personal(VAR_STATUS, $page_id, $participant[VAR_ID]);
         $con->set_personal(VAR_PAGE, $page_id, $participant[VAR_ID]); 
     }
 }
 
 function redirectCurrentUser($con, $page_id)
 {
-    // $con->set_personal(VAR_STATUS, $page_id);
     $con->set_personal(VAR_PAGE, $page_id);
 }
 

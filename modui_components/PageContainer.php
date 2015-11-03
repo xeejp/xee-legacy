@@ -33,16 +33,18 @@ class PageContainer extends NormalContainer{
     }
 
     public function get_values($name){
-        $values = ['_name' => $name, '_page' => $this->page];
-        $values[ModUI::get_child_name($name, $this->page)] =
-            array_merge(['_name' => ModUI::get_child_name($name, $this->page), '_template_name' => $this->components[$this->page]->get_template_name(ModUI::get_child_name($name, $this->page))],
-                $this->components[$this->page]->get_values(ModUI::get_child_name($name, $this->page)));
+        $page = call_user_func($this->page);
+        $values = ['_name' => $name, '_page' => $page];
+        $values[ModUI::get_child_name($name, $page)] =
+            array_merge(['_name' => ModUI::get_child_name($name, $page), '_template_name' => $this->components[$page]->get_template_name(ModUI::get_child_name($name, $page))],
+                $this->components[$page]->get_values(ModUI::get_child_name($name, $page)));
         return $values;
     }
 
     public function input($name, $value){
+        $page = call_user_func($this->page);
         $result = ModUI::get_name($name);
-        if($result[0] == $this->page){
+        if($result[0] == $page){
             parent::input($name, $value);
         }
     }

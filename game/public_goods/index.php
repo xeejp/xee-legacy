@@ -51,7 +51,9 @@ You have {cur_pt} points.<br/>
 And, your sum of profit is {sum_profit} points.<br/>
 What point do you invest?<br/>
 TMPL
-,   [VAR_TURN => $_con->get(VAR_TURN, 0), VAR_CUR_PT => $_con->get_personal(VAR_CUR_PT), VAR_SUM_PROFIT => $_con->get_personal(VAR_SUM_PROFIT)]
+,   function()use($_con) {
+        return [VAR_TURN => $_con->get(VAR_TURN, 0), VAR_CUR_PT => $_con->get_personal(VAR_CUR_PT), VAR_SUM_PROFIT => $_con->get_personal(VAR_SUM_PROFIT)];
+    }
 ));
 
 $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest', 
@@ -83,11 +85,11 @@ $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest',
 $pages[PAGE_WAIT_ACTION]->add(new TemplateUI(<<<TMPL
 Waiting for {num_not_ready_user} users...<br/>
 TMPL
-,   call_user_func(function($con) { 
-        $num_not_ready_user = calc_num_not_ready_user($con);
+,   function()use($_con) { 
+        $num_not_ready_user = calc_num_not_ready_user($_con);
 
         return ['num_not_ready_user' => $num_not_ready_user];
-    }, $_con)
+    }
 ));
 
 
@@ -97,16 +99,16 @@ Middle Result<br/>
 <span>ID:{id} Investment Point:{pt}</span><br/>
 {/each}
 TMPL
-,   call_user_func(function($con) {
+,   function()use($_con) {
         $invest_list = [];
-        foreach ( $con->participants as $participant ) {
+        foreach ( $_con->participants as $participant ) {
             $id = $participant[VAR_ID];
-            $pt = $con->get_personal(VAR_INVEST_PT, 0, $id);
+            $pt = $_con->get_personal(VAR_INVEST_PT, 0, $id);
             $invest_list[] = [VAR_ID => $id, 'pt' => $pt];
         } 
 
         return ['invest_list' => $invest_list];
-    }, $_con)
+    }
 ));
 
 function calcTotalInvestment($con)

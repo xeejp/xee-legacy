@@ -27,7 +27,7 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
             }
         }
 
-        return ($num == 2);
+        return ($num == NUM_PLAYER);
     },
     function($con) {
         $result = [];

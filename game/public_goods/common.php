@@ -1,7 +1,8 @@
 <?php
 
-// experiment no
+// experiment settings
 define('EXP_NO', 'password');
+define('NUM_PLAYER', 2);
 
 // pages
 define('PAGE_WAIT', 'wait');

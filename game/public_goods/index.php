@@ -4,9 +4,9 @@ require 'common.php';
 
 // page settings
 $pages = [];
-$pages[PAGE_REJECT]        = new RedirectUI(_URL, $_con->get_personal(VAR_PAGE, PAGE_WAIT) == PAGE_REJECT);
-$pages[PAGE_WAIT]          = new StaticUI('<br/><br/><center>Waiting now</center>');
-$pages[PAGE_EXPERIMENT]    = new NormalContainer();
+$pages[PAGE_REJECT]         = new RedirectUI(_URL, $_con->get_personal(VAR_PAGE, PAGE_WAIT) == PAGE_REJECT);
+$pages[PAGE_WAIT]           = new StaticUI('<br/><br/><center>Waiting now</center>');
+$pages[PAGE_EXPERIMENT]     = new NormalContainer();
 $pages[PAGE_WAIT_ACTION]    = new NormalContainer();
 $pages[PAGE_MIDDLE_RESULT]  = new NormalContainer();
 $pages[PAGE_FINAL_RESULT]   = new NormalContainer();
@@ -54,6 +54,11 @@ TMPL
     }
 ));
 
+function isReady($num_ready_user)
+{
+    return ($num_ready_user == NUM_PLAYER);
+}
+
 $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest', 
     function($value)use($_con) {
         $invest_pt = intval($value);
@@ -65,8 +70,7 @@ $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest',
         $_con->set_personal(VAR_INVEST_PT, $invest_pt);
         $_con->set_personal(VAR_READY, true);
 
-        $num_ready_user = calcNumReadyUser($_con);
-        if ( $num_ready_user == NUM_PLAYER ) {
+        if ( isReady(calcNumReadyUser($_con)) ) {
             setValueToAllUsers($_con, VAR_READY, false);
             redirectAllUsers($_con, PAGE_MIDDLE_RESULT);
         } else {
@@ -80,8 +84,7 @@ $pages[PAGE_WAIT_ACTION]->add(new TemplateUI(<<<TMPL
 Waiting for {num_not_ready_user} users...<br/>
 TMPL
 ,   function()use($_con) { 
-        $num_ready_user = calcNumReadyUser($_con);
-        $num_not_ready_user = NUM_PLAYER - $num_ready_user;
+        $num_not_ready_user = NUM_PLAYER - calcNumReadyUser($_con);
 
         return ['num_not_ready_user' => $num_not_ready_user];
     }
@@ -124,29 +127,46 @@ function calcProfit($con, $total_investment)
     return $cur_pt - $invest_pt + 0.4*$total_investment;
 }
 
+function setSumProfit($con)
+{
+    $total = calcTotalInvestment($con);
+    $profit = calcProfit($con, $total);
+    $cur_sum_profit = $con->get_personal(VAR_SUM_PROFIT, 0);
+    $con->set_personal(VAR_SUM_PROFIT, $cur_sum_profit + $profit);
+}
+
+function inclementTurn($con)
+{
+    $turn = $con->get(VAR_TURN, 1);
+    ++$turn;
+    $con->set(VAR_TURN, $turn);
+
+    return $turn; 
+}
+
+function isFinish($turn)
+{
+    return ($turn > MAX_TURN);
+}
 
 $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
     function($con) {
         return 'OK';
     },
     function($con) {
-        $total = calcTotalInvestment($con);
-        $profit = calcProfit($con, $total);
-        $cur_sum_profit = $con->get_personal(VAR_SUM_PROFIT, 0);
-        $con->set_personal(VAR_SUM_PROFIT, $cur_sum_profit + $profit);
+        setSumProfit($con);
 
         $con->set_personal(VAR_READY, true);
-        $num_ready_user = calcNumReadyUser($con);
-        if ( $num_ready_user == NUM_PLAYER ) {
-            $turn = $con->get(VAR_TURN, 1);
-            $con->set(VAR_TURN, ++$turn);
-            if ( $turn <= 3 ) {
+        
+        if ( isReady(calcNumReadyUser($con)) ) {
+            $turn = inclementTurn($con);
+            if ( isFinish($turn) ) {
+                redirectAllUsers($con, PAGE_FINAL_RESULT); 
+            } else {
                 setValueToAllUsers($con, VAR_CUR_PT, 20);
                 setValueToAllUsers($con, VAR_INVEST_PT, 0);
                 redirectAllUsers($con, PAGE_EXPERIMENT);
-            } else {
-                redirectAllUsers($con, PAGE_FINAL_RESULT); 
-            }
+            } 
             setValueToAllUsers($con, VAR_READY, false);
         } else {
             redirectCurrentUser($con, PAGE_WAIT_ACTION);

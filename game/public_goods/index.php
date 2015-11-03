@@ -176,6 +176,16 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
     }
 ));
 
+function sortProfitList($sum_profit_list)
+{
+    usort($sum_profit_list, 
+        function($a, $b) {
+            return ($a['pt'] > $b['pt']);
+        }    
+    );
+
+    return $sum_profit_list;
+}
 
 $pages[PAGE_FINAL_RESULT]->add(new TemplateUI(<<<TMPL
 Final Result<br/>
@@ -188,8 +198,17 @@ TMPL
         foreach ( $_con->participants as $participant ) {
             $id = $participant[VAR_ID];
             $pt = $_con->get_personal(VAR_SUM_PROFIT, 0, $id);
-            $sum_profit_list[] = [VAR_ID => $id, 'pt' => $pt];
+            $sum_profit_list[] = ['id' => $id, 'pt' => $pt];
         } 
+
+        // $sum_profit_list = sortProfitList($sum_profit_list);
+        usort($sum_profit_list, 
+            function($a, $b) {
+                dump($a, true);
+                dump($b, true);
+                return ($a['pt'] < $b['pt']);
+            }    
+        );
 
         return ['sum_profit_list' => $sum_profit_list];
     }

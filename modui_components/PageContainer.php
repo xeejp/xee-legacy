@@ -42,8 +42,9 @@ class PageContainer extends NormalContainer{
     }
 
     public function input($name, $value){
+        $page = call_user_func($this->page);
         $result = ModUI::get_name($name);
-        if($result[0] == $this->page){
+        if($result[0] == $page){
             parent::input($name, $value);
         }
     }

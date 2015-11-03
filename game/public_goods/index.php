@@ -115,10 +115,10 @@ function calcTotalInvestment($con)
     return $total;
 }
 
-function calcProfit($con, $total_investment, $id)
+function calcProfit($con, $total_investment)
 {
-    $cur_pt = $con->get_personal(VAR_CUR_PT, 20, $id);
-    $invest_pt = $con->get_personal(VAR_INVEST_PT, 0, $id);
+    $cur_pt = $con->get_personal(VAR_CUR_PT, 20);
+    $invest_pt = $con->get_personal(VAR_INVEST_PT, 0);
 
     return $cur_pt - $invest_pt + 0.4*$total_investment;
 }
@@ -130,27 +130,23 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
     },
     function($con) {
         $total = calcTotalInvestment($con);
-        foreach ( $con->participants as $participant ) { 
-            $id = $participant[VAR_ID];
-            $profit = calcProfit($con, $total, $id); 
-            $cur_sum_profit = $con->get_personal(VAR_SUM_PROFIT, 0, $id);
-            $con->set_personal(VAR_SUM_PROFIT, $cur_sum_profit + $profit, $id);
-        }
+        $profit = calcProfit($con, $total);
+        $cur_sum_profit = $con->get_personal(VAR_SUM_PROFIT, 0);
+        $con->set_personal(VAR_SUM_PROFIT, $cur_sum_profit + $profit);
 
         $con->set_personal(VAR_READY, true);
         $num_not_ready_user = calcNumNotReadyUser($con);
         if ( $num_not_ready_user == 0 ) {
             $turn = $con->get(VAR_TURN, 1);
             $con->set(VAR_TURN, ++$turn);
-            setValueToAllUsers($con, VAR_CUR_PT, 20);
-            setValueToAllUsers($con, VAR_INVEST_PT, 0);
-            setValueToAllUsers($con, VAR_READY, false);
             if ( $turn <= 3 ) {
+                setValueToAllUsers($con, VAR_CUR_PT, 20);
+                setValueToAllUsers($con, VAR_INVEST_PT, 0);
                 redirectAllUsers($con, PAGE_EXPERIMENT);
-                setValueToAllUsers($con, VAR_READY, false);
             } else {
                 redirectAllUsers($con, PAGE_FINAL_RESULT); 
             }
+            setValueToAllUsers($con, VAR_READY, false);
         } else {
             redirectCurrentUser($con, PAGE_WAIT_ACTION);
         }

@@ -11,6 +11,6 @@ class TemplateUI extends ModUIComponent{
         return [$this->get_template_name($name) => $this->template];
     }
     public function get_values($name){
-        return $this->values;
+        return call_user_func($this->values);
     }
 }

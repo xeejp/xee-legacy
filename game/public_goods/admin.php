@@ -11,20 +11,31 @@ $container->add(new StaticUI('ExpID : '. $_con->experiment[EXP_NO] .'<br/>'));
 $container->add(new ParticipantsList($_con));
 $container->add(new ParticipantsManagement($_con));
 
-$container->add($modulator = new PageContainer($_con->get(VAR_STATUS, PAGE_WAIT)));
+$container->add($modulator = new PageContainer(
+    function()use($_con) {
+        return $_con->get(VAR_STATUS, PAGE_WAIT); 
+    }
+));
+
 $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
     function($con) {
         $num = 0;
-        foreach ($con->participants as $participant) {
-            if ($con->get_personal(VAR_ACTIVE, false, $participant[VAR_ID]))
+        foreach ( $con->participants as $participant ) {
+            $active = $con->get_personal(VAR_ACTIVE, false, $participant[VAR_ID]); 
+            if ( $active ) {
                 $num++;
+            }
         }
+
         return ($num == 2);
     },
     function($con) {
+        dump('matching ga okonawareta kei', true);
+
         $result = [];
-        foreach($con->participants as $participant) {
-            if (!$con->get_personal(VAR_ACTIVE, false, $participant[VAR_ID])) {
+        foreach ( $con->participants as $participant ) {
+            $active = $con->get_personal(VAR_ACTIVE, false, $participant[VAR_ID]);
+            if ( !$active ) {
                 continue;
             }
 

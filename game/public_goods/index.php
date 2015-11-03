@@ -166,7 +166,12 @@ $pages[PAGE_FINAL_RESULT]->add(new StaticUI('Final Result'));
 
 
 // add all pages
-$_con->add_component($_page = new PageContainer($_con->get_personal(VAR_PAGE, PAGE_WAIT)));
+$_con->add_component($_page = new PageContainer(
+    function()use($_con) { 
+        return $_con->get_personal(VAR_PAGE, PAGE_WAIT); 
+    }
+));
+
 foreach ($pages as $key => $value) {
     $_page->add_page($key, $value);
 }

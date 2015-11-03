@@ -22,7 +22,7 @@ You play the role of {role}.<br/>
 Your cost of property is ${cost}.<br/>
 Tax is ${tax}.<br/>
 TMPL
-        ,   ['role' => 'Seller', 'cost' => $_con->get_personal('cost'), 'tax' => $_con->get('tax')]);
+        ,   ['role' => 'Seller', 'cost' => $_con->get_personal('cost'), 'tax' => $_con->get('tax', 0)]);
             break;
         case 'buyer':
             $page_head = new TemplateUI(<<<TMPL
@@ -31,7 +31,7 @@ You play the role of {role}.<br/>
 Your price of willingness to pay is up to \${money}.<br/>
 Tax is \${tax}.<br/>
 TMPL
-        ,   ['role' => 'Buyer', 'money' => $_con->get_personal('money'), 'tax' => $_con->get('tax')]);
+        ,   ['role' => 'Buyer', 'money' => $_con->get_personal('money'), 'tax' => $_con->get('tax', 0)]);
             break;
         default:
             $page_head = new StaticUI('');

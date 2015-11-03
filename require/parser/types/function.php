@@ -1,24 +1,28 @@
 <?php
-// 定義済み関数を実行し値を返す
+// 関数オブジェクトを返す
+$this->use_type('return');
 return function ($parser, $data) {
-    list($package_name, $function_name) = explode('::', $data['name'], 2);
-    $function = $parser->get_function($package_name, $function_name);
-    $args = [];
-    foreach ($data['args'] as $arg)
-        $args[] = $parser->parse($arg);
-    return function () use ($function, $args){
-        $arguments = [];
-        foreach ($args as $arg)
-            $arguments[] = call_user_func($arg);
-        return call_user_func_array($function, $arguments);
+    if (!isset($data['descriptions']))
+        throw new Exception('Undefined descriptions[function]');
+    $descriptions = [];
+    foreach ($data['descriptions'] as $description)
+        $descriptions[] = $parser->parse($description);
+    return function () use ($descriptions) {
+        return function () use ($descriptions) {
+            try {
+                foreach ($descriptions as $description)
+                    call_user_func($description);
+            } catch (ReturnNotException $result) { // type:return のみが投げる例外をcatchする
+                return $result->get_result();
+            }
+        };
     };
 };
 
 /* ex:
 [
   'type' => 'function',
-  'name' => '<package>::<func>',
-  'args' => [
+  'descriptions' => [
     [PARSABLE_OBJ],
     [PARSABLE_OBJ],
     [PARSABLE_OBJ], ...

@@ -2,21 +2,27 @@
 return $json =
 [ 'type' => 'procedure',
   'descriptions' => [
-    [ 'type' => 'function',
+    [ 'type' => 'package',
       'name' => 'function::define',
       'args' => [
         [ 'type' => 'constant',
           'value' => 'func'
         ],
-        [ 'type' => 'user_function',
+        [ 'type' => 'function',
           'descriptions' => [
-            [ 'type' => 'function',
+            [ 'type' => 'return',
+              'value' => [
+                'type' => 'constant',
+                'value' => 'return!',
+              ],
+            ],
+            [ 'type' => 'package',
               'name' => 'system::echo',
               'args' => [
                 [ 'type' => 'variable',
                   'name' => 'counter',
                   'value' => [
-                    'type' => 'function',
+                    'type' => 'package',
                     'name' => 'system::calc',
                     'args' => [
                       [ 'type' => 'variable',
@@ -43,7 +49,7 @@ return $json =
     [ 'type' => 'variable',
       'name' => 'counter',
       'value' =>
-        [ 'type' => 'function',
+        [ 'type' => 'package',
           'name' => 'db::get',
           'args' => [
             [ 'type'=>'constant',
@@ -55,27 +61,32 @@ return $json =
           ],
         ],
     ],
-    [ 'type' => 'function',
+    [ 'type' => 'package',
       'name' => 'system::loop',
       'args' => [
         [ 'type' => 'constant',
-          'value' => 1,
+          'value' => 10,
         ],
-        [ 'type' => 'user_function',
+        [ 'type' => 'function',
           'descriptions' => [
-            [ 'type' => 'function',
-              'name' => 'function::execute',
+            [ 'type' => 'package',
+              'name' => 'modui::StaticUI',
               'args' => [
-                [ 'type' => 'constant',
-                  'value' => 'func',
+                [ 'type' => 'package',
+                  'name' => 'function::execute',
+                  'args' => [
+                    [ 'type' => 'constant',
+                      'value' => 'func',
+                    ],
+                  ],
                 ],
               ],
-            ],
+            ]
           ],
         ],
       ],
     ],
-    [ 'type' => 'function',
+    [ 'type' => 'package',
       'name' => 'modui::OptionUI',
       'args' => [
         [ 'type' => 'constant',
@@ -86,7 +97,7 @@ return $json =
         ],
       ],
     ],
-    [ 'type' => 'function',
+    [ 'type' => 'package',
       'name' => 'db::set',
       'args' => [
         [ 'type'=>'constant',

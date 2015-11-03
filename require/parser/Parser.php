@@ -7,13 +7,14 @@ class Parser {
     private $types = [];
     private $packages = [];
 
-    public function __construct ($con) {
-        $this->controller = $con;
+    public function __construct ($controller) {
+        $this->controller = $controller;
         $this->use_type('constant');
         $this->use_type('variable');
+        $this->use_type('return');
         $this->use_type('function');
         $this->use_type('procedure');
-        $this->use_type('user_function');
+        $this->use_type('package');
         $this->use_package('system');
     }
 
@@ -25,13 +26,32 @@ class Parser {
         if (!isset($this->packages[$name]))
             $this->packages[$name] = require(self::PACKAGE_DIR_ROOT. $name .'.php');
     }
+    
+    public function convert ($json) {
+        $datas = json_decode($json, true);
+        if ($datas == null)
+            throw new Exception('JSON Error');
+        $functions = [];
+        foreach ($datas as $data)
+            $functions[] = $this->parse($data);
+        return function () use ($functions) {
+            try {
+                foreach ($functions as $function)
+                    call_user_func)($function);
+            } catch (ReturnNotException $result) {
+                return $result->get_result();
+            } catch (Exception $e) {
+                echo($e->getMessage());
+            }
+        }
+    }
 
     public function parse ($data) {
         if (!isset($data['type']))
             throw new Exception('Type is undefined');
         if (!isset($this->types[$data['type']]))
             throw new Exception('Type "'. $data['type'] .'" is undefined');
-        return $this->types[$data['type']]($this, $data);
+        return call_user_func($this->types[$data['type']], $this, $data);
     }
 
     public function get_function ($package_name, $function_name) {

@@ -1,18 +1,18 @@
 <?php
-// ローカル変数を扱う
-$local_variables = [];
-return function ($parser, $data) use (&$local_variables) {
+// 変数を扱う
+$variables = [];
+return function ($parser, $data) use (&$variables) {
     $name = $data['name'];
     $value = isset($data['value'])? $parser->parse($data['value']): null;
     if ($value == null) {
-        return function () use (&$local_variables, $name, $value) {
-            if (!isset($local_variables[$name]))
+        return function () use (&$variables, $name, $value) {
+            if (!isset($variables[$name]))
                 throw new Exception('Variable "'. $name .'" is undefined.');
-            return $local_variables[$name];
+            return $variables[$name];
         };
     } else {
-        return function () use (&$local_variables, $name, $value) {
-            return $local_variables[$name] = call_user_func($value);
+        return function () use (&$variables, $name, $value) {
+            return $variables[$name] = call_user_func($value);
         };
     }
 };
@@ -21,6 +21,6 @@ return function ($parser, $data) use (&$local_variables) {
 [
   'type' => 'variable',
   'name' => 'abcval',
-  ('value' => 100,) // valueが定義されていればsetter、そうでなければgetterとして振る舞う
+  ('value' => 100,) // valueが存在すればsetter、そうでなければgetterとして振る舞う
 ]
 */

@@ -17,9 +17,8 @@ return [
         }
     },
     'loop' => function ($times, $inner) {
-        for ($i=0; $i<$times; $i++) {
+        for ($i=0; $i<$times; $i++)
             call_user_func($inner);
-        }
     },
     'mt_rand' => function ($min, $max) {
         return mt_rand($min, $max);

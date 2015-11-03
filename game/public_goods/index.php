@@ -162,7 +162,23 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
 ));
 
 
-$pages[PAGE_FINAL_RESULT]->add(new StaticUI('Final Result'));
+$pages[PAGE_FINAL_RESULT]->add(new TemplateUI(<<<TMPL
+Final Result<br/>
+{each sum_profit_list}
+<span>ID:{id} Total Profit:{pt}</span><br/>
+{/each}
+TMPL
+,   function()use($_con) {
+        $sum_profit_list = [];
+        foreach ( $_con->participants as $participant ) {
+            $id = $participant[VAR_ID];
+            $pt = $_con->get_personal(VAR_SUM_PROFIT, 0, $id);
+            $sum_profit_list[] = [VAR_ID => $id, 'pt' => $pt];
+        } 
+
+        return ['sum_profit_list' => $sum_profit_list];
+    }
+));
 
 
 // add all pages

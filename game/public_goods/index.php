@@ -180,7 +180,7 @@ function sortProfitList($sum_profit_list)
 {
     usort($sum_profit_list, 
         function($a, $b) {
-            return ($a['pt'] > $b['pt']);
+            return ($a['pt'] < $b['pt']);
         }    
     );
 
@@ -201,15 +201,8 @@ TMPL
             $sum_profit_list[] = ['id' => $id, 'pt' => $pt];
         } 
 
-        // $sum_profit_list = sortProfitList($sum_profit_list);
-        usort($sum_profit_list, 
-            function($a, $b) {
-                dump($a, true);
-                dump($b, true);
-                return ($a['pt'] < $b['pt']);
-            }    
-        );
-
+        $sum_profit_list = sortProfitList($sum_profit_list);
+        
         return ['sum_profit_list' => $sum_profit_list];
     }
 ));

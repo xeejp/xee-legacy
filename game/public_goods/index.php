@@ -131,7 +131,7 @@ $pages[PAGE_TEST]->add(new SelectionUI('OK',
     call_user_func(function()use($_con) {
         return [
             ['id' => 'test01', 'description' => 'selectionUItest', 'options' => [['value' => '1', 'text' => 'select1'], ['value' => '2', 'text' => 'select2']]],
-            ['id' => 'test02', 'description' => 'selectionUItest2', 'options' => [['value' => '1', 'text' => 'select1']]],
+            ['id' => 'test02', 'description' => 'selectionUItest2', 'options' => [['value' => '1', 'text' => 'select1'], ['value' => '2', 'text' => 'select2'], ['value' => '2', 'text' => 'select2']]],
         ];
     }, $_con),
     function($value)use($_con) {

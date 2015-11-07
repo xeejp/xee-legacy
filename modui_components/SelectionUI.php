@@ -19,7 +19,7 @@ class SelectionUI extends ModUIComponent {
 {each list}
 {description}: 
 <select id="{_name}-selection-{id}">
-{html options}
+{each options}<option value="{value}">{text}</option>{/each}
 </select><br/>
 {/each} 
 <button id="{_name}-button">{button_title}</button>
@@ -31,22 +31,7 @@ TMPL;
     }
 
     public function get_values($name) {
-        $list = [];
-        foreach ( $this->list as $line ) {
-            $id = $line['id'];
-            $description = $line['description'];
-            $options = "";
-            foreach ( $line['options'] as $option ) {
-                $value = $option['value'];
-                $text = $option['text'];
-                $options .= '<option value="' . $value . '">' . 
-                            $text . '</option>';
-            }
-            $list[] = ['id' => $id, 'description' => $description, 'options' => $options];
-        }
-
-        dump('get_values: ' . dump($list), true);
-        return ['list' => $list, 'button_title' => $this->button_title];
+        return ['list' => $this->list, 'button_title' => $this->button_title];
     }
 
     public function get_scripts($name) {

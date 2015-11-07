@@ -14,12 +14,13 @@ $pages[PAGE_FINAL_RESULT]   = new NormalContainer();
 
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 Turn:{turn}<br/>
+Your ID:{id}<br/>
 You have {cur_pt} points.<br/>
 And, your sum of profit is {total_profit} points.<br/>
 What point do you invest?<br/>
 TMPL
 ,   function()use($_con) {
-        return [VAR_TURN => $_con->get(VAR_TURN, 0), VAR_CUR_PT => $_con->get_personal(VAR_CUR_PT), VAR_TOTAL_PROFIT => $_con->get_personal(VAR_TOTAL_PROFIT)];
+        return [VAR_TURN => $_con->get(VAR_TURN, 0), VAR_ID => $_con->get_personal(VAR_CUR_ID, 0), VAR_CUR_PT => $_con->get_personal(VAR_CUR_PT), VAR_TOTAL_PROFIT => $_con->get_personal(VAR_TOTAL_PROFIT)];
     }
 ));
 
@@ -57,6 +58,7 @@ TMPL
 
 $pages[PAGE_MIDDLE_RESULT]->add(new TemplateUI(<<<TMPL
 Turn:{turn}<br/>
+Your ID:{id}<br/>
 Middle Result<br/>
 {each invest_list}
 <span>ID:{id} Investment Point:{pt}</span><br/>
@@ -71,7 +73,7 @@ TMPL
             $invest_list[] = [VAR_ID => $id, 'pt' => $pt];
         } 
 
-        return ['turn' => $turn, 'invest_list' => $invest_list];
+        return ['turn' => $turn, 'id' => $_con->get_personal(VAR_CUR_ID, 0), 'invest_list' => $invest_list];
     }
 ));
 
@@ -103,6 +105,7 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
 
 $pages[PAGE_FINAL_RESULT]->add(new TemplateUI(<<<TMPL
 Final Result<br/>
+Your ID:{id}<br/>
 {each total_profit_list}
 <span>ID:{id} Total Profit:{pt}</span><br/>
 {/each}
@@ -117,7 +120,7 @@ TMPL
 
         $total_profit_list = sortProfitList($total_profit_list);
         
-        return ['total_profit_list' => $total_profit_list];
+        return ['id' => $_con->get_personal(VAR_CUR_ID, 0), 'total_profit_list' => $total_profit_list];
     }
 ));
 

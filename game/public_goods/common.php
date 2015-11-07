@@ -21,6 +21,7 @@ define('VAR_ACTIVE', 'active');
 define('VAR_STATUS', 'status');
 define('VAR_PAGE', 'page');
 define('VAR_TURN', 'turn');
+define('VAR_CUR_ID', 'cur_id');
 define('VAR_CUR_PT', 'cur_pt');
 define('VAR_TOTAL_PROFIT', 'total_profit');
 define('VAR_INVEST_PT', 'invest_pt');

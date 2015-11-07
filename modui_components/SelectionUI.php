@@ -4,12 +4,23 @@ class SelectionUI extends ModUIComponent {
     private $button_title, $list, $sending;
 
 
-    public function __construct($btn, $sending){
+    public function __construct($button_title, $list, $sending){
+        $this->button_title = $button_title;
+        $this->list         = $list;
+        $this->sending      = $sending;
     }
 
     public function get_templates($name){
         $template = <<<TMPL
+<form>
+{each list}
+<select>
+{description}{each menu}<option value='{value}'>{text}</option>{/each}
+</select>
+{/each}
+</form>
 TMPL;
+
         return [$this->get_template_name($name) => $template];
     }
 

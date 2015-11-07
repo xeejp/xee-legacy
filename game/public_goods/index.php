@@ -12,37 +12,6 @@ $pages[PAGE_MIDDLE_RESULT]  = new NormalContainer();
 $pages[PAGE_FINAL_RESULT]   = new NormalContainer();
     
 
-function setValueToAllUsers($con, $id, $val)
-{
-    foreach ( $con->participants as $participant ) {
-        $con->set_personal($id, $val, $participant[VAR_ID]);
-    }
-}
-
-function calcNumReadyUser($con) {
-    $num_ready_user = 0;
-    foreach ( $con->participants as $participant ) {
-        $is_ready = $con->get_personal(VAR_READY, false, $participant[VAR_ID]);
-        if ( $is_ready ) {
-            ++$num_ready_user;
-        }
-    }
-    
-    return $num_ready_user;
-}
-
-function redirectAllUsers($con, $page_id)
-{
-    foreach( $con->participants as $participant ) {
-        $con->set_personal(VAR_PAGE, $page_id, $participant[VAR_ID]); 
-    }
-}
-
-function redirectCurrentUser($con, $page_id)
-{
-    $con->set_personal(VAR_PAGE, $page_id);
-}
-
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 Turn:{turn}<br/>
 You have {cur_pt} points.<br/>
@@ -53,11 +22,6 @@ TMPL
         return [VAR_TURN => $_con->get(VAR_TURN, 0), VAR_CUR_PT => $_con->get_personal(VAR_CUR_PT), VAR_TOTAL_PROFIT => $_con->get_personal(VAR_TOTAL_PROFIT)];
     }
 ));
-
-function isReady($num_ready_user)
-{
-    return ($num_ready_user == NUM_PLAYER);
-}
 
 $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest', 
     function($value)use($_con) {
@@ -111,46 +75,6 @@ TMPL
     }
 ));
 
-function calcTotalInvestment($con)
-{
-    $total = 0;
-    foreach ( $con->participants as $participant ) {
-        $total += $con->get_personal(VAR_INVEST_PT, 0, $participant[VAR_ID]);
-    }
-
-    return $total;
-}
-
-function calcProfit($con, $total_investment)
-{
-    $cur_pt = $con->get_personal(VAR_CUR_PT, 20);
-    $invest_pt = $con->get_personal(VAR_INVEST_PT, 0);
-
-    return $cur_pt - $invest_pt + 0.4*$total_investment;
-}
-
-function setTotalProfit($con)
-{
-    $total_investment = calcTotalInvestment($con);
-    $profit = calcProfit($con, $total_investment);
-    $cur_total_profit = $con->get_personal(VAR_TOTAL_PROFIT, 0);
-    $con->set_personal(VAR_TOTAL_PROFIT, $cur_total_profit + $profit);
-}
-
-function inclementTurn($con)
-{
-    $turn = $con->get(VAR_TURN, 1);
-    ++$turn;
-    $con->set(VAR_TURN, $turn);
-
-    return $turn; 
-}
-
-function isFinish($turn)
-{
-    return ($turn > MAX_TURN);
-}
-
 $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
     function($con) {
         return 'OK';
@@ -176,16 +100,6 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
     }
 ));
 
-function sortProfitList($total_profit_list)
-{
-    usort($total_profit_list, 
-        function($a, $b) {
-            return ($a['pt'] < $b['pt']);
-        }    
-    );
-
-    return $total_profit_list;
-}
 
 $pages[PAGE_FINAL_RESULT]->add(new TemplateUI(<<<TMPL
 Final Result<br/>
@@ -214,7 +128,6 @@ $_con->add_component($_page = new PageContainer(
         return $_con->get_personal(VAR_PAGE, PAGE_WAIT); 
     }
 ));
-
 foreach ($pages as $key => $value) {
     $_page->add_page($key, $value);
 }

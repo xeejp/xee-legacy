@@ -13,7 +13,9 @@ $container->add(new OptionUI($_con, 'tax', $_con->get('tax', 0)));
 $container->add(new ParticipantsList($_con));
 $container->add(new ParticipantsManagement($_con));
 
-$container->add($modulator = new PageContainer($_con->get('status', 'wait')));
+$container->add($modulator = new PageContainer(function () use($_con) {
+    return $_con->get('status', 'wait');
+}));
 $modulator->add_page('wait', new MatchingButton($_con,
     function($con){
         $num = 0;

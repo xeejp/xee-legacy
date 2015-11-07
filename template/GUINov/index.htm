@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<!-- saved from url=(0029)http://localhost/new/XEE.html -->
+<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+	<meta charset="utf-8">
+	<title>XEE</title>
+	<style>
+		#toolbox {
+			min-width: 640px;
+			min-height: 240px;
+			margin: 0px;
+			padding: 0px;
+			background-color: #CCCCCC;
+			border: 1px solid #000000;
+			position: relative;
+		}
+
+		#dropbox {
+			min-width: 640px;
+			min-height: 480px;
+			margin: 0px;
+			padding: 0px;
+			background-color: #FFFFFF;
+			border: 1px solid #000000;
+			position: relative;
+		}
+
+		#databox {
+			min-width: 640px;
+			min-height: 240px;
+			margin: 0px;
+			padding: 0px;
+			background-color: #CCCCCC;
+			border: 1px solid #000000;
+			position: relative;
+		}
+
+		.tool {
+			min-width: 49px;
+			min-height: 49px;
+			border: 1px solid #000000;
+			border-radius: 5px;
+			margin: 0px;
+			padding: 0px;
+			text-align: center;
+			float: left;
+			position: relative;
+			background-color: rgba(0,128,128,0.5);
+			cursor: move;
+		}
+
+		.value {
+			min-width: 49px;
+			min-height: 24px;
+			border: 1px solid #000000;
+			border-radius: 5px;
+			margin: 0px;
+			padding: 0px;
+			text-align: center;
+			float: left;
+			position: relative;
+			background-color: rgba(1280,0,128,0.5);
+			cursor: move;
+		}
+		.gridbg {
+			background-image:
+				linear-gradient(transparent 90%, rgba(0,128,255,0.1) 50%),
+				linear-gradient(90deg, transparent 90%, rgba(0,128,255,0.1) 50%);
+			background-size: 10px 10px;
+			background-repeat: repeat;
+			background-position: 1px 1px;
+		}
+/*---選択されたときのcss---*/
+		.selected {
+			border-width: 3px;
+		}
+
+         span.demo1 {
+            background-color:yellow;
+            margin-right:20px;
+            padding:5px;
+         }
+
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="contextmenu.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		window.onload = function(){
+			var tools = [];
+			tools[tools.length] = { 'name': 'if', 'functionName': 'if', 'class': 'tool' };
+			tools[tools.length] = { 'name': 'else', 'functionName': 'else', 'class': 'tool' };
+			tools[tools.length] = { 'name': 'switch', 'functionName': 'switch', 'class': 'tool' };
+			tools[tools.length] = { 'name': 'case', 'functionName': 'case', 'class': 'tool' };
+			tools[tools.length] = { 'name': '$users', 'functionName': '$users', 'class': 'value' };
+			tools[tools.length] = { 'name': '$users[$i]', 'functionName': '$users[$i]', 'class': 'value' };
+			tools[tools.length] = { 'name': '$wtp', 'functionName': '$wtp', 'class': 'value' };
+			tools[tools.length] = { 'name': '$cost', 'functionName': '$cost', 'class': 'value' };
+			tools[tools.length] = { 'name': '$price', 'functionName': '$price', 'class': 'value' };
+			tools[tools.length] = { 'name': 'Loop', 'functionName': 'loop', 'class':'tool'};
+			tools[tools.length] = { 'name': 'Make', 'functionName': 'make', 'class': 'tool' };
+
+/*---toolboxをクラスごとに振り分けするための変数---*/
+			var div_box = '<tr></tr>'
+			var div_mem = [];
+
+/*-------------------------------------------------*/
+
+			for (var i = 0; i < tools.length; i++) {
+
+/*---toolをクラス別に振り分け---*/
+				if($.inArray(tools[i]['class'],div_mem) < 0){
+					div_mem.push(tools[i]['class']);
+					var  box= $(div_box).clone().attr('id','toolbox_' +tools[i]['class']);
+					$('#toolbox').append(box.prepend(tools[i]['class'] + '<br>'));
+				};
+
+/*------------------------------*/
+
+//---'toolbox'を'toolbox_' + tools[i]['class']に変更
+				f_createtool(tools[i]['name'],'toolbox_' + tools[i]['class'], tools[i]['functionName'], tools[i]['class']);
+			}
+
+			var data = document.getElementById('databox').innerHTML;
+			var drops = data.split(',');
+			for (var i = 1; i < drops.length; i++) {
+				f_createtool(drops[i]['name'], 'dropbox', drops[i]['functionName'], drops[i]['class']);
+			}
+
+/*---doropboxの右クリックメニュー---*/
+//dropbox右クリック追加の仕方
+//1:<body>内のdropBoxMenuに<li>を追加する
+//2:'dropboxMenuメニュー<li>のid' : function(t) {idの実行したい処理},　を下記のbindings内に追加
+
+	$('#dropbox').contextMenu('dropBoxMenu',{bindings: {
+				'peast': function(t) {peast(copy_data,event.pageX,event.pageY);},
+				'undo': function(t) {undo();},
+				'redo': function(t) {redo();},
+		}});
+/*----------------------------------*/
+		}
+
+		var toolnum = 0;
+		function f_setValue(toolid, value) {
+			var parentId = 	document.getElementById(toolid).parentNode.id;
+			var elm = document.getElementById(parentId);
+			var obj = document.createElement("input");
+			var index0 = elm.innerHTML.indexOf(">") + 1;
+			var preHTML = elm.innerHTML.substring(index0, elm.innerHTML.length);
+			document.getElementById(parentId).removeChild(document.getElementById(toolid));
+
+			obj.setAttribute('id', 'input_' + parentId + '_' + toolnum);
+			obj.setAttribute('onchange', 'f_setValue(\'input_' + parentId + '_' + toolnum + '\', this.value)');
+			obj.setAttribute('draggable', 'false');
+			obj.setAttribute('value', value);
+			obj.setAttribute('type', 'text');
+			obj.setAttribute('size', 1);
+
+			switch(elm.getAttribute('functionName')){
+				case 'loop':
+
+					elm.innerHTML = 'Loop';
+					elm.appendChild(obj);
+					elm.innerHTML += preHTML;
+					break;
+				case 'make':
+					elm.innerHTML = 'Make';
+					elm.appendChild(obj);
+					elm.innerHTML += preHTML;
+					break;
+				default:
+					elm.innerHTML = '';
+					break;
+			}
+
+			document.getElementById('databox').innerHTML = '<textarea cols=200 rows=10>' + document.getElementById('dropbox').innerHTML + '</textarea>';
+/*---inputが変更された時もundoの対象にする---*/
+			undo_set();
+/*-------------------------------------------*/
+			toolnum++;
+			return obj.getAttribute('id');
+		}
+		// ドロップ元1階層上
+		var pre_drop;
+		// ドロップ元一番上
+		var pre_drop_parent;
+		// ドロップ先1階層上
+		var pst_drop;
+		// ドロップ先一番上
+		var pst_drop_parent;
+
+/*---変数の追加---*/
+		//コピーデータ
+		var copy_data;
+		//アンドゥ用保存
+		var undo_data =[''];
+		//リドゥ用保存
+		var redo_data = [];
+/*------------------*/
+
+		var drag_elm_X;
+		var drag_elm_Y;
+		// ドラッグ開始時
+		function f_dragstart(evt){
+			evt.dataTransfer.setData("text", evt.target.id);
+			var scrollX = document.documentElement.scrollLeft || document.body.scrollLeft ;
+			var scrollY = document.documentElement.scrollTop || document.body.scrollTop ;
+			var mouseX = scrollX + evt.clientX;
+			var mouseY = scrollY + evt.clientY;
+			drag_elm_X = mouseX - evt.target.getBoundingClientRect().left;
+			drag_elm_Y = mouseY - evt.target.getBoundingClientRect().top;
+		}
+
+		// dropboxと重なっている時
+		function f_dragover(evt){
+			evt.preventDefault();
+		}
+
+		// ドロップ時
+		function f_drop(evt){
+			var id_name = evt.dataTransfer.getData("text");
+			var drag_elm = document.getElementById(id_name);
+
+			// dropした瞬間のマウスの座標を取得
+			var scrollX = document.documentElement.scrollLeft || document.body.scrollLeft ;
+			var scrollY = document.documentElement.scrollTop || document.body.scrollTop ;
+			var mouseX = scrollX + evt.clientX;
+			var mouseY = scrollY + evt.clientY;
+
+			pre_drop = document.getElementById(id_name).parentNode.id;
+			pre_drop_parent = id_name.slice(0, 7);
+			pst_drop = evt.target.id;
+			pst_drop_parent = evt.currentTarget.id;
+
+/*---inputにドロップされた場合---*/
+			var new_evt;
+			if(pst_drop.slice(0,5) == 'input') {pst_drop = $(evt.target).parent().attr('id');new_evt =$(evt.target).parent();}else{new_evt = $(event.target);};
+			if(pst_drop != 'dropbox'&& parentcheck(id_name,evt.target))return;
+/*-------------------------------*/
+
+			if(pst_drop_parent == pst_drop_parent.slice(0, 7)){
+				if(pre_drop_parent == 'toolbox' && pst_drop_parent == 'toolbox'){
+					// toolboxからtoolboxへ移動した時
+/*---不要？---*/
+					//evt.currentTarget.appendChild(drag_elm);
+/*--------*/
+
+				}else if(pre_drop_parent == 'dropbox' && pst_drop_parent == 'dropbox'){
+					// dropboxからdropboxへ移動した時
+/*---idの書き換え---*/
+					var numSplit = id_name.split('_');
+					$(drag_elm).attr('id',pst_drop + '_' + numSplit[numSplit.length - 1]);
+/*------------------*/
+					if(pst_drop != 'dropbox'){
+						// dropbox子孫要素へのドロップ
+						new_evt.append(drag_elm);
+						drag_elm.setAttribute('style', 'position: relative; left: 5px; top: 5px; margin: 4px; float: right;');
+					}else{
+						// dropbox本体へのドロップ
+						var new_tool_left = Math.floor(((mouseX - drag_elm_X) - document.getElementById('dropbox').getBoundingClientRect().left)/10)*10;
+						var new_tool_top = Math.floor(((mouseY - drag_elm_Y) - document.getElementById('dropbox').getBoundingClientRect().top)/10)*10;
+
+						evt.target.appendChild(drag_elm);
+						var new_tool = document.getElementById(drag_elm.id);
+
+						new_tool.setAttribute('style', 'position: absolute; left: ' + new_tool_left + 'px; top: ' + new_tool_top + 'px; float: right;');
+					}
+
+/*---redoのセット---*/
+					redo_data = [];
+/*------------------*/
+
+				}else if(pre_drop_parent == 'toolbox' && pst_drop_parent == 'dropbox'){
+					// toolboxからdropboxへ移動した時
+					if(pst_drop != 'dropbox'){
+						// toolboxからdropbox子孫要素へのドロップ
+						var new_toolid = f_createtool(drag_elm.innerHTML, pst_drop, drag_elm.getAttribute('functionName'), drag_elm.getAttribute('class'));
+						var new_tool = document.getElementById(new_toolid);
+
+						new_tool.setAttribute('style', 'position: relative; left: 5px; top: 5px; margin: 4px; float: right;');
+					}else{
+						var new_tool_left = Math.floor(((mouseX - drag_elm_X) - document.getElementById('dropbox').getBoundingClientRect().left)/10)*10;
+						var new_tool_top = Math.floor(((mouseY - drag_elm_Y) - document.getElementById('dropbox').getBoundingClientRect().top)/10)*10;
+
+						var new_toolid = f_createtool(drag_elm.innerHTML, pst_drop, drag_elm.getAttribute('functionName'), drag_elm.getAttribute('class'));
+						var new_tool = document.getElementById(new_toolid);
+
+						new_tool.setAttribute('style', 'position: absolute; left: ' + new_tool_left + 'px; top: ' + new_tool_top + 'px; float: right;');
+					}
+/*---右クリックメニュー追加とredoのセット,inputがfocusかどうか判定---*/
+					$("input").focus(function(){input_focus = true;}).blur(function(){input_focus = false;});
+					RcrickMenu(new_tool);
+					redo_data = [];
+/*------------------------------------------*/
+				}else if(pre_drop_parent == 'dropbox' && pst_drop_parent == 'toolbox'){
+					// dropboxからtoolboxへ移動した時
+					drag_elm.parentNode.removeChild(drag_elm);
+
+				}
+
+				evt.preventDefault();
+/*
+				// DetaBoxへ書き出す
+				var data = document.getElementById('dropbox');
+				var parentLeft = data.getBoundingClientRect().left;
+				var parentTop = data.getBoundingClientRect().top;
+				var json_stringify_allow = ["id", "innerHTML"];
+
+
+				document.getElementById('databox').innerHTML = '{<br />&nbsp;';
+				for (var i = 1; i < data.childNodes.length; i++) {
+					document.getElementById('databox').innerHTML += '"id' + i + '":';				
+					document.getElementById('databox').innerHTML += JSON.stringify(data.childNodes.item(i), json_stringify_allow);
+					document.getElementById('databox').innerHTML += data.childNodes.item(i).offsetLeft - parentLeft + ', ';
+					document.getElementById('databox').innerHTML += data.childNodes.item(i).offsetTop - parentTop;
+					document.getElementById('databox').innerHTML += ',<br />&nbsp;';
+				}
+				document.getElementById('databox').innerHTML += '<br />}<br />';
+*/
+				document.getElementById('databox').innerHTML = '<textarea cols=200 rows=10>' + document.getElementById('dropbox').innerHTML + '</textarea>';
+/*---undoにデータセット---*/
+				undo_set();
+/*------------------------*/
+			}
+		}
+
+/*---クリック時選択状態にする---*/
+		function f_click(evt){
+			var select = document.getElementById(evt.target.id);
+			if($(select).hasClass('item')){
+				$('.selected').removeClass('selected');
+				$(select).addClass('selected');
+			};
+		};
+/*------------------------------*/
+
+		function f_createtool(elmName, parentId, functionName, className){
+			var obj = document.createElement('div');
+			var elm = document.getElementById(parentId);
+
+			switch(functionName){
+				case 'loop':
+					obj.innerHTML = 'Loop<input name="count" id="input_' + parentId + '_' + toolnum + '" size="1" onchange="f_setValue(\'input_' + parentId + '_' + toolnum + '\', this.value)" value="">times';
+					obj.setAttribute('functionName', 'loop');
+					break;
+				case 'make':
+					obj.innerHTML = 'Make<input name="count" id="input_' + parentId + '_' + toolnum + '" size="1" onchange="f_setValue(\'input_' + parentId + '_' + toolnum + '\', this.value)" value="">groups';
+					obj.setAttribute('functionName', 'make');
+					break;
+				default:
+					obj.innerHTML = elmName;
+					obj.setAttribute('functionName', functionName);
+					break;
+			}
+			obj.setAttribute('className', className);
+			obj.setAttribute('class', className);
+			obj.setAttribute('id', parentId + '_' + toolnum);
+/*---追加---*/		
+			obj.setAttribute('onclick', 'f_click(event)');
+/*----------*/
+			obj.setAttribute('draggable', 'true');
+			obj.setAttribute('ondragstart', 'f_dragstart(event)');
+			obj.setAttribute('ondragover', 'f_dragover(event)');
+			obj.setAttribute('ondrop', 'f_drop(event)');
+
+			$(obj).addClass('item').removeClass('selected');
+
+/*---jQueryに書き換え---*/
+			$(elm).append(obj);
+			//elm.appendChild(obj);
+/*----------------------*/
+			toolnum++;
+			return obj.getAttribute('id');
+		};
+
+
+/*---新たに追加した関数---*/
+		//toolに右クリックメニューを追加
+		function RcrickMenu(box){
+			$(box).contextMenu('toolMenu',{bindings: {
+                		'copy': function(t) {copy(box);},
+			}});
+			if($(box).children('div').attr('id')){RcrickMenu($(box).children('div'))};
+		};
+
+		//データコピー
+		function copy(evt){
+			if(!confirm('copy?')) return;
+			if(evt.length  != 0){
+				copy_data = $(evt).clone();
+				$(copy_data).removeClass('selected');
+			};
+		};
+
+		//データペースト
+		function peast(data,eX,eY){
+			if(!confirm('peast?')) return;
+			if(data != null){
+				id_reset(data,'dropbox');
+				RcrickMenu(data);
+				var new_tool_left = eX - $('#dropbox').offset().left;
+				var new_tool_top =  eY - $('#dropbox').offset().top;
+				$(data).css({top: new_tool_top +'px' , left: new_tool_left + 'px',position : 'absolute'});
+				$('#dropbox').append(data.clone());
+				undo_set();
+			}else{alert('No data');};
+		};
+
+		//ペースト時のid書き換え
+		function id_reset(des,parentId){
+			$(des).attr('id',parentId + '_' + toolnum);
+			var selfId = $(des).attr('id');
+			if($(des).children('input').attr('id') != null){
+				$(des).children('input').attr('id','input_' + selfId );
+				$(des).children('input').attr('onchange',"f_setValue('input_" + selfId + "', this.value)");
+			};
+			toolnum++;
+			if($(des).children('div').attr('id') != null){
+				des = $(des).children('div');
+				var Id = selfId;
+				for(var i=0;i<des.length;i++)id_reset(des[i],Id);
+			};
+		};
+
+		//自身にドロップしてないかチェック
+		function parentcheck(myId,drp){
+			var drpId = $(drp).attr('id');
+			if(myId == drpId){return true;};
+			if($(drp).parent().attr('id') != undefined){
+				if(parentcheck(myId,$(drp).parent()))return true;
+			};
+			return false;
+		};
+
+		//アンドゥ
+		function undo_set(){
+			if(undo_data[0] != document.getElementById('dropbox').innerHTML){
+				undo_data.unshift(document.getElementById('dropbox').innerHTML);
+				undo_data[4] = null;
+			}
+		};
+		function undo(){
+			if(undo_data[1] != null){
+				redo_data.unshift(undo_data[0]);
+				$('#dropbox').empty();
+				$('#dropbox').append(undo_data[1]);
+				RcrickMenu($('#dropbox').children('div'));
+				undo_data.shift();
+				document.getElementById('databox').innerHTML = '<textarea cols=200 rows=10>' + document.getElementById('dropbox').innerHTML + '</textarea>';
+			}
+		};
+
+		//リドゥ
+		function redo(){
+			if(redo_data[0] != null){
+				$('#dropbox').empty();
+				$('#dropbox').append(redo_data[0]);
+				RcrickMenu($('#dropbox').children('div'));
+				redo_data.shift();
+				undo_set();
+				document.getElementById('databox').innerHTML = '<textarea cols=200 rows=10>' + document.getElementById('dropbox').innerHTML + '</textarea>';
+			};
+		};
+
+		//キーボード操作
+		var input_focus = false;
+		document.onkeydown = function(e) {
+			//ctrlキーと同時押し
+			if(event.ctrlKey && !input_focus){
+				keychar = String.fromCharCode(event.keyCode).toUpperCase();
+				switch(keychar){
+					case 'C': copy($('.selected'));
+						break;
+					case 'V': peast(copy_data,$('#dropbox').offset().left,$('#dropbox').offset().top);
+						break;
+					case 'Y': redo();
+						break;
+					case 'Z': undo();
+						break;
+				};
+			};
+		};
+/*---------------------------------------------*/
+
+	</script>
+</head>
+	<body>
+
+		<div>ToolBox</div>
+		<div id="toolbox" ondragover="f_dragover(event)" ondrop="f_drop(event)"></div>
+		<div>DropBox</div>
+		<div id="dropbox" class="gridbg" ondragover="f_dragover(event)" ondrop="f_drop(event)"></div>
+		<div>DataBox</div>
+		<div id="databox"></div>
+<!--新たに追加した部分（右クリックのメニュー）-->
+	<div class="contextMenu" id="toolMenu"><ul>
+		<li id="copy">Copy</li>
+	</ul></div>
+	<div class="contextMenu" id="dropBoxMenu"><ul>
+		<li id="peast">Peast</li>
+		<li id="undo">Undo</li>
+		<li id="redo">Redo</li>
+	</ul></div>
+<!---------------------------------------------->
+			<div id="databox"></div>	
+</body>
+</html>

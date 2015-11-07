@@ -20,7 +20,7 @@ And, your sum of profit is {total_profit} points.<br/>
 What point do you invest?<br/>
 TMPL
 ,   function()use($_con) {
-        return [VAR_TURN => $_con->get(VAR_TURN, 0), VAR_ID => $_con->get_personal(VAR_CUR_ID, 0), VAR_CUR_PT => $_con->get_personal(VAR_CUR_PT), VAR_TOTAL_PROFIT => $_con->get_personal(VAR_TOTAL_PROFIT)];
+        return ['turn' => $_con->get(VAR_TURN, 0), 'id' => $_con->get_personal(VAR_CUR_ID, 0), 'cur_pt' => $_con->get_personal(VAR_CUR_PT), 'total_profit' => $_con->get_personal(VAR_TOTAL_PROFIT)];
     }
 ));
 

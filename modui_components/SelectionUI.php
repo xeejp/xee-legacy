@@ -53,8 +53,9 @@ TMPL;
         $value = 'function(selector) { return { ';
         foreach ( $this->list as $list ) {
             $suffix = $list['id'];
-            $value .= $suffix . ': $(\'#\' + selector + \'-selection-' . $suffix . '\').val(), ';
+            $value .= '\'' . $suffix . '\': $(\'#\' + selector + \'-selection-' . $suffix . '\').val(), ';
         }
+        $value = rtrim($value, ', ');
         $value .= '}; }';
 
         $event = <<<'JS'

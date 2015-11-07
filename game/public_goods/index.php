@@ -10,6 +10,7 @@ $pages[PAGE_EXPERIMENT]     = new NormalContainer();
 $pages[PAGE_WAIT_ACTION]    = new NormalContainer();
 $pages[PAGE_MIDDLE_RESULT]  = new NormalContainer();
 $pages[PAGE_FINAL_RESULT]   = new NormalContainer();
+$pages[PAGE_TEST]           = new NormalContainer();
     
 
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
@@ -37,7 +38,8 @@ $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest',
 
         if ( isReady(calcNumReadyUser($_con)) ) {
             setValueToAllUsers($_con, VAR_READY, false);
-            redirectAllUsers($_con, PAGE_MIDDLE_RESULT);
+            //redirectAllUsers($_con, PAGE_MIDDLE_RESULT);
+            redirectAllUsers($_con, PAGE_TEST);
         } else {
             redirectCurrentUser($_con, PAGE_WAIT_ACTION);
         }
@@ -121,6 +123,19 @@ TMPL
         $total_profit_list = sortProfitList($total_profit_list);
         
         return ['id' => $_con->get_personal(VAR_CUR_ID, 0), 'total_profit_list' => $total_profit_list];
+    }
+));
+
+
+$pages[PAGE_TEST]->add(new SelectionUI('OK', 
+    call_user_func(function()use($_con) {
+        return [
+            ['id' => 'test01', 'description' => 'selectionUItest', 'options' => [['value' => '1', 'text' => 'select1']]],
+            ['id' => 'test02', 'description' => 'selectionUItest2', 'options' => [['value' => '2', 'text' => 'select1']]],
+        ];
+    }, $_con),
+    function($value)use($_con) {
+        dump('Selection inpu: ' . dump($value), true);
     }
 ));
 

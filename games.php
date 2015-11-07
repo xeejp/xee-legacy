@@ -13,6 +13,10 @@ $games = [
         'directory' => 'premade_test_auction',
         'name' => 'Parsed Test Auction',
     ],
+    [
+        'directory' => 'board',
+        'name' => 'Board',
+    ],
 ];
 
 foreach($games as $game){

@@ -38,7 +38,7 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
             }
 
             $con->set_personal(VAR_CUR_PT, 20, $participant[VAR_ID]);
-            $con->set_personal(VAR_SUM_PROFIT, 0, $participant[VAR_ID]);
+            $con->set_personal(VAR_TOTAL_PROFIT, 0, $participant[VAR_ID]);
             $con->set_personal(VAR_INVEST_PT, 0, $participant[VAR_ID]);
             $con->set_personal(VAR_PUNISH_PT, 0, $participant[VAR_ID]);
             $con->set_personal(VAR_PUNISH_TARGET, 0, $participant[VAR_ID]); 

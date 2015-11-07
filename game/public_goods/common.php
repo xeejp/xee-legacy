@@ -20,7 +20,7 @@ define('VAR_STATUS', 'status');
 define('VAR_PAGE', 'page');
 define('VAR_TURN', 'turn');
 define('VAR_CUR_PT', 'cur_pt');
-define('VAR_SUM_PROFIT', 'sum_profit');
+define('VAR_TOTAL_PROFIT', 'total_profit');
 define('VAR_INVEST_PT', 'invest_pt');
 define('VAR_PUNISH_PT', 'punish_pt');
 define('VAR_PUNISH_TARGET', 'punish_target');

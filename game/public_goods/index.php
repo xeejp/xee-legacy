@@ -46,11 +46,11 @@ function redirectCurrentUser($con, $page_id)
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 Turn:{turn}<br/>
 You have {cur_pt} points.<br/>
-And, your sum of profit is {sum_profit} points.<br/>
+And, your sum of profit is {total_profit} points.<br/>
 What point do you invest?<br/>
 TMPL
 ,   function()use($_con) {
-        return [VAR_TURN => $_con->get(VAR_TURN, 0), VAR_CUR_PT => $_con->get_personal(VAR_CUR_PT), VAR_SUM_PROFIT => $_con->get_personal(VAR_SUM_PROFIT)];
+        return [VAR_TURN => $_con->get(VAR_TURN, 0), VAR_CUR_PT => $_con->get_personal(VAR_CUR_PT), VAR_TOTAL_PROFIT => $_con->get_personal(VAR_TOTAL_PROFIT)];
     }
 ));
 
@@ -129,12 +129,12 @@ function calcProfit($con, $total_investment)
     return $cur_pt - $invest_pt + 0.4*$total_investment;
 }
 
-function setSumProfit($con)
+function setTotalProfit($con)
 {
-    $total = calcTotalInvestment($con);
-    $profit = calcProfit($con, $total);
-    $cur_sum_profit = $con->get_personal(VAR_SUM_PROFIT, 0);
-    $con->set_personal(VAR_SUM_PROFIT, $cur_sum_profit + $profit);
+    $total_investment = calcTotalInvestment($con);
+    $profit = calcProfit($con, $total_investment);
+    $cur_total_profit = $con->get_personal(VAR_TOTAL_PROFIT, 0);
+    $con->set_personal(VAR_TOTAL_PROFIT, $cur_total_profit + $profit);
 }
 
 function inclementTurn($con)
@@ -156,7 +156,7 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
         return 'OK';
     },
     function($con) {
-        setSumProfit($con);
+        setTotalProfit($con);
 
         $con->set_personal(VAR_READY, true);
         
@@ -197,7 +197,7 @@ TMPL
         $sum_profit_list = [];
         foreach ( $_con->participants as $participant ) {
             $id = $participant[VAR_ID];
-            $pt = $_con->get_personal(VAR_SUM_PROFIT, 0, $id);
+            $pt = $_con->get_personal(VAR_TOTAL_PROFIT, 0, $id);
             $sum_profit_list[] = ['id' => $id, 'pt' => $pt];
         } 
 

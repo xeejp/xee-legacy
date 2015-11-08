@@ -5,7 +5,7 @@
 // experiment settings
 define('EXP_NO', 'password');
 define('NUM_PLAYER', 2);
-define('MAX_TURN', 3);
+define('MAX_TURN', 2);
 
 // pages
 define('PAGE_WAIT', 'wait');
@@ -37,14 +37,14 @@ define('VAR_READY', 'ready');
 function setValueToAllUsers($con, $id, $val)
 {
     foreach ( $con->participants as $participant ) {
-        $con->set_personal($id, $val, $participant[VAR_ID]);
+        $con->set_personal($id, $val, strval($participant[VAR_ID]));
     }
 }
 
 function calcNumReadyUser($con) {
     $num_ready_user = 0;
     foreach ( $con->participants as $participant ) {
-        $is_ready = $con->get_personal(VAR_READY, false, $participant[VAR_ID]);
+        $is_ready = $con->get_personal(VAR_READY, false, strval($participant[VAR_ID]));
         if ( $is_ready ) {
             ++$num_ready_user;
         }
@@ -56,7 +56,7 @@ function calcNumReadyUser($con) {
 function redirectAllUsers($con, $page_id)
 {
     foreach( $con->participants as $participant ) {
-        $con->set_personal(VAR_PAGE, $page_id, $participant[VAR_ID]); 
+        $con->set_personal(VAR_PAGE, $page_id, strval($participant[VAR_ID])); 
     }
 }
 
@@ -74,7 +74,7 @@ function calcTotalInvestment($con)
 {
     $total = 0;
     foreach ( $con->participants as $participant ) {
-        $total += $con->get_personal(VAR_INVEST_PT, 0, $participant[VAR_ID]);
+        $total += $con->get_personal(VAR_INVEST_PT, 0, strval($participant[VAR_ID]));
     }
 
     return $total;

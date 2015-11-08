@@ -56,7 +56,7 @@ $pages[PAGE_PUNISHMENT]->add(new TemplateUI(<<<TMPL
 Turn:{turn}<br/>
 Your ID:{id}<br/>
 You have {punish_pt} points for punishment.<br/>
-What point do you use for punishment.<br/>
+What point do you use for punishment.<br/><br/>
 TMPL
 ,   function()use($_con) {
         return [
@@ -71,8 +71,17 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
     function()use($_con) {
         $list = [];
         foreach ( $_con->participants as $participant ) {
-            $id = $participant['id'];
-            $invest_pt = $_con->get_personal(VAR_INVEST_PT, 0, $id);
+            $id = $participant[VAR_ID]; 
+
+            $cur_id = $_con->get_personal(VAR_CUR_ID, 0);
+            dump('cur_id: ' . dump($cur_id) . ' id: ' . dump($id), true);
+
+            if ( strval($id) == strval($cur_id) ) {
+                dump('SKIPPED!!! cur_id: ' . dump($cur_id) . ' id: ' . dump($id), true); 
+                continue;
+            }
+
+            $invest_pt = $_con->get_personal(VAR_INVEST_PT, 0, strval($id));
             $description = 'ID:' . $id . ' Investment point:' . $invest_pt . ' ';
             $list[] = [
                 'id'            => $id,
@@ -83,17 +92,36 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
         return $list; 
     },
     function($value)use($_con) {
+        dump('[index.php punish] value: ' . dump($value), true);
+
         $total_punish = 0;
         foreach ( $value as $id => $punish_pt ) {
-            $total_punish += $punish_pt;
+            $pt = intval($punish_pt);
+            $total_punish += $pt;
         }
-        if ( $punish_pt < 0 || $punish_pt > 10 ) {
+        if ( $total_punish < 0 || $total_punish > 10 ) {
             return;
         }
 
+        $punish_pt = $_con->get_personal(VAR_PUNISH_PT, 0);
+        $_con->set_personal(VAR_PUNISH_PT, $punish_pt - $total_punish);
+
         foreach ( $value as $id => $punish_pt ) {
-            $received_punish_pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, $id);
-            $_con->set_personal(VAR_RECEIVED_PUNISH_PT, $received_punish_pt + $punish_pt*3, $id);  
+            $cur_id = $_con->get_personal(VAR_CUR_ID, 0);
+            if ( strval($id) == strval($cur_id) ) {
+                continue;
+            }
+            $pt = intval($punish_pt); 
+            $received_punish_pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id));
+            $received_punish_pt += 3*$pt;
+            dump('[index.php punish foreach] received_punish_pt:' . $received_punish_pt, true);
+
+            dump('begin: ' . $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 100, strval($id)), true);
+            $_con->set_personal(VAR_RECEIVED_PUNISH_PT, $received_punish_pt, strval($id));  
+            dump('end: ' . $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 100, strval($id)), true);
+
+            $received_punish_pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 100, strval($id));
+            dump('[index.php punish func]: cur_id:' . $_con->get_personal(VAR_CUR_ID, 0) . ' punish_id:' . $id . ' received_punish_pt:' . $received_punish_pt, true);
         }
 
         $_con->set_personal(VAR_READY, true); 
@@ -131,7 +159,7 @@ TMPL
         $punish_list = [];
         foreach ( $_con->participants as $participant ) {
             $id = $participant[VAR_ID];
-            $pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, $id);
+            $pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id));
             $punish_list[] = ['id' => $id, 'pt' => $pt];
         } 
 
@@ -147,11 +175,11 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
         $total_profit = $con->get_personal(VAR_TOTAL_PROFIT, 0);
         $punish_pt = $con->get_personal(VAR_PUNISH_PT, 0);
         $received_punish_pt = $con->get_personal(VAR_RECEIVED_PUNISH_PT, 0);
-        $con->set_personal(VAR_TOTAL_PROFIT, $total_profit - $punish_pt - $received_punish_pt);
+        $con->set_personal(VAR_TOTAL_PROFIT, $total_profit - (10 - $punish_pt) - $received_punish_pt);
 
         $con->set_personal(VAR_READY, true);
         if ( isReady(calcNumReadyUser($con)) ) {
-            $turn = inclementTurn($turn);
+            $turn = inclementTurn($con);
             if ( isFinish($turn) ) {
                 redirectAllUsers($con, PAGE_FINAL_RESULT); 
             } else {
@@ -178,7 +206,7 @@ TMPL
         $invest_list = [];
         foreach ( $_con->participants as $participant ) {
             $id = $participant[VAR_ID];
-            $pt = $_con->get_personal(VAR_INVEST_PT, 0, $id);
+            $pt = $_con->get_personal(VAR_INVEST_PT, 0, strval($id));
             $invest_list[] = [VAR_ID => $id, 'pt' => $pt];
         } 
 
@@ -224,7 +252,7 @@ TMPL
         $total_profit_list = [];
         foreach ( $_con->participants as $participant ) {
             $id = $participant[VAR_ID];
-            $pt = $_con->get_personal(VAR_TOTAL_PROFIT, 0, $id);
+            $pt = $_con->get_personal(VAR_TOTAL_PROFIT, 0, strval($id));
             $total_profit_list[] = ['id' => $id, 'pt' => $pt];
         } 
 

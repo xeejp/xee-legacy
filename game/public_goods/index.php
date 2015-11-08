@@ -10,7 +10,7 @@ $pages[PAGE_EXPERIMENT]     = new NormalContainer();
 $pages[PAGE_WAIT_ACTION]    = new NormalContainer();
 $pages[PAGE_MIDDLE_RESULT]  = new NormalContainer();
 $pages[PAGE_FINAL_RESULT]   = new NormalContainer();
-    
+
 
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 Turn:{turn}<br/>

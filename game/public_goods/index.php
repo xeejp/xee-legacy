@@ -28,6 +28,12 @@ TMPL
 
 $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest', 
     function($value)use($_con) {
+        $turn = inclementTurn($con);
+        setValueToAllUsers($con, VAR_CUR_PT, 20);
+        setValueToAllUsers($con, VAR_INVEST_PT, 0);
+        setValueToAllUsers($con, VAR_PUNISH_PT, 10);
+        setValueToAllUsers($con, VAR_RECEIVED_PUNISH_PT, 0);
+
         $invest_pt = intval($value);
         $cur_pt = $_con->get_personal(VAR_CUR_PT);
         if ( $invest_pt < 0 || $invest_pt > $cur_pt ) {
@@ -50,16 +56,54 @@ $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest',
 $pages[PAGE_PUNISHMENT]->add(new TemplateUI(<<<TMPL
 Turn:{turn}<br/>
 Your ID:{id}<br/>
-You have {cur_pt} points.<br/>
-And, your sum of profit is {total_profit} points.<br/>
+You have {punish_pt} points for punishment.<br/>
+What point do you use for punishment.<br/>
 TMPL
 ,   function()use($_con) {
         return [
             'turn'          => $_con->get(VAR_TURN, 0), 
             'id'            => $_con->get_personal(VAR_CUR_ID, 0), 
-            'cur_pt'        => $_con->get_personal(VAR_CUR_PT), 
-            'total_profit'  => $_con->get_personal(VAR_TOTAL_PROFIT)
+            'punish_pt'     => $_con->get_personal(VAR_PUNISH_PT), 
         ]; 
+    }
+));
+
+$pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
+    function()use($_con) {
+        $list = [];
+        foreach ( $_con->participants as $participant ) {
+            $id = $participant['id'];
+            $invest_pt = $_con->get_personal(VAR_INVEST_PT, 0, $id);
+            $description = 'ID:' . $id . ' Investment point:' . $invest_pt . ' ';
+            $list[] = [
+                'id'            => $id,
+                'description'   => $description,
+            ];
+        }
+
+        return $list; 
+    },
+    function($value)use($_con) {
+        $total_punish = 0;
+        foreach ( $value as $id => $punish_pt ) {
+            $total_punish += $punish_pt;
+        }
+        if ( $punish_pt < 0 || $punish_pt > 10 ) {
+            return;
+        }
+
+        foreach ( $value as $id => $punish_pt ) {
+            $received_punish_pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, $id);
+            $_con->set_personal(VAR_RECEIVED_PUNISH_PT, $received_punish_pt + $punish_pt*3, $id);  
+        }
+
+        $_con->set_personal(VAR_READY, true); 
+        if ( isReady(calcNumReadyUser($_con)) ) {
+            setValueToAllUsers($_con, VAR_READY, false);
+            redirectAllUsers($_con, PAGE_PUNISHMENT_RESULT);
+        } else {
+            redirectCurrentUser($_con, PAGE_WAIT_ACTION);
+        }
     }
 ));
 
@@ -75,7 +119,50 @@ TMPL
 ));
 
 
-$pages[PAGE_PUNISHMENT_RESULT]->add(new StaticUI('Punishment Result'));
+$pages[PAGE_PUNISHMENT_RESULT]->add(new TemplateUI(<<<TMPL
+Turn:{turn}<br/>
+Your ID:{id}<br/>
+Punishment Result<br/>
+{each punish_list}
+<span>ID:{id} Recieved Punishment Point:{pt}</span><br/>
+{/each}
+TMPL
+,   function()use($_con) {
+        $turn = $_con->get(VAR_TURN, 1);
+        $punish_list = [];
+        foreach ( $_con->participants as $participant ) {
+            $id = $participant[VAR_ID];
+            $pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, $id);
+            $punish_list[] = ['id' => $id, 'pt' => $pt];
+        } 
+
+        return ['turn' => $turn, 'id' => $_con->get_personal(VAR_CUR_ID, 0), 'punish_list' => $punish_list];
+    }
+));
+
+$pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
+    function($con) {
+        return 'OK';
+    },
+    function($con) {
+        $total_profit = $con->get_personal(VAR_TOTAL_PROFIT, 0);
+        $punish_pt = $con->get_personal(VAR_PUNISH_PT, 0);
+        $received_punish_pt = $con->get_personal(VAR_RECEIVED_PUNISH_PT, 0);
+        $con->set_personal(VAR_TOTAL_PROFIT, $total_profit - $punish_pt - $received_punish_pt);
+
+        $con->set_personal(VAR_READY, true);
+        if ( isReady(calcNumReadyUser($con)) ) {
+            if ( isFinish($turn) ) {
+                redirectAllUsers($con, PAGE_FINAL_RESULT); 
+            } else {
+                redirectAllUsers($con, PAGE_EXPERIMENT);
+            } 
+            setValueToAllUsers($con, VAR_READY, false);
+        } else {
+            redirectCurrentUser($con, PAGE_WAIT_ACTION);
+        }
+    }
+));
 
 
 $pages[PAGE_MIDDLE_RESULT]->add(new TemplateUI(<<<TMPL
@@ -107,16 +194,16 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
         setTotalProfit($con);
 
         $con->set_personal(VAR_READY, true);
-        
         if ( isReady(calcNumReadyUser($con)) ) {
-            $turn = inclementTurn($con);
-            if ( isFinish($turn) ) {
-                redirectAllUsers($con, PAGE_FINAL_RESULT); 
+            if ( isPunishPhase($con) ) {
+                redirectAllUsers($con, PAGE_PUNISHMENT);
             } else {
-                setValueToAllUsers($con, VAR_CUR_PT, 20);
-                setValueToAllUsers($con, VAR_INVEST_PT, 0);
-                redirectAllUsers($con, PAGE_EXPERIMENT);
-            } 
+                if ( isFinish($turn) ) {
+                    redirectAllUsers($con, PAGE_FINAL_RESULT); 
+                } else {
+                    redirectAllUsers($con, PAGE_EXPERIMENT);
+                } 
+            }
             setValueToAllUsers($con, VAR_READY, false);
         } else {
             redirectCurrentUser($con, PAGE_WAIT_ACTION);

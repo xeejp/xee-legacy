@@ -26,10 +26,10 @@ define('VAR_TURN', 'turn');
 define('VAR_PUNISH_PHASE', 'punish_phase');
 define('VAR_CUR_ID', 'cur_id');
 define('VAR_CUR_PT', 'cur_pt');
+define('VAR_PUNISH_PT', 'punish_pt');
 define('VAR_TOTAL_PROFIT', 'total_profit');
 define('VAR_INVEST_PT', 'invest_pt');
-define('VAR_PUNISH_PT', 'punish_pt');
-define('VAR_PUNISH_TARGET', 'punish_target');
+define('VAR_RECEIVED_PUNISH_PT', 'received_punish_pt');
 define('VAR_READY', 'ready');
 
 
@@ -107,7 +107,7 @@ function inclementTurn($con)
 
 function isFinish($turn)
 {
-    return ($turn > MAX_TURN);
+    return ($turn >= MAX_TURN);
 }
 
 function sortProfitList($total_profit_list)

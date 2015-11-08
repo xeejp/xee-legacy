@@ -57,26 +57,25 @@ TMPL
         return [
             'turn'          => $_con->get(VAR_TURN, 0), 
             'id'            => $_con->get_personal(VAR_CUR_ID, 0), 
-            'punish_pt'     => $_con->get_personal(VAR_PUNISH_PT), 
+            'punish_pt'     => $_con->get_personal(VAR_CUR_PUNISH_PT), 
         ]; 
     }
 ));
 
 $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
     function()use($_con) {
+        dump('[index.php new MultiSendingUI] called begin', true);
+
         $list = [];
         foreach ( $_con->participants as $participant ) {
             $id = $participant[VAR_ID]; 
-
-            $cur_id = $_con->get_personal(VAR_CUR_ID, 0);
-            dump('cur_id: ' . dump($cur_id) . ' id: ' . dump($id), true);
-
-            if ( strval($id) == strval($cur_id) ) {
-                dump('SKIPPED!!! cur_id: ' . dump($cur_id) . ' id: ' . dump($id), true); 
+            if ( isCurrentUser($_con, $id) ) {
+                $cur_id = $_con->get_personal(VAR_CUR_ID); 
+                dump('SKIPPED!!! cur_id: ' . strval($cur_id) . ' id: ' . strval($id), true); 
                 continue;
             }
 
-            $invest_pt = $_con->get_personal(VAR_INVEST_PT, 0, strval($id));
+            $invest_pt = $_con->get_personal(VAR_INVEST_PT, 100, strval($id));
             $description = 'ID:' . $id . ' Investment point:' . $invest_pt . ' ';
             $list[] = [
                 'id'            => $id,
@@ -84,28 +83,25 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
             ];
         }
 
+        dump('[index.php new MultiSendingUI] called end', true);
+
         return $list; 
     },
     function($value)use($_con) {
-        dump('[index.php punish] value: ' . dump($value), true);
+        dump('[index.php page_punish] value: ' . dump($value), true);
 
-        $total_punish = 0;
-        foreach ( $value as $id => $punish_pt ) {
-            $pt = intval($punish_pt);
-            $total_punish += $pt;
-        }
+        $total_punish = calcTotalPunishment($value);
         if ( $total_punish < 0 || $total_punish > 10 ) {
             return;
         }
 
-        $punish_pt = $_con->get_personal(VAR_PUNISH_PT, 0);
-        $_con->set_personal(VAR_PUNISH_PT, $punish_pt - $total_punish);
+        $_con->set_personal(VAR_PUNISH_PT, $total_punish);
 
         foreach ( $value as $id => $punish_pt ) {
-            $cur_id = $_con->get_personal(VAR_CUR_ID, 0);
-            if ( strval($id) == strval($cur_id) ) {
+            if ( isCurrentUser($_con, $id) ) {
                 continue;
             }
+
             $pt = intval($punish_pt); 
             $received_punish_pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id));
             $received_punish_pt += 3*$pt;
@@ -113,10 +109,10 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
 
             dump('begin: ' . $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 100, strval($id)), true);
             $_con->set_personal(VAR_RECEIVED_PUNISH_PT, $received_punish_pt, strval($id));  
-            dump('end: ' . $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 100, strval($id)), true);
+            dump('end: ' . $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 100, strval($id)), true); 
 
-            $received_punish_pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 100, strval($id));
-            dump('[index.php punish func]: cur_id:' . $_con->get_personal(VAR_CUR_ID, 0) . ' punish_id:' . $id . ' received_punish_pt:' . $received_punish_pt, true);
+            $received_punish_pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id));
+            dump('[index.php punish func]: cur_id:' . $_con->get_personal(VAR_CUR_ID) . ' punish_target_id:' . $id . ' target_received_punish_pt:' . $received_punish_pt, true);
         }
 
         $_con->set_personal(VAR_READY, true); 
@@ -158,7 +154,7 @@ TMPL
             $punish_list[] = ['id' => $id, 'pt' => $pt];
         } 
 
-        return ['turn' => $turn, 'id' => $_con->get_personal(VAR_CUR_ID, 0), 'punish_list' => $punish_list];
+        return ['turn' => $turn, 'id' => $_con->get_personal(VAR_CUR_ID), 'punish_list' => $punish_list];
     }
 ));
 
@@ -167,10 +163,10 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
         return 'OK';
     },
     function($con) {
-        $total_profit = $con->get_personal(VAR_TOTAL_PROFIT, 0);
-        $punish_pt = $con->get_personal(VAR_PUNISH_PT, 0);
-        $received_punish_pt = $con->get_personal(VAR_RECEIVED_PUNISH_PT, 0);
-        $con->set_personal(VAR_TOTAL_PROFIT, $total_profit - (10 - $punish_pt) - $received_punish_pt);
+        $total_profit = $con->get_personal(VAR_TOTAL_PROFIT);
+        $punish_pt = $con->get_personal(VAR_PUNISH_PT);
+        $received_punish_pt = $con->get_personal(VAR_RECEIVED_PUNISH_PT);
+        $con->set_personal(VAR_TOTAL_PROFIT, $total_profit - $punish_pt - $received_punish_pt);
 
         $con->set_personal(VAR_READY, true);
         if ( isReady(calcNumReadyUser($con)) ) {
@@ -179,8 +175,9 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
                 redirectAllUsers($con, PAGE_FINAL_RESULT); 
             } else {
                 setValueToAllUsers($con, VAR_CUR_PT, 20);
+                setValueToAllUsers($con, VAR_CUR_PUNISH_PT, 10);
                 setValueToAllUsers($con, VAR_INVEST_PT, 0);
-                setValueToAllUsers($con, VAR_PUNISH_PT, 10);
+                setValueToAllUsers($con, VAR_PUNISH_PT, 0);
                 setValueToAllUsers($con, VAR_RECEIVED_PUNISH_PT, 0);
 
                 redirectAllUsers($con, PAGE_EXPERIMENT);
@@ -232,7 +229,7 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
                 } else {
                     setValueToAllUsers($con, VAR_CUR_PT, 20);
                     setValueToAllUsers($con, VAR_INVEST_PT, 0);
-                    setValueToAllUsers($con, VAR_PUNISH_PT, 10);
+                    setValueToAllUsers($con, VAR_CUR_PUNISH_PT, 10);
                     setValueToAllUsers($con, VAR_RECEIVED_PUNISH_PT, 0);
 
                     redirectAllUsers($con, PAGE_EXPERIMENT);

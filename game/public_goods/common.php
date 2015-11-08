@@ -26,9 +26,10 @@ define('VAR_TURN', 'turn');
 define('VAR_PUNISH_PHASE', 'punish_phase');
 define('VAR_CUR_ID', 'cur_id');
 define('VAR_CUR_PT', 'cur_pt');
-define('VAR_PUNISH_PT', 'punish_pt');
+define('VAR_CUR_PUNISH_PT', 'cur_punish_pt');
 define('VAR_TOTAL_PROFIT', 'total_profit');
 define('VAR_INVEST_PT', 'invest_pt');
+define('VAR_PUNISH_PT', 'punish_pt');
 define('VAR_RECEIVED_PUNISH_PT', 'received_punish_pt');
 define('VAR_READY', 'ready');
 
@@ -126,3 +127,21 @@ function isPunishPhase($con)
     return $con->get(VAR_PUNISH_PHASE, false);
 }
 
+function isCurrentUser($con, $id)
+{
+    $cur_id = $con->get_personal(VAR_CUR_ID); 
+    dump('[common isCurrentUser] id:' . strval($id) . ' cur_id:' . strval($cur_id), true);
+
+    return ( strval($id) == strval($cur_id) );
+}
+
+function calcTotalPunishment($value)
+{
+    $total_punish = 0;
+    foreach ( $value as $id => $punish_pt ) {
+        $pt = intval($punish_pt);
+        $total_punish += $pt;
+    }
+    
+    return $total_punish;
+}

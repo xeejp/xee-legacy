@@ -40,14 +40,15 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
 
             $con->set_personal(VAR_CUR_ID, $id, strval($id));
             $con->set_personal(VAR_CUR_PT, 20, strval($id));
-            $con->set_personal(VAR_PUNISH_PT, 10, strval($id));
+            $con->set_personal(VAR_CUR_PUNISH_PT, 20, strval($id));
             $con->set_personal(VAR_TOTAL_PROFIT, 0, strval($id));
             $con->set_personal(VAR_INVEST_PT, 0, strval($id));
+            $con->set_personal(VAR_PUNISH_PT, 10, strval($id));
             $con->set_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id)); 
             $con->set_personal(VAR_READY, false, strval($id));
         }
         $con->set(VAR_TURN, 1);
-        $con->set(VAR_PUNISH_PHASE, false);
+        $con->set(VAR_PUNISH_PHASE, true);
         $con->set(VAR_PAGE, 'ready');
 
         return $result;

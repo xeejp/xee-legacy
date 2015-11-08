@@ -14,6 +14,7 @@ define('PAGE_EXPERIMENT', 'experiment');
 define('PAGE_WAIT_ACTION', 'waitAction');
 define('PAGE_MIDDLE_RESULT', 'middleResult');
 define('PAGE_FINAL_RESULT', 'finalResult');
+define('PAGE_TEST', 'uiTest');
 
 // variables
 define('VAR_ID', 'id');

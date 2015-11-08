@@ -1,0 +1,107 @@
+<html>
+<head>
+</head>
+<body>
+<script>
+var str = '<div functionname="if" id="dropbox_11" class="tool" left="70px" top="90px">if<div functionname="else" id="dropbox_11_12" class="tool">else<div functionname="switch" id="dropbox_11_12_13" class="tool">switch</div><div functionname="case" id="dropbox_11_12_14" class="tool">case</div></div><div functionname="hensu" id="dropbox_15" class="tool">hensu</div><div functionname="hensu2" id="dropbox_16" class="tool">hensu2</div></div>';
+    var rep6 = new Object();
+    /*var str_copy = str;
+    var count_array = new Array();
+    count_array[0] = 0;
+    count_array[1] = 0;
+    count_array[2] = 0;
+    count_array[3] = 0;*/
+    var contact1 = new Object();
+    /*var max_deep = 0;*/
+    /*count_div(str_copy);*/
+    rep1 = str.match(/functionname="([^"]+)/)[1];
+    rep2 = str.match(/id="([^"]+)/)[1];
+    rep3 = str.match(/class="([^"]+)/)[1];
+    rep4 = str.match(/left="([^"]+)/)[1];
+    rep5 = str.match(/top="([^"]+)/)[1];
+    contact1['functionname'] = rep1;
+    contact1['id'] = rep2;
+    contact1['class'] = rep3;
+    contact1['left'] = rep4;
+    contact1['top'] = rep5;
+    str = str.substr(str.search(">" + rep1) + rep1.length + 1);
+    contact1['nest'] = func();
+    document.write(JSON.stringify(contact1));
+    function func(){
+        var rep1_;
+        var rep2_;
+        var rep3_;
+        var contactArray = new Array();
+        while(true){
+            var searchIndexDiv = str.search("<div");
+            var searchIndexEndDiv = str.search("</div>");
+            if(searchIndexDiv == -1 && searchIndexEndDiv == -1){
+                break;
+            }
+            if(searchIndexDiv == -1){
+                searchIndexDiv = 1000;
+            }
+            if(searchIndexDiv > searchIndexEndDiv){
+                str = str.substr(searchIndexEndDiv + 5);
+                break;
+            }
+            var contact = new Object();
+            rep1_ = str.match(/functionname="([^"]+)/)[1];
+            rep2_ = str.match(/id="([^"]+)/)[1];
+            rep3_ = str.match(/class="([^"]+)/)[1];
+            contact['functionname'] = rep1_;
+            contact['id'] = rep2_;
+            contact['class'] = rep3_;
+            str = str.substr(str.search(">" + rep1_) + rep1_.length + 1);
+            var searchIndexDiv = str.search("<div");
+            var searchIndexEndDiv = str.search("</div>");
+            if(searchIndexDiv == -1){
+                searchIndexDiv = 1000;
+            }
+            if(searchIndexDiv == -1 && searchIndexEndDiv == -1){
+                break;
+            }
+            if(searchIndexDiv < searchIndexEndDiv){ 
+                //str = str.substr(str.search(">" + rep1_) + rep1_.length + 1);
+                contact['nest'] = func();
+            }else{
+                str = str.substr(searchIndexEndDiv + 5);
+            }
+            contactArray.push(contact);
+        }
+        if(contactArray.length == 0){
+            return null;
+        }
+        return contactArray;
+    }
+
+    /*function count_div(str1){
+        var len = 5;
+        var count = 0;
+        while(str1.length > len){
+            var searchIndexDiv = str1.search("<div");
+            var searchIndexEndDiv = str1.search("</div>");
+            if(searchIndexDiv == -1){
+                searchIndexDiv = 1000;   
+            }
+            if(searchIndexDiv < searchIndexEndDiv){
+                count_array[count]++;
+                count++;
+                str1 = str1.substr(searchIndexDiv + 5);
+            }else{
+                max_deep = count + 1;
+                count--;
+                str1 = str1.substr(searchIndexEndDiv + 5);
+            }
+            for(var i = 0;i < 2;i++){
+            }
+        }
+    }*/
+</script>
+</body>
+</html>
+<script>
+</script>
+
+<script>
+    </script>

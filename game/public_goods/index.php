@@ -10,8 +10,7 @@ $pages[PAGE_EXPERIMENT]     = new NormalContainer();
 $pages[PAGE_WAIT_ACTION]    = new NormalContainer();
 $pages[PAGE_MIDDLE_RESULT]  = new NormalContainer();
 $pages[PAGE_FINAL_RESULT]   = new NormalContainer();
-$pages[PAGE_TEST]           = new NormalContainer();
-    
+
 
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 Turn:{turn}<br/>
@@ -38,8 +37,7 @@ $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest',
 
         if ( isReady(calcNumReadyUser($_con)) ) {
             setValueToAllUsers($_con, VAR_READY, false);
-            // redirectAllUsers($_con, PAGE_MIDDLE_RESULT);
-            redirectAllUsers($_con, PAGE_TEST);
+            redirectAllUsers($_con, PAGE_MIDDLE_RESULT);
         } else {
             redirectCurrentUser($_con, PAGE_WAIT_ACTION);
         }
@@ -123,19 +121,6 @@ TMPL
         $total_profit_list = sortProfitList($total_profit_list);
         
         return ['id' => $_con->get_personal(VAR_CUR_ID, 0), 'total_profit_list' => $total_profit_list];
-    }
-));
-
-$pages[PAGE_TEST]->add(new MultiSendingUI('OK',
-    call_user_func(function($con) {
-        return [
-            ['id' => 'test', 'description' => 'MultiSendindUITest0'],
-            ['id' => 'testt', 'description' => 'MultiSendindUITest1'],
-            ['id' => 'testtt', 'description' => 'MultiSendindUITest2'],
-        ];
-    }, $_con),
-    function($value)use($_con) {
-        dump('[index.php] value: ' . dump($value), true);
     }
 ));
 

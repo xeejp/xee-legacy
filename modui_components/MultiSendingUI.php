@@ -12,23 +12,26 @@ class MultiSendingUI extends ModUIComponent {
     }
 
     public function get_templates($name) {
-        $template = <<<TMPL
-{each list}{description}: <input id="{_name}-{id} type="text" value=""><br/>{/each}
-<button id="{_name}-button">{button_title}</button><br/>
-TMPL;
-
-        dump('[MultiSendingUI get_templates] template: ' . dump($template), true);
+        $list = call_user_func($this->list);
+        $template = "";
+        foreach ( $list as $line ) {
+            $id = $line['id'];
+            $desc = $line['description'];
+            $template .= $desc . ': <input id="{_name}-' . $id . '" type="text"><br/>';
+        }
+        $template .= '<button id="{_name}-button">{button_title}</button><br/>';
 
         return [$this->get_template_name($name) => $template];
     }
 
     public function get_values($name) {
-        return ['list' => $this->list, 'button_title' => $this->button_title];
+        return ['button_title' => $this->button_title];
     }
 
     public function get_scripts($name){
+        $list = call_user_func($this->list);
         $value = 'function(selector) { return { ';
-        foreach ( $this->list as $line ) {
+        foreach ( $list as $line ) {
             $id = $line['id'];
             $value .= $id . ': $(\'#\' + selector + \'-' . $id . '\').val(), ';
         }
@@ -41,16 +44,10 @@ function(selector, update) {
 }
 JS;
 
-        dump('[MultiSendingUI get_scripts] value: ' . dump($value), true);
-        dump('[MultiSendingUI get_scripts] event: ' . dump($event), true);
-
         return ['value' => $value, 'event' => $event];
     }
 
     public function input($name, $value){
-        dump('[MultiSendingUI input] name: ' . dump($name), true);
-        dump('[MultiSendingUI input] value: ' . dump($value), true);
-
         call_user_func($this->sending, $value);
     }
 

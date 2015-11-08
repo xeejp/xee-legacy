@@ -47,7 +47,7 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
             $con->set_personal(VAR_READY, false, strval($id));
         }
         $con->set(VAR_TURN, 1);
-        $con->set(VAR_PUNISH_PHASE, true);
+        $con->set(VAR_PUNISH_PHASE, false);
         $con->set(VAR_PAGE, 'ready');
 
         return $result;

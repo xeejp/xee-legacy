@@ -7,11 +7,7 @@ class SelectionUI extends ModUIComponent {
     public function __construct($button_title, $list, $sending) {
         $this->button_title = $button_title;
         $this->list         = $list;
-        $this->sending      = $sending;
-
-        // dump('button_title: ' . dump($this->button_title), true);
-        // dump('list: ' . dump($this->list), true);
-        // dump('sending: ' . dump($this->sending), true);
+        $this->sending      = $sending; 
     }
 
     public function get_templates($name) {
@@ -25,8 +21,6 @@ class SelectionUI extends ModUIComponent {
 <button id="{_name}-button">{button_title}</button>
 TMPL;
 
-        dump('template: ' . dump($template), true);
-
         return [$this->get_template_name($name) => $template];
     }
 
@@ -35,6 +29,7 @@ TMPL;
     }
 
     public function get_scripts($name) {
+        /*
         $value = 'function(selector) { return { ';
         foreach ( $this->list as $list ) {
             $suffix = $list['id'];
@@ -42,10 +37,19 @@ TMPL;
         }
         $value = rtrim($value, ', ');
         $value .= '}; }';
+         */
+        $value = <<<'JS'
+function(selector) {
+    return {
+        'test01': $("#" + selector + "-selection-test01").val(),
+        'test02': $("#" + selector + "-selection-test02").val()
+    };
+}
+JS;
 
         $event = <<<'JS'
 function(selector, update) { 
-    $(document).on("click", '#' + selector + '-button', update);
+    $(document).on("click", "#" + selector + "-button", update);
 }
 JS;
 
@@ -58,6 +62,8 @@ JS;
     }
 
     public function input($name, $value) {
+        dump('debug_backtrace: ' . serialize(debug_backtrace()), true);
+
         dump('click_name:' . dump($name), true);
         dump('click_input: ' . dump($value), true);
         call_user_func($this->sending, $value);

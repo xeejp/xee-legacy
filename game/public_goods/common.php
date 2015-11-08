@@ -11,7 +11,9 @@ define('MAX_TURN', 3);
 define('PAGE_WAIT', 'wait');
 define('PAGE_REJECT', 'reject');
 define('PAGE_EXPERIMENT', 'experiment');
+define('PAGE_PUNISHMENT', 'punishment');
 define('PAGE_WAIT_ACTION', 'waitAction');
+define('PAGE_PUNISHMENT_RESULT', 'punishmentResult');
 define('PAGE_MIDDLE_RESULT', 'middleResult');
 define('PAGE_FINAL_RESULT', 'finalResult');
 
@@ -21,6 +23,7 @@ define('VAR_ACTIVE', 'active');
 define('VAR_STATUS', 'status');
 define('VAR_PAGE', 'page');
 define('VAR_TURN', 'turn');
+define('VAR_PUNISH_PHASE', 'punish_phase');
 define('VAR_CUR_ID', 'cur_id');
 define('VAR_CUR_PT', 'cur_pt');
 define('VAR_TOTAL_PROFIT', 'total_profit');
@@ -116,5 +119,10 @@ function sortProfitList($total_profit_list)
     );
 
     return $total_profit_list;
+}
+
+function isPunishPhase($con)
+{
+    return $con->get(VAR_PUNISH_PHASE, false);
 }
 

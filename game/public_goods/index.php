@@ -4,12 +4,14 @@ require 'common.php';
 
 // page settings
 $pages = [];
-$pages[PAGE_REJECT]         = new RedirectUI(_URL, $_con->get_personal(VAR_PAGE, PAGE_WAIT) == PAGE_REJECT);
-$pages[PAGE_WAIT]           = new StaticUI('<br/><br/><center>Waiting now</center>');
-$pages[PAGE_EXPERIMENT]     = new NormalContainer();
-$pages[PAGE_WAIT_ACTION]    = new NormalContainer();
-$pages[PAGE_MIDDLE_RESULT]  = new NormalContainer();
-$pages[PAGE_FINAL_RESULT]   = new NormalContainer();
+$pages[PAGE_REJECT]             = new RedirectUI(_URL, $_con->get_personal(VAR_PAGE, PAGE_WAIT) == PAGE_REJECT);
+$pages[PAGE_WAIT]               = new StaticUI('<br/><br/><center>Waiting now</center>');
+$pages[PAGE_EXPERIMENT]         = new NormalContainer();
+$pages[PAGE_PUNISHMENT]         = new NormalContainer();
+$pages[PAGE_WAIT_ACTION]        = new NormalContainer();
+$pages[PAGE_PUNISHMENT_RESULT]  = new NormalContainer();
+$pages[PAGE_MIDDLE_RESULT]      = new NormalContainer();
+$pages[PAGE_FINAL_RESULT]       = new NormalContainer();
 
 
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
@@ -45,6 +47,23 @@ $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest',
 ));
 
 
+$pages[PAGE_PUNISHMENT]->add(new TemplateUI(<<<TMPL
+Turn:{turn}<br/>
+Your ID:{id}<br/>
+You have {cur_pt} points.<br/>
+And, your sum of profit is {total_profit} points.<br/>
+TMPL
+,   function()use($_con) {
+        return [
+            'turn'          => $_con->get(VAR_TURN, 0), 
+            'id'            => $_con->get_personal(VAR_CUR_ID, 0), 
+            'cur_pt'        => $_con->get_personal(VAR_CUR_PT), 
+            'total_profit'  => $_con->get_personal(VAR_TOTAL_PROFIT)
+        ]; 
+    }
+));
+
+
 $pages[PAGE_WAIT_ACTION]->add(new TemplateUI(<<<TMPL
 Waiting for {num_not_ready_user} users...<br/>
 TMPL
@@ -54,6 +73,9 @@ TMPL
         return ['num_not_ready_user' => $num_not_ready_user];
     }
 ));
+
+
+$pages[PAGE_PUNISHMENT_RESULT]->add(new StaticUI('Punishment Result'));
 
 
 $pages[PAGE_MIDDLE_RESULT]->add(new TemplateUI(<<<TMPL

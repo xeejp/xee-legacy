@@ -107,7 +107,7 @@ function inclementTurn($con)
 
 function isFinish($turn)
 {
-    return ($turn >= MAX_TURN);
+    return ($turn > MAX_TURN);
 }
 
 function sortProfitList($total_profit_list)

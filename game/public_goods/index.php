@@ -28,11 +28,10 @@ TMPL
 
 $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest', 
     function($value)use($_con) {
-        $turn = inclementTurn($con);
-        setValueToAllUsers($con, VAR_CUR_PT, 20);
-        setValueToAllUsers($con, VAR_INVEST_PT, 0);
-        setValueToAllUsers($con, VAR_PUNISH_PT, 10);
-        setValueToAllUsers($con, VAR_RECEIVED_PUNISH_PT, 0);
+        setValueToAllUsers($_con, VAR_CUR_PT, 20);
+        setValueToAllUsers($_con, VAR_INVEST_PT, 0);
+        setValueToAllUsers($_con, VAR_PUNISH_PT, 10);
+        setValueToAllUsers($_con, VAR_RECEIVED_PUNISH_PT, 0);
 
         $invest_pt = intval($value);
         $cur_pt = $_con->get_personal(VAR_CUR_PT);
@@ -152,6 +151,7 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
 
         $con->set_personal(VAR_READY, true);
         if ( isReady(calcNumReadyUser($con)) ) {
+            $turn = inclementTurn($turn);
             if ( isFinish($turn) ) {
                 redirectAllUsers($con, PAGE_FINAL_RESULT); 
             } else {
@@ -198,6 +198,7 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
             if ( isPunishPhase($con) ) {
                 redirectAllUsers($con, PAGE_PUNISHMENT);
             } else {
+                $turn = inclementTurn($con);
                 if ( isFinish($turn) ) {
                     redirectAllUsers($con, PAGE_FINAL_RESULT); 
                 } else {

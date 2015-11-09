@@ -83,6 +83,9 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
         return $list; 
     }, $_con),
     function($value)use($_con) {
+        dump('[index.php new MultiSendingUI] sending is called.', true);
+        dump('[index.php new MultiSendingUI] value:' . dump($value), true);
+
         $total_punish = calcTotalPunishment($value);
         if ( $total_punish < 0 || $total_punish > 10 ) {
             return;

@@ -5,8 +5,8 @@ $pages = [];
 $pages['reject'] = new RedirectUI(_URL, $_con->get_personal('page', 'wait') == 'reject');
 $pages['wait']   = new StaticUI('<br/><br/><center>Waiting now</center>');
 $pages['experiment'] = new NormalContainer();
-$pages['result'] = new TemplateUI(<<<TMPL
-最終利得 : {score}円<br/>
+$pages['result'] = new TemplateUI(<<<'TMPL'
+Your profit : ${score}<br/>
 TMPL
 , ['score' => $_con->get_personal('money', 0) - $_con->get_personal('cost', 0)]);
 
@@ -14,30 +14,36 @@ TMPL
 switch ($_con->get_personal('role')) {
 case 'seller':
     $page_head = new TemplateUI(<<<'TMPL'
-あなたは{role}です<br/>
-仕入値 : {cost}円<br/>
+Now, we will play market eauiriblium experiment.<br />You play the role of {role}.<br/>
+Your cost of property is ${cost}.<br/>
+Tax is ${tax}.<br/>
 TMPL
-,   ['role' => '売り手', 'cost' => $_con->get_personal('cost')]);
+,   ['role' => 'Seller', 'cost' => $_con->get_personal('cost'), 'tax' => $_con->get('tax')]);
     break;
 case 'buyer':
     $page_head = new TemplateUI(<<<'TMPL'
-あなたは{role}です<br/>
-所持金 : {money}円<br/>
+Now, we will play market eauiriblium experiment.<br />You play the role of {role}.<br/>
+Your price of willingness to pay is up to ${money}.<br/>
+Tax is ${tax}.<br/>
 TMPL
-,   ['role' => '買い手', 'money' => $_con->get_personal('money')]);
+,   ['role' => 'Buyer', 'money' => $_con->get_personal('money'), 'tax' => $_con->get('tax')]);
     break;
 default:
     $page_head = new StaticUI('');
 }
 
 $page_list = new TemplateUI(<<<TMPL
-販売価格<br/>
+{if sell_list}
+Sellers want to sell you the prices as follows:<br/>
+{/if}
 {each sell_list}
-<span>売値 : {price} 円</span><br/>
+<span>Selling price : \${price}</span><br/>
 {/each}
-買取価格<br/>
+{if buy_list}
+The other buyers want to buy the prices as follows:<br/>
+{/if}
 {each buy_list}
-<span>買値 : {price} 円</span><br/>
+<span>Buying price : \${price}</span><br/>
 {/each}
 TMPL
 ,   call_user_func(function($con){
@@ -60,8 +66,12 @@ TMPL
 );
 
 $page_form = new NormalContainer();
-$page_form->add(new SendingUI('決定', function($value)use($_con){
-    if (($price = intval($value)) <= 0) return;
+$page_form->add(new StaticUI('Please enter your price to buy.<br/>'));
+$page_form->add(new SendingUI('Submit', function($value)use($_con){
+    $tax = $_con->get('tax', 0);
+    $price = intval($value);
+    $price = ($_con->get_personal('role') == 'seller')? $price + $tax: $price - $tax;
+    if ($price <= 0) return;
     if ($_con->get('allow_loss', 'false') != 'true') {
         switch($_con->get_personal('role')) {
         case 'seller':
@@ -94,7 +104,7 @@ $page_form->add(new SendingUI('決定', function($value)use($_con){
         $_con->set_personal('money', $_con->get_personal('money', 0, $id) - $value, $id);
         $_con->set_personal('finish', true, $id);
         $_con->set_personal('price', 0);
-        $_con->set_personal('money', $_con->get_personal('money', 0) + $value);
+        $_con->set_personal('money', $_con->get_personal('money', 0) + $value - $tax);
         $_con->set_personal('finish', true);
         break;
     case 'buyer':
@@ -105,7 +115,7 @@ $page_form->add(new SendingUI('決定', function($value)use($_con){
         $_con->set_personal('money', $_con->get_personal('money', 0) - $price);
         $_con->set_personal('finish', true);
         $_con->set_personal('price', 0, $id);
-        $_con->set_personal('money', $_con->get_personal('money', 0, $id) + $price, $id);
+        $_con->set_personal('money', $_con->get_personal('money', 0, $id) + $price - $tax, $id);
         $_con->set_personal('finish', true, $id);
         break;
     }
@@ -113,7 +123,7 @@ $page_form->add(new SendingUI('決定', function($value)use($_con){
     $_con->set_personal('page', 'result', $id);
 }));
 $page_form->add(new ButtonUI($_con,
-    function($_con){ return '取り消し'; },
+    function($_con){ return 'Cancel'; },
     function($_con){ $_con->set_personal('price', 0); }
 ));
 
@@ -122,8 +132,11 @@ $pages['experiment']->add($page_list);
 $pages['experiment']->add($page_form);
 
 // add pages
-$_con->add_component($_page = new PageContainer($_con->get_personal('page', 'wait')));
+$_page = new PageContainer($_con->get_personal('page', 'wait'));
 foreach ($pages as $key => $value) {
     $_page->add_page($key, $value);
 }
 
+$_con->add_component(new StaticUI('<div><div style="margin: 0 auto; width: 25em;">'));
+$_con->add_component($_page);
+$_con->add_component(new StaticUI('</div></div>'));

@@ -55,6 +55,7 @@ JS
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="{$_(_URL)}js/jquery-2.1.3.min.js"></script>
 <script src="{$_(_URL)}js/lwte/lwte.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 <script> lwte = new LWTE();</script>
 
 <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.6.0/pure-min.css">

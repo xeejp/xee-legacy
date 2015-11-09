@@ -63,19 +63,19 @@ TMPL
 ));
 
 $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
-    function()use($_con) {
+    call_user_func(function($con) {
         dump('[index.php new MultiSendingUI] called begin', true);
 
         $list = [];
-        foreach ( $_con->participants as $participant ) {
+        foreach ( $con->participants as $participant ) {
             $id = $participant[VAR_ID]; 
-            if ( isCurrentUser($_con, $id) ) {
-                $cur_id = $_con->get_personal(VAR_CUR_ID); 
+            if ( isCurrentUser($con, $id) ) {
+                $cur_id = $con->get_personal(VAR_CUR_ID); 
                 dump('SKIPPED!!! cur_id: ' . strval($cur_id) . ' id: ' . strval($id), true); 
                 continue;
             }
 
-            $invest_pt = $_con->get_personal(VAR_INVEST_PT, 100, strval($id));
+            $invest_pt = $con->get_personal(VAR_INVEST_PT, 100, strval($id));
             $description = 'ID:' . $id . ' Investment point:' . $invest_pt . ' ';
             $list[] = [
                 'id'            => $id,
@@ -86,7 +86,7 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
         dump('[index.php new MultiSendingUI] called end', true);
 
         return $list; 
-    },
+    }, $_con),
     function($value)use($_con) {
         dump('[index.php page_punish] value: ' . dump($value), true);
 

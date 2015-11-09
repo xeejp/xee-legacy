@@ -1,8 +1,9 @@
 <?php
 class ParticipantsManagement extends ModUIComponent{
-    private $_con;
-    public function __construct($con){
+    private $_con, $default_value;
+    public function __construct($con, $default_value=false){
         $this->_con = $con;
+        $this->default_value = $default_value;
     }
     public function get_template_name($name){
         return 'participantsManagement';
@@ -47,7 +48,7 @@ TMPL;
             $values['participants'][] = [
                 'id' => $participant['id'],
                 'name' => $participant['name'],
-                'active' => $this->_con->get_personal('active', false, $participant['id'])
+                'active' => $this->_con->get_personal('active', $this->default_value, $participant['id'])
             ];
         }
         return $values;

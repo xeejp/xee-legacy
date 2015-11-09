@@ -5,7 +5,7 @@
 // experiment settings
 define('EXP_NO', 'password');
 define('NUM_PLAYER', 2);
-define('MAX_TURN', 1);
+define('MAX_TURN', 2);
 
 // pages
 define('PAGE_WAIT', 'wait');
@@ -30,7 +30,7 @@ define('VAR_CUR_PUNISH_PT', 'cur_punish_pt');
 define('VAR_TOTAL_PROFIT', 'total_profit');
 define('VAR_INVEST_PT', 'invest_pt');
 define('VAR_PUNISH_PT', 'punish_pt');
-define('VAR_RECEIVED_PUNISH_PT', 'received_punish_pt');
+define('VAR_RECEIVED_PUNISH_PT', 'rec_punish_pt');
 define('VAR_READY', 'ready');
 
 

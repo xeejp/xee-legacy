@@ -83,8 +83,6 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
         return $list; 
     }, $_con),
     function($value)use($_con) {
-        dump('[index.php page_punish] value: ' . dump($value), true);
-
         $total_punish = calcTotalPunishment($value);
         if ( $total_punish < 0 || $total_punish > 10 ) {
             return;
@@ -99,14 +97,7 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
             $pt = intval($punish_pt); 
             $received_punish_pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 100, strval($id));
             $received_punish_pt += 3*$pt;
-            dump('[index.php punish foreach] received_punish_pt:' . $received_punish_pt . ' id:' . strval($id), true);
-            dump('[index.php punish foreach] set begin: ' . $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 100, strval($id)), true);
-            $_con->set_personal(VAR_RECEIVED_PUNISH_PT, $received_punish_pt, strval($id));  
-            dump('[index.php punish foreach] set end: ' . $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 100, strval($id)), true); 
-
-            $received_punish_pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 100, strval($id));
-            dump('[index.php punish func]: cur_id:' . $_con->get_personal(VAR_CUR_ID) . ' punish_target_id:' . $id . ' target_received_punish_pt:' . $received_punish_pt, true);
-            dump('[index.php punish func]: get_personal(cur_id):' . $_con->get_personal(VAR_CUR_ID, 114514, strval($id)), true);
+            $_con->set_personal(VAR_RECEIVED_PUNISH_PT, $received_punish_pt, strval($id));
         }
 
         $_con->set_personal(VAR_READY, true); 

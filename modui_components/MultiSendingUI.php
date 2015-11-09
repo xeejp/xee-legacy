@@ -12,31 +12,29 @@ class MultiSendingUI extends ModUIComponent {
     }
 
     public function get_templates($name) {
-        $list = call_user_func($this->list);
-        $template = "";
-        foreach ( $list as $line ) {
-            $id = $line['id'];
-            $desc = $line['description'];
-            $template .= $desc . ': <input id="{_name}-' . $id . '" type="text"><br/>';
-        }
-        $template .= '<button id="{_name}-button">{button_title}</button><br/>';
+        $template = <<<TMPL
+<form id="{_name}">
+{each list}{description}: <input name="{id}" type="text"><br/>{/each}
+<button id="{_name}-button">{button_title}</button><br/>
+</form>
+TMPL;
 
         return [$this->get_template_name($name) => $template];
     }
 
     public function get_values($name) {
-        return ['button_title' => $this->button_title];
+        return ['list' => $this->list, 'button_title' => $this->button_title];
     }
 
     public function get_scripts($name){
-        $list = call_user_func($this->list);
-        $value = 'function(selector) { return { ';
-        foreach ( $list as $line ) {
-            $id = $line['id'];
-            $value .= $id . ': $(\'#\' + selector + \'-' . $id . '\').val(), ';
-        }
-        $value = rtrim($value, ", ");
-        $value .= '}; }';
+        $value = <<<'JS'
+function(selector) {
+    var $form = $('#' + selector);
+    var arrVal = $form.serializeArray(); 
+
+    return arrVal;
+}
+JS;
 
         $event = <<<'JS'
 function(selector, update) {
@@ -48,7 +46,11 @@ JS;
     }
 
     public function input($name, $value){
-        call_user_func($this->sending, $value);
+        $list = [];
+        foreach ( $value as $line ) {
+            $list[strval($line['name'])] = strval($line['value']);
+        }
+        call_user_func($this->sending, $list);
     }
 
 }

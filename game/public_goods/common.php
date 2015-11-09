@@ -5,7 +5,7 @@
 // experiment settings
 define('EXP_NO', 'password');
 define('NUM_PLAYER', 2);
-define('MAX_TURN', 2);
+define('MAX_TURN', 1);
 
 // pages
 define('PAGE_WAIT', 'wait');
@@ -130,7 +130,6 @@ function isPunishPhase($con)
 function isCurrentUser($con, $id)
 {
     $cur_id = $con->get_personal(VAR_CUR_ID); 
-    dump('[common isCurrentUser] id:' . strval($id) . ' cur_id:' . strval($cur_id), true);
 
     return ( strval($id) == strval($cur_id) );
 }

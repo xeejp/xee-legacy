@@ -64,14 +64,11 @@ TMPL
 
 $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
     call_user_func(function($con) {
-        dump('[index.php new MultiSendingUI] called begin', true);
-
         $list = [];
         foreach ( $con->participants as $participant ) {
             $id = $participant[VAR_ID]; 
             if ( isCurrentUser($con, $id) ) {
                 $cur_id = $con->get_personal(VAR_CUR_ID); 
-                dump('SKIPPED!!! cur_id: ' . strval($cur_id) . ' id: ' . strval($id), true); 
                 continue;
             }
 
@@ -82,8 +79,6 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
                 'description'   => $description,
             ];
         }
-
-        dump('[index.php new MultiSendingUI] called end', true);
 
         return $list; 
     }, $_con),

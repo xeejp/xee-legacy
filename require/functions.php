@@ -3,6 +3,7 @@
 function modui($_request, $name, $_vdb, $require_dir, $auto_time=5000, $properties=[]){
     $_modui = new ModUI($name, new NormalContainer());
     $con = new Controller($_vdb, $_modui);
+    $con->_auto_time = $auto_time;
     foreach($properties as $key => $value){
         $con->{$key} = $value;
     }
@@ -33,7 +34,7 @@ function(update){
     });
 }
 JS
-        , $auto_time);
+        , $con->_auto_time);
         $_tmpl = new Template();
         foreach($_result['templates'] as $key => $template){
             $_tmpl->lwte_add($key, $template);

@@ -53,9 +53,12 @@ JS
 <meta charset="utf-8">
 <meta name="description" content="{$this->description}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{$_(_URL)}js/jquery-2.1.3.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="{$_(_URL)}js/lwte/lwte.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/tablesorter/2.17.4/css/theme.default.css">
+<script src="https://cdn.jsdelivr.net/tablesorter/2.17.4/js/jquery.tablesorter.min.js"></script>
+<script src="https://cdn.jsdelivr.net/tablesorter/2.17.4/js/jquery.tablesorter.widgets.min.js"></script>
 <script> lwte = new LWTE();</script>
 
 <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.6.0/pure-min.css">

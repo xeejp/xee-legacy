@@ -389,37 +389,40 @@ $result->add(new TemplateUI($templates['result']['personal'], function () use ($
         'profit' => $_con->get_personal('profit', 0),
     ];
 }));
-$result->add(new TemplateUI($templates['result']['ranking'], function () use ($_con) {
-    $profits = [];
-    foreach ($_con->participants as $participant)
-        if ($_con->get_personal('finished', false, $participant['id']))
-            $profits[$participant['id']] = $_con->get_personal('profit', 0, $participant['id']);
-    arsort($profits);
-    $rank = 1;
-    $ranking = [];
-    $average = ['profit' => 0, 'price' => 0];
-    foreach ($profits as $id => $profit) {
-        $ranking[] = [
-            'no' => $rank++,
-            'role' => $_con->get_personal('role', '', $id),
-            'money' => $_con->get_personal('money', 0, $id),
-            'cost' => $_con->get_personal('cost', 0, $id),
-            'price' => $_con->get_personal('price', 0, $id),
-            'profit' => $profit,
-        ] + (($id == $_con->participant['id'])? ['self' => true]: []);
-        $average['profit'] += $profit;
-        $average['price'] += $_con->get_personal('price', 0, $id);
-    }
-    $average['profit'] /= count($profits);
-    $average['price'] /= count($profits);
-    return ['ranking' => $ranking, 'average' => [$average]];
-}));
-$result->add(new ScriptUI([
-    'other' => <<<'JS'
-$('.tablesorter').tablesorter();
-
+$result->add(new TemplateUI($templates['result']['ranking'],
+    function () use ($_con) {
+        $profits = [];
+        foreach ($_con->participants as $participant)
+            if ($_con->get_personal('finished', false, $participant['id']))
+                $profits[$participant['id']] = $_con->get_personal('profit', 0, $participant['id']);
+        arsort($profits);
+        $rank = 1;
+        $ranking = [];
+        $average = ['profit' => 0, 'price' => 0];
+        foreach ($profits as $id => $profit) {
+            $ranking[] = [
+                'no' => $rank++,
+                'role' => $_con->get_personal('role', '', $id),
+                'money' => $_con->get_personal('money', 0, $id),
+                'cost' => $_con->get_personal('cost', 0, $id),
+                'price' => $_con->get_personal('price', 0, $id),
+                'profit' => $profit,
+            ] + (($id == $_con->participant['id'])? ['self' => true]: []);
+            $average['profit'] += $profit;
+            $average['price'] += $_con->get_personal('price', 0, $id);
+        }
+        $average['profit'] /= count($profits);
+        $average['price'] /= count($profits);
+        return ['ranking' => $ranking, 'average' => [$average]];
+    }, function () {
+        return ['event' => <<<'JS'
+function(selector, update){
+    $('.tablesorter').tablesorter();
+}
 JS
-]));
+        ];
+    }
+));
 $result->add(new StaticUI($templates['result']['graph']));
 $result->add(new ScatterGraph(
     call_user_func(function () use ($_con) {

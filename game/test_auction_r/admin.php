@@ -3,7 +3,7 @@
 $templates = [];
 $templates['participants_list'] = <<<'TMPL'
 <p>登録済み被験者数：{count}人</p>
-<table class="pure-table">
+<table class="tablesorter" style="border: solid 1px; font-size: 1em;">
 <thead>
 <tr>
 <th>被験者番号</th>
@@ -87,6 +87,13 @@ $container->add(new TemplateUI($templates['participants_list'], function () use 
         'count' => count($_con->participants),
         'participants' => $participants,
     ];
+}, function () {
+    return ['event' => <<<'JS'
+function(selector, update){
+    $('.tablesorter').tablesorter();
+}
+JS
+];
 }));
 $container->add(new ParticipantsManagement($_con, true));
 

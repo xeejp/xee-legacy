@@ -188,6 +188,18 @@ function isValidValue($value, $min, $max)
     return ($min <= $value && $value <= $max);
 }
 
+function initAllUsersData($con)
+{
+    foreach ( $con->participants as $participant ) {
+        $id = strval($participant[VAR_ID]);
+        setValueToAllUsers($con, VAR_CUR_PT, 20, $id);
+        setValueToAllUsers($con, VAR_CUR_PUNISH_PT, 10, $id);
+        setValueToAllUsers($con, VAR_INVEST_PT, 0, $id);
+        setValueToAllUsers($con, VAR_PUNISH_PT, 0, $id);
+        setValueToAllUsers($con, VAR_RECEIVED_PUNISH_PT, 0, $id);
+    }
+}
+
 function initCurrentUserData($con)
 {
     setValueToAllUsers($con, VAR_CUR_PT, 20);

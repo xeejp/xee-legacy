@@ -169,7 +169,7 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
         $con->set_personal(VAR_READY, true);
         if ( isReady(calcNumReadyUser($con)) ) {
             $turn = inclementTurn($con);
-            if ( isFinish($con, $turn) ) {
+            if ( isFinishCurrentPhase($con, $turn) ) {
                 redirectAllUsers($con, PAGE_FINAL_RESULT); 
             } else {
                 initCurrentUserData($con);
@@ -221,7 +221,7 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
                 redirectAllUsers($con, PAGE_PUNISHMENT);
             } else {
                 $turn = inclementTurn($con);
-                if ( isFinish($con, $turn) ) {
+                if ( isFinishCurrentPhase($con, $turn) ) {
                     redirectAllUsers($con, PAGE_FINAL_RESULT); 
                 } else {
                     initCurrentUserData($con);

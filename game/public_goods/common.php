@@ -131,7 +131,7 @@ function isPunishPhase($con)
     return $con->get(VAR_PUNISH_PHASE, false);
 }
 
-function isFinish($con, $turn)
+function isFinishCurrentPhase($con, $turn)
 {
     $punish_phase   = isPunishPhase($con);
     $turn_no_punish = strval($_con->get(VAR_TURN_NO_PUNISH));

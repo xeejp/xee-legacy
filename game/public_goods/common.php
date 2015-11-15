@@ -284,3 +284,10 @@ function calcMeanInvestment($con)
 
     return $mean_invest_list;
 }
+
+function isPunishmentData($con, $num)
+{
+    $turn_no_punish = $con->get(VAR_TURN_NO_PUNISH, 0);
+
+    return ( $num > $turn_no_punish );
+}

@@ -451,45 +451,46 @@ TMPL
         ];
     }
 ));
+ */
 
 $pages[PAGE_GRAPH]->add(new ScatterGraph(
     call_user_func(
         function()use($_con) {
-            foreach ($_con->participants as $participant)
-    //            if ($_con->get_personal('finished', false, $participant['id']))
-                    switch($_con->get_personal('role', '', $participant['id'])) {
-                    case 'seller':
-                        $supply[] = $_con->get_personal('profit', 0, $participant['id']);
-                        break;
-                    case 'buyer':
-                        $demand[] = $_con->get_personal('profit', 0, $participant['id']);
-                        break;
-                    }
+            $mean_invest_list = calcMeanInvestment($_con);
 
             $data = [
-                'supply' => [
+                'no_punish' => [
                     'values' => [],
                     'color' => 'green',
                 ],
-                'demand' => [
+                'punish' => [
                     'values' => [],
                     'color' => 'red',
                 ],
             ];
-            asort($supply);
-            arsort($demand);
+
             $i = 1;
             foreach ($supply as $val)
                 $data['supply']['values'][] = ['x' => $i++, 'y' => $val];
             $i = 1;
             foreach ($demand as $val)
                 $data['demand']['values'][] = ['x' => $i++, 'y' => $val];
+
+            $counter = 0;
+            foreach ( $mean_invest_list as $mean_invest ) {
+                ++$counter;
+                if ( !isPunishmentData($_con, $counter) ) {
+                   $data['no_punish']['values'][] = ['x' => $counter, 'y' => $mean_invest_list]; 
+                } else {
+                   $data['punish']['values'][] = ['x' => $counter, 'y' => $mean_invest_list];
+                }
+            }
+
             return $data;
         }
     ),
-    ['label' => ['x' => '', 'y' => '価格']]
+    ['label' => ['x' => 'ターン', 'y' => '平均投資額']]
 ));
-*/
 
 
 // add all pages

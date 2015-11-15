@@ -205,3 +205,13 @@ function calcReceivedPunishment($con, $id, $punish_pt)
     $con->set_personal(VAR_RECEIVED_PUNISH_PT, $received_punish_pt, strval($id));
 }
 
+function changePhase($con)
+{
+    $current_phase = $con->get(VAR_PUNISH_PHASE);
+    if ( $current_phase ) {
+        $current_phase = false;
+    } else {
+        $current_phase = true;
+    }
+    $con->set(VAR_PUNISH_PHASE, $current_phase);
+}

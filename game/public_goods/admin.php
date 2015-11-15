@@ -11,7 +11,6 @@ $container->add(new StaticUI('ExpID : '. $_con->experiment[EXP_NO] .'<br/><br/>'
 $container->add(new MultiSendingUI('Update',
     call_user_func(
         function($con) {
-            
             $list = [
                 ['id' => VAR_TURN_NO_PUNISH,    'description' => 'The number of turn of no-punishment '],
                 ['id' => VAR_TURN_PUNISH,       'description' => 'The number of turn of punishment ']
@@ -41,8 +40,8 @@ Punishment: {turn_punish}<br/>
 TMPL
 ,   function()use($_con) {
         $list = [
-            'turn_no_punish'    => strval($_con->get(VAR_TURN_NO_PUNISH)),
-            'turn_punish'       => strval($_con->get(VAR_TURN_PUNISH))
+            'turn_no_punish'    => strval($_con->get(VAR_TURN_NO_PUNISH, 0)),
+            'turn_punish'       => strval($_con->get(VAR_TURN_PUNISH, 0))
         ];
 
         return $list;
@@ -93,6 +92,13 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
         $con->set(VAR_TURN, 1);
         $con->set(VAR_PUNISH_PHASE, false);
         $con->set(VAR_PAGE, 'ready');
+
+        if ( $con->get(VAR_TURN_NO_PUNISH, 0) == 0 ) {
+            $con->set(VAR_TURN_NO_PUNISH, DEFAULT_TURN);
+        }
+        if ( $con->get(VAR_TURN_PUNISH, 0) == 0 ) {
+            $con->set(VAR_TURN_PUNISH, DEFAULT_TURN);
+        }
 
         return $result;
     }

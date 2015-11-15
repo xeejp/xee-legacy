@@ -6,6 +6,7 @@
 define('EXP_NO', 'password');
 define('NUM_PLAYER', 2);
 define('MAX_TURN', 6);
+define('DEFAULT_TURN', 6);
 
 // pages
 define('PAGE_WAIT', 'wait');

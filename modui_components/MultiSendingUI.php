@@ -13,9 +13,9 @@ class MultiSendingUI extends ModUIComponent {
 
     public function get_templates($name) {
         $template = <<<TMPL
-<fieldset id={_name}>
-{each list}{description}: <input name="{id}" type="text"><br/>{/each}
-<button id="{_name}-button">{button_title}</button><br/>
+<fieldset id={_name} class="pure-form">
+{each list}{description}: <input name="{id}" type="text" value="{dvalue}"><br/>{/each}
+<button class="pure-button" id="{_name}-button">{button_title}</button><br/>
 </fieldset>
 TMPL;
 

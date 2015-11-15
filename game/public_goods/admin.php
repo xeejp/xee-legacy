@@ -4,16 +4,18 @@ require 'common.php';
 
 $container = new NormalContainer();
 // options
-$container->add(new StaticUI('[設定]<br/>'));
-$container->add(new StaticUI('ExpID : '. $_con->experiment[EXP_NO] .'<br/><br/>'));
+$container->add(new StaticUI('<div class="container"><div class="page-header"><div align="center">'));
+$container->add(new StaticUI('<h1>管理画面</h1><hr/>'));
+$container->add(new StaticUI('<h2>実験番号: <font style="color:red;">'. $_con->experiment[EXP_NO] .'</font></h2></div><hr/>'));
+
 
 // settings
-$container->add(new MultiSendingUI('Update',
+$container->add(new MultiSendingUI('設定',
     call_user_func(
         function($con) {
             $list = [
-                ['id' => VAR_TURN_NO_PUNISH,    'description' => 'The number of turn of no-punishment '],
-                ['id' => VAR_TURN_PUNISH,       'description' => 'The number of turn of punishment ']
+                ['id' => VAR_TURN_NO_PUNISH,    'description' => '罰なし実験の繰り返し回数', 'dvalue' => $con->get(VAR_TURN_NO_PUNISH, 0)],
+                ['id' => VAR_TURN_PUNISH,       'description' => '罰あり実験の繰り返し回数', 'dvalue' => $con->get(VAR_TURN_PUNISH, 0)]
             ];
 
             return $list;
@@ -34,11 +36,18 @@ $container->add(new MultiSendingUI('Update',
 
 $container->add(new TemplateUI(<<<TMPL
 <br/>
-No-Punishment: {turn_no_punish}<br/>
-Punishment: {turn_punish}<br/>
+現在の設定値<br/>
+罰なし: {if turn_no_punish==0}未設定{else}{turn_no_punish}回{/if}<br/>
+罰あり: {if turn_punish==0}未設定{else}{turn_punish}回{/if}<br/>
 <br/>
 TMPL
 ,   function()use($_con) {
+        if ( $_con->get(VAR_TURN_NO_PUNISH, 0) == 0 ) {
+            $_con->set(VAR_TURN_NO_PUNISH, DEFAULT_TURN);
+        }
+        if ( $_con->get(VAR_TURN_PUNISH, 0) == 0 ) {
+            $_con->set(VAR_TURN_PUNISH, DEFAULT_TURN);
+        }
         $list = [
             'turn_no_punish'    => strval($_con->get(VAR_TURN_NO_PUNISH, 0)),
             'turn_punish'       => strval($_con->get(VAR_TURN_PUNISH, 0))

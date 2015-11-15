@@ -5,8 +5,13 @@ require 'common.php';
 // page settings
 $pages = [];
 $pages[PAGE_REJECT]             = new RedirectUI(_URL, $_con->get_personal(VAR_PAGE, PAGE_WAIT) == PAGE_REJECT);
-$pages[PAGE_WAIT]               = new StaticUI('<br/><br/><center>Waiting now</center>');
+$_con->add_component(new StaticUI('<div><div style="margin: 0 auto; max-width: 40em;">'));
+$pages[PAGE_WAIT]               = new StaticUI('<div style="text-align: center;">
+<h1>公共財実験</h1>
+<hr/>
+実験開始までしばらくお待ちください。</div>');
 $pages[PAGE_EXPLANATION]        = new ExplanationUI($_con);
+$pages[PAGE_PUNISH_EXPLANATION] = new NormalContainer();
 $pages[PAGE_EXPERIMENT]         = new NormalContainer();
 $pages[PAGE_PUNISHMENT]         = new NormalContainer();
 $pages[PAGE_WAIT_ACTION]        = new NormalContainer();
@@ -18,29 +23,10 @@ $pages[PAGE_GRAPH]              = new NormalContainer();
 
 $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
         ['explanation' => 'これからコンピュータがみなさんをランダムに4人1組のグループへ振り分けます。'],
-        ['explanation' => '「次へ」ボタンを押して実験相手を確認してください。'],
-    ])->add_page('役割決め',
-        call_user_func(
-            function($con) {
-                $exp = [];
-                $exp[] = ['explanation' => 'あなたの実験相手が決まりました。'];
-                $counter = 0;
-                foreach ( $con->participants as $participant ) {
-                    ++$counter;
-                    $id     = strval($participant[VAR_ID]);
-                    $suffix = '';
-                    if ( isCurrentUser($con, $id) ) {
-                        $suffix =  '(あなた)';
-                    }
-
-                    $exp[] = ['explanation_sub' => strval($counter) . '人目のメンバーのID：' . $id . $suffix];
-                }
-
-                return $exp;
-            }
-            ,$_con
-        )
-    )->add_page('ルール説明', [
+        ['explanation' => '「次へ」ボタンを押して実験相手を決定してください。'],
+    ])->add_page('役割決め', [
+        ['explanation' => 'あなたの実験相手が決まりました。'],
+    ])->add_page('ルール説明', [
         ['explanation' => 'グループ内の各メンバーは、それぞれ20ポイントずつ持っています。'],
         ['explanation' => '各メンバーは、自分の所持しているポイントの中から一部または全部をグループで実施するプロジェクトのために投資することができます。'],
         ['explanation_sub' => 'まったく投資しないこともできます。その場合は0を入力してください。'],
@@ -49,13 +35,12 @@ $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
     ])->add_page('ルール説明', [
         ['explanation' => 'グループの各メンバーが投資額を決定したら、グループ全員の投資額を合計します。'],
         ['explanation' => '投資額合計を0.4倍したポイントがグループ内のメンバー全員に配られます。'],
-        // MEMO: 修正して小数点以下の数まで扱えるようになりました['explanation_sub' => '小数点以下切り捨てで整数で配られます。'],
+        ['explanation_sub' => '小数点以下切り捨てで整数で配られます。'],
         ['explanation' => 'つまり、あなたの利益は次のように計算されます。'],
-        ['explanation_sub' => 'あなたの利益＝20pt−あなたの投資額＋(0.4×グループ全員の投資額合計)'],
-        // MEMO: 「入力できます」の間違い?['explanation_sub' => '(なお、この実験では20pt以下の正の整数のみ入力できません。)'],
-        ['explanation_sub' => '(なお、この実験では20pt以下の正の整数のみ入力できます。)'],
+        ['explanation_sub' => 'あなたの利益＝20ポイント−あなたの投資ポイント＋(0.4×グループ全員の合計投資ポイント)'],
+        ['explanation_sub' => '(なお、この実験では20pt以下の正の整数のみ入力できません。)'],
     ])->add_page('ルール説明(投資例)', [
-        ['explanation' => 'あなたの利益＝20pt−あなたの投資額＋(0.4×グループ全員の投資額合計)'],
+        ['explanation' => 'あなたの利益＝20ポイント−あなたの投資ポイント＋(0.4×グループ全員の合計投資ポイント)'],
         ['explanation_sub' => 'どのメンバーも投資しない場合：あなたの投資額は0、グループ全員の投資額合計は0。'],
         ['explanation_sub' => 'つまり、あなたの利益は20ptになります。'],
         ['explanation_sub' => '全メンバーが半分の10ptを投資する場合：あなたの投資額は10、グループ全員の投資額合計は40。'],
@@ -63,8 +48,7 @@ $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
         ['explanation_sub' => '全メンバーが20pt全部を投資する場合：あなたの投資額は20、グループ全員の投資額合計は80。'],
         ['explanation_sub' => 'つまり、あなたの利益は32ptになります。'],
     ])->add_page('ルール説明', [
-        // MEMO: 罰ありとなしとで記述を分けたほうがよい？['explanation' => 'この投資をメンバーを変えずに'. strval(intval($_con->get(VAR_TURN_NO_PUNISH, 0)) + intval($_con->get(VAR_TURN_PUNISH, 0))) .'ターン繰り返します。'],
-        ['explanation' => 'この投資をメンバーを変えずに'. strval(intval($_con->get(VAR_TURN_NO_PUNISH, 0))) .'ターン繰り返します。'],
+        ['explanation' => 'この投資をメンバーを変えずに'. strval(intval($_con->get(VAR_TURN_NO_PUNISH, 0)) + intval($_con->get(VAR_TURN_PUNISH, 0))) .'ターン繰り返します。'],
         ['explanation_sub' => '投資できる最大額は毎ターン20ポイントです。'],
         ['explanation_sub' => '各ターンで得られた利益は、累積されてページ上部に表示されます。'],
         ['explanation_sub' => '各ターン毎に、他のユーザーの投資額が表示されます。'],
@@ -74,24 +58,68 @@ $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
         ['explanation' => 'それでは実験開始までしばらくお待ち下さい。'],
     ]);
 
+/*
+$punish_explanation = new ExplanationUI($_con);
+$punish_explanation->add_page('ルール説明(罰則あり)', [
+    ['explanation' => '同様の実験に罰則制度を設けてもう一度行います。'],
+    ['explanation' => 'グループの各メンバーはそれぞれ20ポイントずつ持っており、その一部または全部を投資するところまでは同じです。'],
+    ['explanation' => '次のような罰則制度を新たに設けます。'],
+    ['explanation_sub' => '各ターン毎に、他のユーザの投資額が表示された後、罰則を入力する画面が表示されます。'],
+    ['explanation_sub' => 'あなたは、自分のポイントから罰則コストとして1ポイント使うと、相手から3ポイント減じることができます。'],
+    ['explanation_sub' => '罰則は何人にでも与えることができますが、罰則に使えるポイントは最大10ポイントまでです。'],
+    ['explanation_sub' => '罰則によって自分、もしくは相手の利益がマイナスになることがあります。'],
+    ['explanation' => '最終的に、あなたの利益は次のように計算されます。'],
+    ['explanation_sub' => 'あなたの利益=20pt-あなたの投資額+(0.4×グループ全員の投資額合計)-あなたが使った罰則ポイント-相手から受けた罰則ポイント'],
+]);
+$pages[PAGE_PUNISH_EXPLANATION]->add($punish_explanation);
+
+
+$pages[PAGE_PUNISH_EXPLANATION]->add(new ButtonUI($_con,
+    function($con) {
+        return 'OK';
+    },
+    function($con) { 
+        $_con->set_personal(VAR_READY, true); 
+        if ( isReady(calcNumReadyUser($_con)) ) {
+            setValueToAllUsers($_con, VAR_READY, false);
+            redirectAllUsers($_con, PAGE_EXPERIMENT);
+        } else {
+            redirectCurrentUser($_con, PAGE_WAIT_ACTION);
+        }
+    }
+));
+*/
+
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
-Turn:{turn}<br/>
-Your ID:{id}<br/>
-You have {cur_pt} points.<br/>
-And, your sum of profit is {total_profit} points.<br/>
-What point do you invest?<br/>
+<h1 style="text-align: center;">投資ポイント入力(罰則なし／あり実験)</h1>
+<hr/><br/>
+現在のターン数は{turn}回目です。<br/>
+この実験は全部で{total_turn}回行います。<br/>
+{if left_turn==0}このターンが最後の回です。<br/>
+{else}残りのターン数はこのターンを含めて{left_turn}回です。<br/>{/if}
+<br/><hr/><br/>
+あなたは{cur_pt}ポイント持っています。<br/>
+{cur_pt}ポイントのうち、一部または全部をグループで実施するプロジェクトのために投資することができます。<br/>
+{cur_pt}ポイントをそのまま持っておく分と、プロジェクトに投資する分に分けてください。<br/>
+<br/>
+入力すると、グループの他のメンバーの投資額を計算したあとで、あなたの利益は次のように計算されます。<br/><br/>
+<center><i><b>あなたの利益＝{cur_pt}−あなたの投資ポイント＋(0.4×グループ全員の合計投資ポイント)</b></i></center>
+<br/><hr/><br/>
+プロジェクトに何ポイント投資しますか？<br/>
 TMPL
 ,   function()use($_con) {
         return [
             'turn'          => $_con->get(VAR_TURN, 0),
+            'total_turn'    => $_con->get(VAR_TURN_NO_PUNISH, 0),
+            'left_turn'     => $_con->get(VAR_TURN_NO_PUNISH, 0) - $_con->get(VAR_TURN, 0) + 1,
             'id'            => $_con->get_personal(VAR_CUR_ID, 0),
             'cur_pt'        => $_con->get_personal(VAR_CUR_PT, 0),
-            'total_profit'  => $_con->get_personal(VAR_TOTAL_PROFIT, 0)
         ];
     }
 ));
 
-$pages[PAGE_EXPERIMENT]->add(new SendingUI('invest', 
+
+$pages[PAGE_EXPERIMENT]->add(new SendingUI('投資する', 
     function($value)use($_con) {
         $invest_pt  = intval($value);
         $cur_pt     = $_con->get_personal(VAR_CUR_PT, 0);
@@ -111,13 +139,24 @@ $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest',
         }
     }
 ));
+$pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
+<br/><br/><hr/>
+<div style="text-align: right;">なお、現在の累計ポイント数は{total_profit}ポイントです。</div>
+TMPL
+,   function()use($_con) {
+        return [
+            'total_profit'  => $_con->get_personal(VAR_TOTAL_PROFIT, 0)
+        ];
+    }
+));
 
 
 $pages[PAGE_PUNISHMENT]->add(new TemplateUI(<<<TMPL
-Turn:{turn}<br/>
-Your ID:{id}<br/>
-You have {punish_pt} points for punishment.<br/>
-What point do you use for punishment.<br/><br/>
+<h1 style="text-align: center;">第{turn}回の罰則ポイント入力</h1>
+<hr/><br/>
+あなたは他のメンバーに対する罰則に合計{punish_pt}ポイントまで使えます。<br/>
+あなたが相手に1ポイントの罰則を使うと、あなたの累計ポイントが1ポイント減らされ、相手は累計ポイントが3ポイント減らされます。<br/>
+それぞれのメンバーにいくらの罰則を与えますか。<br/><br/>
 TMPL
 ,   function()use($_con) {
         return [
@@ -128,7 +167,7 @@ TMPL
     }
 ));
 
-$pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
+$pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('罰則を与える',
     call_user_func(
         function($con) {
             $list = [];
@@ -140,10 +179,11 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
                 }
 
                 $invest_pt      = $con->get_personal(VAR_INVEST_PT, 0, strval($id));
-                $description    = 'ID:' . $id . ' Investment point:' . $invest_pt . ' ';
+                $description    = 'IDが' . $id . 'のメンバー(' . $invest_pt . 'ポイント投資)に対する罰則ポイント';
                 $list[] = [
                     'id'            => $id,
                     'description'   => $description,
+                    'dvalue'        => '',
                 ];
             }
 
@@ -182,7 +222,9 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
 
 
 $pages[PAGE_WAIT_ACTION]->add(new TemplateUI(<<<TMPL
-Waiting for {num_not_ready_user} users...<br/>
+<h1 style="text-align: center;">入力待ち</h1>
+<hr/><br/>
+<center>あと{num_not_ready_user}名の入力を待っています。</center>
 TMPL
 ,   function()use($_con) { 
         $num_not_ready_user = NUM_PLAYER - calcNumReadyUser($_con);
@@ -195,12 +237,22 @@ TMPL
 
 
 $pages[PAGE_PUNISHMENT_RESULT]->add(new TemplateUI(<<<TMPL
-Turn:{turn}<br/>
-Your ID:{id}<br/>
-Punishment Result<br/>
+<h1 style="text-align: center;">第{turn}回の罰則結果</h1>
+<hr/><br/>
+<table  class="pure-table">
+<thead>
+<tr><th>メンバーのID</th><th>投資ポイント</th><th>罰則結果*</th><th>備考</th></tr>
+</thead>
+<tbody align="right">
 {each punish_list}
-<span>ID:{id} Recieved Punishment Point:{pt}</span><br/>
+<tr{if self} class="pure-table-odd"{/if}>
+<td>{id}</td><td>{invest}ポイント</td><td>{pt}ポイント</td><td>{if self}あなた{/if}</td>
+</tr>
 {/each}
+</tbody>
+</table>
+* あなたがそれぞれのメンバーから受けた罰則ポイントを3倍したポイントのことで、累計ポイントから減算されたポイントです。<br/>
+<br/>
 TMPL
 ,   function()use($_con) {
         $turn           = $_con->get(VAR_TURN, 0);
@@ -208,7 +260,12 @@ TMPL
         foreach ( $_con->participants as $participant ) {
             $id             = $participant[VAR_ID];
             $pt             = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id));
-            $punish_list[]  = ['id' => $id, 'pt' => $pt];
+            $invest_pt      = $_con->get_personal(VAR_INVEST_PT, 0, strval($id));
+		if($participant[VAR_ID]== isCurrentUser($_con, $id)){
+			$punish_list[]  = ['id' => $id, 'pt' => $pt, 'invest' => $invest_pt, 'self' => true];
+		}else{
+			$punish_list[]  = ['id' => $id, 'pt' => $pt, 'invest' => $invest_pt, 'self' => false];
+		}
         } 
 
         return [
@@ -221,7 +278,7 @@ TMPL
 
 $pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
     function($con) {
-        return 'OK';
+        return '確認';
     },
     function($con) {
         reduceTotalProfit($con);
@@ -244,33 +301,47 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
 
 
 $pages[PAGE_MIDDLE_RESULT]->add(new TemplateUI(<<<TMPL
-Turn:{turn}<br/>
-Your ID:{id}<br/>
-Middle Result<br/>
+<h1 style="text-align: center;">第{turn}回の結果</h1>
+<hr/><br/>
+<table  class="pure-table">
+<thead>
+<tr><th>メンバーのID</th><th>投資ポイント</th><th>備考</th></tr>
+</thead>
+<tbody align="right">
 {each invest_list}
-<span>ID:{id} Investment Point:{pt}</span><br/>
+<tr{if self} class="pure-table-odd"{/if}>
+<td>{id}</td><td>{pt}ポイント</td><td>{if self}あなた{/if}</td>
+</tr>
 {/each}
+</tbody>
+</table>
+<br/>
 TMPL
 ,   function()use($_con) {
         $turn           = $_con->get(VAR_TURN, 1);
         $invest_list    = [];
+        $self           = [];
         foreach ( $_con->participants as $participant ) {
             $id             = $participant[VAR_ID];
             $pt             = $_con->get_personal(VAR_INVEST_PT, 0, strval($id));
-            $invest_list[]  = [VAR_ID => $id, 'pt' => $pt];
+		if($participant[VAR_ID]== isCurrentUser($_con, $id)){
+			$invest_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => true];
+		}else{
+			$invest_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => false];
+		}
         } 
-
         return [
             'turn'          => $turn,
             'id'            => $_con->get_personal(VAR_CUR_ID, 0),
-            'invest_list'   => $invest_list
+            'invest_list'   => $invest_list,
+            'self'          => $self
         ];
     }
 ));
 
 $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
     function($con) {
-        return 'OK';
+        return '確認';
     },
     function($con) {
         setTotalProfit($con);
@@ -297,18 +368,32 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
 
 
 $pages[PAGE_FINAL_RESULT]->add(new TemplateUI(<<<TMPL
-Final Result<br/>
-Your ID:{id}<br/>
+<h1 style="text-align: center;">最終結果</h1>
+<hr/><br/>
+<table  class="pure-table">
+<thead>
+<tr><th>メンバーのID</th><th>累計ポイント</th><th>総投資ポイント</th><th>投資率</th><th>総罰則ポイント</th><th>備考</th></tr>
+</thead>
+<tbody align="right">
 {each total_profit_list}
-<span>ID:{id} Total Profit:{pt}</span><br/>
+<tr{if self} class="pure-table-odd"{/if}>
+<td>{id}</td><td>{pt}ポイント</td><td>xxxポイント</td><td>xx.x%</td><td>xxxポイント</td><td>{if self}あなた{/if}</td>
+</tr>
 {/each}
+</tbody>
+</table>
+<br/>
 TMPL
 ,   function()use($_con) {
         $total_profit_list = [];
         foreach ( $_con->participants as $participant ) {
             $id                     = $participant[VAR_ID];
             $pt                     = $_con->get_personal(VAR_TOTAL_PROFIT, 0, strval($id));
-            $total_profit_list[]    = ['id' => $id, 'pt' => $pt];
+		if($participant[VAR_ID]== isCurrentUser($_con, $id)){
+			$total_profit_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => true];
+		}else{
+			$total_profit_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => false];
+		}
         } 
 
         $total_profit_list = sortProfitList($total_profit_list);
@@ -322,7 +407,7 @@ TMPL
 
 $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
     function($con) {
-        return 'OK';
+        return '実験を終了する';
     },
     function($con) { 
         $con->set_personal(VAR_READY, true);

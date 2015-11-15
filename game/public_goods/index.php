@@ -163,10 +163,9 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
         return 'OK';
     },
     function($con) {
-        $total_profit = $con->get_personal(VAR_TOTAL_PROFIT, 0);
-        $punish_pt = $con->get_personal(VAR_PUNISH_PT, 0);
+        $punish_pt          = $con->get_personal(VAR_PUNISH_PT, 0);
         $received_punish_pt = $con->get_personal(VAR_RECEIVED_PUNISH_PT, 0);
-        $con->set_personal(VAR_TOTAL_PROFIT, $total_profit - (float)$punish_pt - (float)$received_punish_pt);
+        setTotalProfit($con, $punish_pt, $received_punish_pt);
 
         $con->set_personal(VAR_READY, true);
         if ( isReady(calcNumReadyUser($con)) ) {

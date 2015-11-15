@@ -22,14 +22,19 @@ And, your sum of profit is {total_profit} points.<br/>
 What point do you invest?<br/>
 TMPL
 ,   function()use($_con) {
-        return ['turn' => $_con->get(VAR_TURN, 0), 'id' => $_con->get_personal(VAR_CUR_ID, 0), 'cur_pt' => $_con->get_personal(VAR_CUR_PT), 'total_profit' => $_con->get_personal(VAR_TOTAL_PROFIT)];
+        return [
+            'turn'          => $_con->get(VAR_TURN, 0),
+            'id'            => $_con->get_personal(VAR_CUR_ID, 0),
+            'cur_pt'        => $_con->get_personal(VAR_CUR_PT),
+            'total_profit'  => $_con->get_personal(VAR_TOTAL_PROFIT)
+        ];
     }
 ));
 
 $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest', 
     function($value)use($_con) {
-        $invest_pt = intval($value);
-        $cur_pt = $_con->get_personal(VAR_CUR_PT);
+        $invest_pt  = intval($value);
+        $cur_pt     = $_con->get_personal(VAR_CUR_PT);
         if ( $invest_pt < 0 || $invest_pt > $cur_pt ) {
             return;
         }

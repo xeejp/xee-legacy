@@ -31,6 +31,7 @@ TMPL;
 function(selector) {
     var $form = $('#' + selector);
     var arrVal = $form.serializeArray(); 
+    alert(arrVal);
 
     return arrVal;
 }

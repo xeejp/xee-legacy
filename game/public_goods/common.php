@@ -276,6 +276,10 @@ function calcMeanInvestment($con)
     $mean_invest_list   = array_pad($mean_invest_list, $length, 0.0);
     for ( $i = 0; $i < $length; $i++ ) {
         for ( $j = 0; $j < $member; $j++ ) {
+            if ( !isset($invest_list[$j][$i]) ) {
+                $mean_invest_list[$i] += 0.0;
+                continue;
+            }
             $mean_invest_list[$i] += (float)$invest_list[$j][$i];
         }
     }

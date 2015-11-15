@@ -104,12 +104,9 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
         foreach ( $value as $id => $punish_pt ) {
             if ( isCurrentUser($_con, $id) ) {
                 continue;
-            }
+            } 
 
-            $pt = intval($punish_pt); 
-            $received_punish_pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id));
-            $received_punish_pt += 3*$pt;
-            $_con->set_personal(VAR_RECEIVED_PUNISH_PT, $received_punish_pt, strval($id));
+            calcReceivedPunishment($_con, $id, $punish_pt);
         }
 
         $_con->set_personal(VAR_READY, true);

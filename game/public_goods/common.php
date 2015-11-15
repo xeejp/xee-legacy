@@ -158,3 +158,12 @@ function initCurrentUserData($con)
     setValueToAllUsers($con, VAR_PUNISH_PT, 0);
     setValueToAllUsers($con, VAR_RECEIVED_PUNISH_PT, 0); 
 }
+
+function calcReceivedPunishment($con, $id, $punish_pt)
+{
+    $pt                 = intval($punish_pt); 
+    $received_punish_pt = $con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id));
+    $received_punish_pt += 3*$pt;
+    $con->set_personal(VAR_RECEIVED_PUNISH_PT, $received_punish_pt, strval($id));
+}
+

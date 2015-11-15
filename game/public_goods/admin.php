@@ -23,7 +23,7 @@ $container->add(new MultiSendingUI('Update',
     function($value)use($_con) {
         $turn_no_punish = intval($value[VAR_TURN_NO_PUNISH]);
         $turn_punish    = intval($value[VAR_TURN_PUNISH]);
-        if ( !(isValidValue($turn_no_punish, 1, MAX_TURN) || !isValidValue($turn_punish, 1, MAX_TURN)) ) {
+        if ( !(isValidValue($turn_no_punish, 1, MAX_TURN) || isValidValue($turn_punish, 1, MAX_TURN)) ) {
             return;
         }
 

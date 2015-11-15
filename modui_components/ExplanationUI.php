@@ -4,9 +4,9 @@ class ExplanationUI extends ModUIComponent{
     private $controller;
     private $pages=[], $no;
 
-    public function __construct ($controller, $id='') {
+    public function __construct ($controller) {
         $this->controller = $controller;
-        $this->no = $this->controller->get_personal('ExpUI::no' . '_' . $id, 0);
+        $this->no = $this->controller->get_personal('ExpUI::no', 0);
     }
 
     public function get_template_name ($name) {

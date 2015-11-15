@@ -259,3 +259,28 @@ function splitInvestmentData($con, $id='')
     
     return $invest_list;
 }
+
+function calcMeanInvestment($con)
+{
+    $invest_list = [];
+    foreach ( $con->participants as $participant ) {
+        $id             = strval($participant[VAR_ID]);
+        $invest_list[]  = splitInvestmentData($con, $id);
+    }
+
+    $member             = count($invest_list);
+    $length             = count($invest_list[0]);
+    $mean_invest_list   = array();
+    $mean_invest_list   = array_pad($mean_invest_list, $length, 0.0);
+    for ( $i = 0; $i < $length; $i++ ) {
+        for ( $j = 0; $j < $member; $j++ ) {
+            $mean_invest_list[$i] += (float)$invest_list[$j][$i];
+        }
+    }
+
+    for ( $i = 0; $i < $length; $i++ ) {
+        $mean_invest_list[$i] /= (float)$member;
+    }
+
+    return $mean_invest_list;
+}

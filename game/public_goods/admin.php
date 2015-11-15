@@ -14,8 +14,9 @@ $container->add(new MultiSendingUI('設定',
     call_user_func(
         function($con) {
             $list = [
-                ['id' => VAR_TURN_NO_PUNISH,    'description' => '罰なし実験の繰り返し回数', 'dvalue' => $con->get(VAR_TURN_NO_PUNISH, 0)],
-                ['id' => VAR_TURN_PUNISH,       'description' => '罰あり実験の繰り返し回数', 'dvalue' => $con->get(VAR_TURN_PUNISH, 0)]
+                ['id' => VAR_NUM_PLAYER,        'description' => '1グループあたりの人数',       'dvalue' => DEFAULT_NUM_PLAYER],
+                ['id' => VAR_TURN_NO_PUNISH,    'description' => '罰なし実験の繰り返し回数',    'dvalue' => $con->get(VAR_TURN_NO_PUNISH, 0)],
+                ['id' => VAR_TURN_PUNISH,       'description' => '罰あり実験の繰り返し回数',    'dvalue' => $con->get(VAR_TURN_PUNISH, 0)]
             ];
 
             return $list;
@@ -23,12 +24,14 @@ $container->add(new MultiSendingUI('設定',
         ,$_con
     ),
     function($value)use($_con) {
+        $num_player     = intval($value[VAR_NUM_PLAYER]);
         $turn_no_punish = intval($value[VAR_TURN_NO_PUNISH]);
         $turn_punish    = intval($value[VAR_TURN_PUNISH]);
         if ( !(isValidValue($turn_no_punish, 1, MAX_TURN) || isValidValue($turn_punish, 1, MAX_TURN)) ) {
             return;
         }
 
+        $_con->set(VAR_NUM_PLAYER, $num_player);
         $_con->set(VAR_TURN_NO_PUNISH, $turn_no_punish);
         $_con->set(VAR_TURN_PUNISH, $turn_punish); 
     }
@@ -37,11 +40,15 @@ $container->add(new MultiSendingUI('設定',
 $container->add(new TemplateUI(<<<TMPL
 <br/>
 現在の設定値<br/>
+1グループあたりの人数：{if num_player==0}未設定{else}{num_player}{/if}<br/>
 罰なし: {if turn_no_punish==0}未設定{else}{turn_no_punish}回{/if}<br/>
 罰あり: {if turn_punish==0}未設定{else}{turn_punish}回{/if}<br/>
 <br/>
 TMPL
 ,   function()use($_con) {
+        if ( $_con->get(VAR_NUM_PLAYER, 0) == 0 ) {
+            $_con->set(VAR_NUM_PLAYER, DEFAULT_NUM_PLAYER);
+        }
         if ( $_con->get(VAR_TURN_NO_PUNISH, 0) == 0 ) {
             $_con->set(VAR_TURN_NO_PUNISH, DEFAULT_TURN);
         }
@@ -49,6 +56,7 @@ TMPL
             $_con->set(VAR_TURN_PUNISH, DEFAULT_TURN);
         }
         $list = [
+            'num_player'        => strval($_con->get(VAR_NUM_PLAYER, 0)),
             'turn_no_punish'    => strval($_con->get(VAR_TURN_NO_PUNISH, 0)),
             'turn_punish'       => strval($_con->get(VAR_TURN_PUNISH, 0))
         ];

@@ -5,6 +5,7 @@
 // experiment settings
 define('EXP_NO', 'password');
 define('NUM_PLAYER', 2);
+define('DEFAULT_NUM_PLAYER', 4);
 define('MAX_TURN', 6);
 define('DEFAULT_TURN', 6);
 
@@ -26,6 +27,7 @@ define('VAR_ID', 'id');
 define('VAR_ACTIVE', 'active');
 define('VAR_STATUS', 'status');
 define('VAR_PAGE', 'page');
+define('VAR_NUM_PLAYER', 'num_player');
 define('VAR_TURN', 'turn');
 define('VAR_TOTAL_TURN', 'total_turn');
 define('VAR_TURN_NO_PUNISH', 'turn_no_punish');

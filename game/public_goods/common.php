@@ -238,7 +238,7 @@ function changePhase($con)
 
 function appendInvestmentData($con, $pt)
 {
-    $array_invest_pt = $con->get_personal(ARRAY_INVEST_PT, []);
-    $array_invest_pt[] = $pt;
+    $array_invest_pt = $con->get_personal(ARRAY_INVEST_PT, '');
+    $array_invest_pt .= strval($pt) . ',';
     $con->set_personal(ARRAY_INVEST_PT, $array_invest_pt);
 }

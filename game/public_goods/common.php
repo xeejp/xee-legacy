@@ -4,8 +4,8 @@
 
 // experiment settings
 define('EXP_NO', 'password');
-define('NUM_PLAYER', 3);
-define('MAX_TURN', 6);
+define('NUM_PLAYER', 2);
+define('MAX_TURN', 2);
 
 // pages
 define('PAGE_WAIT', 'wait');

@@ -82,4 +82,8 @@ class Controller{
         return $result;
     }
 
+    public function load_file($file) {
+        return load_static($file);
+    }
+
 }

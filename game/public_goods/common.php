@@ -83,17 +83,17 @@ function calcTotalInvestment($con)
 
 function calcProfit($con, $total_investment)
 {
-    $cur_pt = $con->get_personal(VAR_CUR_PT, 0);
-    $invest_pt = $con->get_personal(VAR_INVEST_PT, 0);
+    $cur_pt     = $con->get_personal(VAR_CUR_PT, 0);
+    $invest_pt  = $con->get_personal(VAR_INVEST_PT, 0);
 
     return (float)$cur_pt - (float)$invest_pt + 0.4*(float)$total_investment;
 }
 
 function setTotalProfit($con)
 {
-    $total_investment = calcTotalInvestment($con);
-    $profit = calcProfit($con, $total_investment);
-    $cur_total_profit = $con->get_personal(VAR_TOTAL_PROFIT, 0);
+    $total_investment   = calcTotalInvestment($con);
+    $profit             = calcProfit($con, $total_investment);
+    $cur_total_profit   = $con->get_personal(VAR_TOTAL_PROFIT, 0);
     $con->set_personal(VAR_TOTAL_PROFIT, (float)($cur_total_profit + $profit));
 }
 
@@ -138,8 +138,8 @@ function calcTotalPunishment($value)
 {
     $total_punish = 0;
     foreach ( $value as $id => $punish_pt ) {
-        $pt = intval($punish_pt);
-        $total_punish += $pt;
+        $pt             = intval($punish_pt);
+        $total_punish   += $pt;
     }
     
     return $total_punish;

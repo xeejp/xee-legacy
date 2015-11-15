@@ -17,6 +17,7 @@ $container->add($modulator = new PageContainer(
     }
 ));
 
+
 $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
     function($con) {
         $num = 0;
@@ -32,7 +33,7 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
     function($con) {
         $result = [];
         foreach ( $con->participants as $participant ) {
-            $id = $participant[VAR_ID];
+            $id     = $participant[VAR_ID];
             $active = $con->get_personal(VAR_ACTIVE, false, strval($id));
             if ( !$active ) {
                 continue;
@@ -55,7 +56,10 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
     }
 ));
 
+
 $modulator->add_page('ready', $_ready = new NormalContainer());
+
+
 $_ready->add(new ButtonUI($_con,
     function($_con) {
         return "再マッチング"; 
@@ -79,6 +83,8 @@ $_ready->add(new ButtonUI($_con,
         }
     }
 ));
+
+
 $modulator->add_page(PAGE_EXPERIMENT, new ButtonUI($_con,
     function($_con) {
         return 'リセット'; 
@@ -90,5 +96,6 @@ $modulator->add_page(PAGE_EXPERIMENT, new ButtonUI($_con,
         }
     }
 ));
+
 
 $_con->add_component($container);

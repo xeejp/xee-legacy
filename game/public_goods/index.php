@@ -78,8 +78,8 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
                     continue;
                 }
 
-                $invest_pt = $con->get_personal(VAR_INVEST_PT, 100, strval($id));
-                $description = 'ID:' . $id . ' Investment point:' . $invest_pt . ' ';
+                $invest_pt      = $con->get_personal(VAR_INVEST_PT, 0, strval($id));
+                $description    = 'ID:' . $id . ' Investment point:' . $invest_pt . ' ';
                 $list[] = [
                     'id'            => $id,
                     'description'   => $description,
@@ -107,7 +107,7 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
             }
 
             $pt = intval($punish_pt); 
-            $received_punish_pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 100, strval($id));
+            $received_punish_pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id));
             $received_punish_pt += 3*$pt;
             $_con->set_personal(VAR_RECEIVED_PUNISH_PT, $received_punish_pt, strval($id));
         }
@@ -145,12 +145,12 @@ Punishment Result<br/>
 {/each}
 TMPL
 ,   function()use($_con) {
-        $turn = $_con->get(VAR_TURN, 0);
-        $punish_list = [];
+        $turn           = $_con->get(VAR_TURN, 0);
+        $punish_list    = [];
         foreach ( $_con->participants as $participant ) {
-            $id = $participant[VAR_ID];
-            $pt = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id));
-            $punish_list[] = ['id' => $id, 'pt' => $pt];
+            $id             = $participant[VAR_ID];
+            $pt             = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id));
+            $punish_list[]  = ['id' => $id, 'pt' => $pt];
         } 
 
         return [
@@ -197,12 +197,12 @@ Middle Result<br/>
 {/each}
 TMPL
 ,   function()use($_con) {
-        $turn = $_con->get(VAR_TURN, 1);
-        $invest_list = [];
+        $turn           = $_con->get(VAR_TURN, 1);
+        $invest_list    = [];
         foreach ( $_con->participants as $participant ) {
-            $id = $participant[VAR_ID];
-            $pt = $_con->get_personal(VAR_INVEST_PT, 0, strval($id));
-            $invest_list[] = [VAR_ID => $id, 'pt' => $pt];
+            $id             = $participant[VAR_ID];
+            $pt             = $_con->get_personal(VAR_INVEST_PT, 0, strval($id));
+            $invest_list[]  = [VAR_ID => $id, 'pt' => $pt];
         } 
 
         return [
@@ -251,9 +251,9 @@ TMPL
 ,   function()use($_con) {
         $total_profit_list = [];
         foreach ( $_con->participants as $participant ) {
-            $id = $participant[VAR_ID];
-            $pt = $_con->get_personal(VAR_TOTAL_PROFIT, 0, strval($id));
-            $total_profit_list[] = ['id' => $id, 'pt' => $pt];
+            $id                     = $participant[VAR_ID];
+            $pt                     = $_con->get_personal(VAR_TOTAL_PROFIT, 0, strval($id));
+            $total_profit_list[]    = ['id' => $id, 'pt' => $pt];
         } 
 
         $total_profit_list = sortProfitList($total_profit_list);
@@ -272,6 +272,7 @@ $_con->add_component($_page = new PageContainer(
         return $_con->get_personal(VAR_PAGE, PAGE_WAIT); 
     }
 ));
+
 foreach ($pages as $key => $value) {
     $_page->add_page($key, $value);
 }

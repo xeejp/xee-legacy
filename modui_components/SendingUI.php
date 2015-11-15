@@ -12,8 +12,10 @@ class SendingUI extends ModUIComponent{
 
     public function get_templates($name){
         $template = <<<TMPL
+<span class="pure-form">
 <input id="{_name}" type="text" value="">
-<button id="{_name}-b">{$this->btn}</button>
+<button class="pure-button pure-button-primary" id="{_name}-b">{$this->btn}</button>
+</span>
 TMPL;
         return [$this->get_template_name($name) => $template];
     }
@@ -23,7 +25,17 @@ TMPL;
     }
 
     public function get_scripts($name){
-        return ['value' => 'function(selector){return $("#" + selector).val();}', 'event' => 'function(selector, update){$(document).on("click", "#" + selector + "-b", update);}'];
+        return [
+            'value' => 'function(selector){return $("#" + selector).val();}',
+            'event' => <<<'JS'
+function(selector, update){
+    $(document).on("click", "#" + selector + "-b", update);
+    $(document).on("keydown", "#" + selector, function(e){
+        if (e.keyCode == 13) update();
+    });
+}
+JS
+        ];
     }
 
     public function input($name, $value){

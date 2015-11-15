@@ -19,14 +19,14 @@ class OptionUI extends ModUIComponent{
     public function get_templates($name){
         $template = <<<TMPL
 <input id="{_name}" type="text" value="{value}">
-<button id="{_name}-b">update</button><br/>
+<button id="{_name}-b" class="pure-button">update</button>
 TMPL;
         return [$name => $template];
     }
 
     public function get_values($name){
-        $value = $this->_con->get($this->var_name);
-        return ['value' => ($value !== null)? $value: $this->value];
+        $value = $this->_con->get($this->var_name, $this->value);
+        return ['value' => $value];
     }
 
     public function get_scripts($name){

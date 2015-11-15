@@ -11,7 +11,7 @@ class ButtonUI extends ModUIComponent{
     }
 
     public function get_templates($name){
-        return [$this->get_template_name($name) => "<button id=\"{_name}\">{text}</button>"]; 
+        return [$this->get_template_name($name) => '<button class="pure-button" id="{_name}">{text}</button>'];
     }
 
     public function get_values($name){

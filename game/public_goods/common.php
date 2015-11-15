@@ -86,7 +86,7 @@ function calcProfit($con, $total_investment)
     $cur_pt = $con->get_personal(VAR_CUR_PT, 0);
     $invest_pt = $con->get_personal(VAR_INVEST_PT, 0);
 
-    return $cur_pt - $invest_pt + 0.4*$total_investment;
+    return (float)$cur_pt - (float)$invest_pt + 0.4*(float)$total_investment;
 }
 
 function setTotalProfit($con)
@@ -94,7 +94,7 @@ function setTotalProfit($con)
     $total_investment = calcTotalInvestment($con);
     $profit = calcProfit($con, $total_investment);
     $cur_total_profit = $con->get_personal(VAR_TOTAL_PROFIT, 0);
-    $con->set_personal(VAR_TOTAL_PROFIT, $cur_total_profit + $profit);
+    $con->set_personal(VAR_TOTAL_PROFIT, (float)($cur_total_profit + $profit));
 }
 
 function inclementTurn($con)

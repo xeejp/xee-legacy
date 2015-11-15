@@ -25,6 +25,7 @@ define('VAR_ACTIVE', 'active');
 define('VAR_STATUS', 'status');
 define('VAR_PAGE', 'page');
 define('VAR_TURN', 'turn');
+define('VAR_TOTAL_TURN', 'total_turn');
 define('VAR_TURN_NO_PUNISH', 'turn_no_punish');
 define('VAR_TURN_PUNISH', 'turn_punish');
 define('VAR_PUNISH_PHASE', 'punish_phase');

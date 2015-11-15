@@ -19,13 +19,28 @@ $pages[PAGE_GRAPH]              = new NormalContainer();
 $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
         ['explanation' => 'これからコンピュータがみなさんをランダムに4人1組のグループへ振り分けます。'],
         ['explanation' => '「次へ」ボタンを押して実験相手を確認してください。'],
-    ])->add_page('役割決め', [
-        ['explanation' => 'あなたの実験相手が決まりました。'],
-        //['explanation_sub' => '1人目のメンバー：'. {mem[0]} .'さん'],
-        //['explanation_sub' => '2人目のメンバー：'. {mem[2]} .'さん'],
-        //['explanation_sub' => '3人目のメンバー：'. {mem[3]} .'さん'],
-        ['explanation_sub' => '4人目のメンバー：あなた'],
-    ])->add_page('ルール説明', [
+    ])->add_page('役割決め',
+        call_user_func(
+            function($con) {
+                $exp = [];
+                $exp[] = ['explanation' => 'あなたの実験相手が決まりました。'];
+                $counter = 0;
+                foreach ( $con->participants as $participant ) {
+                    ++$counter;
+                    $id     = strval($participant[VAR_ID]);
+                    $suffix = '';
+                    if ( isCurrentUser($con, $id) ) {
+                        $suffix =  '(あなた)';
+                    }
+
+                    $exp[] = ['explanation_sub' => strval($counter) . '人目のメンバーのID：' . $id . $suffix];
+                }
+
+                return $exp;
+            }
+            ,$_con
+        )
+    )->add_page('ルール説明', [
         ['explanation' => 'グループ内の各メンバーは、それぞれ20ポイントずつ持っています。'],
         ['explanation' => '各メンバーは、自分の所持しているポイントの中から一部または全部をグループで実施するプロジェクトのために投資することができます。'],
         ['explanation_sub' => 'まったく投資しないこともできます。その場合は0を入力してください。'],

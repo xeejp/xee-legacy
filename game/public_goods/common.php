@@ -119,6 +119,10 @@ function inclementTurn($con)
     ++$turn;
     $con->set(VAR_TURN, $turn);
 
+    $total_turn = $con->get(VAR_TOTAL_TURN, 0);
+    ++$total_turn;
+    $con->set(VAR_TOTAL_TURN, $total_turn);
+
     return $turn; 
 }
 

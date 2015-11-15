@@ -68,25 +68,28 @@ TMPL
 ));
 
 $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
-    call_user_func(function($con) {
-        $list = [];
-        foreach ( $con->participants as $participant ) {
-            $id = $participant[VAR_ID]; 
-            if ( isCurrentUser($con, $id) ) {
-                $cur_id = $con->get_personal(VAR_CUR_ID); 
-                continue;
+    call_user_func(
+        function($con) {
+            $list = [];
+            foreach ( $con->participants as $participant ) {
+                $id = $participant[VAR_ID];
+                if ( isCurrentUser($con, $id) ) {
+                    $cur_id = $con->get_personal(VAR_CUR_ID);
+                    continue;
+                }
+
+                $invest_pt = $con->get_personal(VAR_INVEST_PT, 100, strval($id));
+                $description = 'ID:' . $id . ' Investment point:' . $invest_pt . ' ';
+                $list[] = [
+                    'id'            => $id,
+                    'description'   => $description,
+                ];
             }
 
-            $invest_pt = $con->get_personal(VAR_INVEST_PT, 100, strval($id));
-            $description = 'ID:' . $id . ' Investment point:' . $invest_pt . ' ';
-            $list[] = [
-                'id'            => $id,
-                'description'   => $description,
-            ];
-        }
-
-        return $list; 
-    }, $_con),
+            return $list;
+        }, 
+        $_con
+    ),
     function($value)use($_con) {
         dump('[index.php new MultiSendingUI] sending is called.', true);
         dump('[index.php new MultiSendingUI] value:' . dump($value), true);
@@ -108,7 +111,7 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
             $_con->set_personal(VAR_RECEIVED_PUNISH_PT, $received_punish_pt, strval($id));
         }
 
-        $_con->set_personal(VAR_READY, true); 
+        $_con->set_personal(VAR_READY, true);
         if ( isReady(calcNumReadyUser($_con)) ) {
             setValueToAllUsers($_con, VAR_READY, false);
             redirectAllUsers($_con, PAGE_PUNISHMENT_RESULT);

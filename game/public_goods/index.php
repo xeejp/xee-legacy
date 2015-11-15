@@ -438,7 +438,6 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
 
 $pages[PAGE_GRAPH]->add(new StaticUI('Graph<br/>未実装です┌(^o^ ┐)┐'));
 
-/*
 $pages[PAGE_GRAPH]->add(new ScatterGraph(
     call_user_func(
         function()use($_con) {
@@ -470,7 +469,7 @@ $pages[PAGE_GRAPH]->add(new ScatterGraph(
     ),
     ['label' => ['x' => 'ターン', 'y' => '平均投資額']]
 ));
-*/
+
 
 
 // add all pages

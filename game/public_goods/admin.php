@@ -86,7 +86,7 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
             }
         }
 
-        return ($num == NUM_PLAYER);
+        return ($num == $con->get(VAR_NUM_PLAYER, 0));
     },
     function($con) {
         $result = [];

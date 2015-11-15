@@ -209,7 +209,11 @@ TMPL
             $invest_list[] = [VAR_ID => $id, 'pt' => $pt];
         } 
 
-        return ['turn' => $turn, 'id' => $_con->get_personal(VAR_CUR_ID, 0), 'invest_list' => $invest_list];
+        return [
+            'turn'          => $turn,
+            'id'            => $_con->get_personal(VAR_CUR_ID, 0),
+            'invest_list'   => $invest_list
+        ];
     }
 ));
 

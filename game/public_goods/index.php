@@ -177,12 +177,7 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
             if ( isFinish($turn) ) {
                 redirectAllUsers($con, PAGE_FINAL_RESULT); 
             } else {
-                setValueToAllUsers($con, VAR_CUR_PT, 20);
-                setValueToAllUsers($con, VAR_CUR_PUNISH_PT, 10);
-                setValueToAllUsers($con, VAR_INVEST_PT, 0);
-                setValueToAllUsers($con, VAR_PUNISH_PT, 0);
-                setValueToAllUsers($con, VAR_RECEIVED_PUNISH_PT, 0);
-
+                initCurrentUserData($con);
                 redirectAllUsers($con, PAGE_EXPERIMENT);
             } 
             setValueToAllUsers($con, VAR_READY, false);
@@ -234,12 +229,7 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
                 if ( isFinish($turn) ) {
                     redirectAllUsers($con, PAGE_FINAL_RESULT); 
                 } else {
-                    setValueToAllUsers($con, VAR_CUR_PT, 20);
-                    setValueToAllUsers($con, VAR_CUR_PUNISH_PT, 10);
-                    setValueToAllUsers($con, VAR_INVEST_PT, 0);
-                    setValueToAllUsers($con, VAR_PUNISH_PT, 0);
-                    setValueToAllUsers($con, VAR_RECEIVED_PUNISH_PT, 0);
-
+                    initCurrentUserData($con);
                     redirectAllUsers($con, PAGE_EXPERIMENT);
                 } 
             }

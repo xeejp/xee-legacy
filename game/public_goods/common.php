@@ -149,3 +149,12 @@ function isValidValue($value, $min, $max)
 {
     return ($min <= $value && $value <= $max);
 }
+
+function initCurrentUserData($con)
+{
+    setValueToAllUsers($con, VAR_CUR_PT, 20);
+    setValueToAllUsers($con, VAR_CUR_PUNISH_PT, 10);
+    setValueToAllUsers($con, VAR_INVEST_PT, 0);
+    setValueToAllUsers($con, VAR_PUNISH_PT, 0);
+    setValueToAllUsers($con, VAR_RECEIVED_PUNISH_PT, 0); 
+}

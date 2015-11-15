@@ -6,6 +6,7 @@ require 'common.php';
 $pages = [];
 $pages[PAGE_REJECT]             = new RedirectUI(_URL, $_con->get_personal(VAR_PAGE, PAGE_WAIT) == PAGE_REJECT);
 $pages[PAGE_WAIT]               = new StaticUI('<br/><br/><center>Waiting now</center>');
+$pages[PAGE_EXPLANATION]        = new ExplanationUI($_con);
 $pages[PAGE_EXPERIMENT]         = new NormalContainer();
 $pages[PAGE_PUNISHMENT]         = new NormalContainer();
 $pages[PAGE_WAIT_ACTION]        = new NormalContainer();
@@ -14,6 +15,47 @@ $pages[PAGE_MIDDLE_RESULT]      = new NormalContainer();
 $pages[PAGE_FINAL_RESULT]       = new NormalContainer(); 
 $pages[PAGE_GRAPH]              = new NormalContainer(); 
 
+
+$pages[PAGE_EXPLANATION]->add_page('グループ分け', [
+        ['explanation' => 'これからコンピュータがみなさんをランダムに4人1組のグループへ振り分けます。'],
+        ['explanation' => '「次へ」ボタンを押して実験相手を確認してください。'],
+    ])->add_page('役割決め', [
+        ['explanation' => 'あなたの実験相手が決まりました。'],
+        //['explanation_sub' => '1人目のメンバー：'. {mem[0]} .'さん'],
+        //['explanation_sub' => '2人目のメンバー：'. {mem[2]} .'さん'],
+        //['explanation_sub' => '3人目のメンバー：'. {mem[3]} .'さん'],
+        ['explanation_sub' => '4人目のメンバー：あなた'],
+    ])->add_page('ルール説明', [
+        ['explanation' => 'グループ内の各メンバーは、それぞれ20ポイントずつ持っています。'],
+        ['explanation' => '各メンバーは、自分の所持しているポイントの中から一部または全部をグループで実施するプロジェクトのために投資することができます。'],
+        ['explanation_sub' => 'まったく投資しないこともできます。その場合は0を入力してください。'],
+        ['explanation_sub' => '投資せずに残ったポイントは、そのまま自分のポイントになります。'],
+        ['explanation' => 'あなたは、20ポイントをそのまま持っておく分と、プロジェクトに投資する分に分けてください。'],
+    ])->add_page('ルール説明', [
+        ['explanation' => 'グループの各メンバーが投資額を決定したら、グループ全員の投資額を合計します。'],
+        ['explanation' => '投資額合計を0.4倍したポイントがグループ内のメンバー全員に配られます。'],
+        ['explanation_sub' => '小数点以下切り捨てで整数で配られます。'],
+        ['explanation' => 'つまり、あなたの利益は次のように計算されます。'],
+        ['explanation_sub' => 'あなたの利益＝20pt−あなたの投資額＋(0.4×グループ全員の投資額合計)'],
+        ['explanation_sub' => '(なお、この実験では20pt以下の正の整数のみ入力できません。)'],
+    ])->add_page('ルール説明(投資例)', [
+        ['explanation' => 'あなたの利益＝20pt−あなたの投資額＋(0.4×グループ全員の投資額合計)'],
+        ['explanation_sub' => 'どのメンバーも投資しない場合：あなたの投資額は0、グループ全員の投資額合計は0。'],
+        ['explanation_sub' => 'つまり、あなたの利益は20ptになります。'],
+        ['explanation_sub' => '全メンバーが半分の10ptを投資する場合：あなたの投資額は10、グループ全員の投資額合計は40。'],
+        ['explanation_sub' => 'つまり、あなたの利益は26ptになります。'],
+        ['explanation_sub' => '全メンバーが20pt全部を投資する場合：あなたの投資額は20、グループ全員の投資額合計は80。'],
+        ['explanation_sub' => 'つまり、あなたの利益は32ptになります。'],
+    ])->add_page('ルール説明', [
+        ['explanation' => 'この投資をメンバーを変えずに*'. $_con->get(VAR_TOTAL_TURN, 0) .'*ターン繰り返します。'],
+        ['explanation_sub' => '投資できる最大額は毎ターン20ポイントです。'],
+        ['explanation_sub' => '各ターンで得られた利益は、累積されてページ上部に表示されます。'],
+        ['explanation_sub' => '各ターン毎に、他のユーザーの投資額が表示されます。'],
+        ['explanation_blank' => ''],
+        ['explanation' => 'あなたは、なるべく総利益が最大になるように投資してください。'],
+    ])->add_page('待機', [
+        ['explanation' => 'それでは実験開始までしばらくお待ち下さい。'],
+    ]);
 
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 Turn:{turn}<br/>

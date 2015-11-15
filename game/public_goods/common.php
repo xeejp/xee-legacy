@@ -10,6 +10,7 @@ define('DEFAULT_TURN', 6);
 
 // pages
 define('PAGE_WAIT', 'wait');
+define('PAGE_EXPLANATION', 'explanation');
 define('PAGE_REJECT', 'reject');
 define('PAGE_EXPERIMENT', 'experiment');
 define('PAGE_PUNISHMENT', 'punishment');

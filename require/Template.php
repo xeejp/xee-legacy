@@ -23,7 +23,9 @@ DESC;
     function lwte_add($name, $template){
         $template = str_replace('"', '\\"', str_replace("\n", "", $template));
         $this->add_script(<<<JS
-lwte.addTemplate("$name", "$template");
+if((error = lwte.addTemplate("$name", "$template")) != false){
+    alert(error);
+}
 JS
     );
     }
@@ -52,7 +54,7 @@ JS
 <meta name="description" content="{$this->description}">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="{$_(_URL)}js/jquery-2.1.3.min.js"></script>
-<script src="{$_(_URL)}js/lwte/lwte.js"></script>
+<script src="{$_(_URL)}js/lwte/lwte.min.js"></script>
 <script> lwte = new LWTE();</script>
 
 <link rel="stylesheet" href="yui.yahooapis.com/pure/0.6.0/pure-min.css">

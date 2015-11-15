@@ -8,6 +8,7 @@ if($_host_session->is_login){
         $_data['games'] = $_games;
         $_data['experiments'] = $_experiments;
         $_template = '';
+        $running = ExperimentModel::S_RUNNING;
         $_template .= <<<TMPL
 <h2>game</h2>
 <form class="pure-form" action="./host/games" method="post">
@@ -32,7 +33,9 @@ if($_host_session->is_login){
 </thead>
 <tbody>
 {each experiments}
-<tr><td>{id}</td><td>{game_id}</td><td><a class="pure-button" href="./admin/{id}">admin</a></td><td><input class="pure-button" type="submit" name="experiment_id" value="{id}"></input></td></tr>
+<tr><td>{id}</td><td>{game_id}</td><td>
+{switch status} {case $running} <a class="pure-button" href="./admin/{id}">admin</a> {/switch}
+</td><td><input class="pure-button" type="submit" name="experiment_id" value="{id}"></input></td></tr>
 {/each}
 </tbody>
 </table>

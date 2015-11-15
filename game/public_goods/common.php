@@ -245,9 +245,12 @@ function appendInvestmentData($con, $pt)
     $con->set_personal(ARRAY_INVEST_PT, $array_invest_pt);
 }
 
-function splitInvestmentData($con)
+function splitInvestmentData($con, $id='')
 {
-    $invest_list_string = explode(',', $con->get_personal(ARRAY_INVEST_PT, ''));
+    if ( $id == '' ) {
+        $id = $con->get_personal(VAR_CUR_ID, 0);
+    }
+    $invest_list_string = explode(',', $con->get_personal(ARRAY_INVEST_PT, '', $id));
     $invest_list = [];
     foreach ( $invest_list_string as $invest_pt_string ) {
         $invest_list[] = intval($invest_pt_string);

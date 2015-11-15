@@ -69,6 +69,7 @@ $punish_explanation->add_page('ルール説明(罰則あり)', [
     ['explanation_sub' => '罰則によって自分、もしくは相手の利益がマイナスになることがあります。'],
     ['explanation' => '最終的に、あなたの利益は次のように計算されます。'],
     ['explanation_sub' => 'あなたの利益=20pt-あなたの投資額+(0.4×グループ全員の投資額合計)-あなたが使った罰則ポイント-相手から受けた罰則ポイント'],
+    ['explanation' => 'この罰則ありの投資をメンバーを変えずに'. strval(intval($_con->get(VAR_TURN_PUNISH, 0))) .'ターン繰り返します。'],
 ]);
 $pages[PAGE_PUNISH_EXPLANATION]->add($punish_explanation);
 

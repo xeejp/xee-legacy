@@ -10,7 +10,8 @@ $pages[PAGE_WAIT]               = new StaticUI('<div style="text-align: center;"
 <h1>公共財実験</h1>
 <hr/>
 実験開始までしばらくお待ちください。</div>');
-$pages[PAGE_EXPLANATION]        = new ExplanationUI($_con, 'common');
+//$pages[PAGE_EXPLANATION]        = new ExplanationUI($_con, 'common');
+$pages[PAGE_EXPLANATION]        = new ExplanationUI($_con);
 $pages[PAGE_PUNISH_EXPLANATION] = new NormalContainer();
 $pages[PAGE_EXPERIMENT]         = new NormalContainer();
 $pages[PAGE_PUNISHMENT]         = new NormalContainer();
@@ -58,6 +59,7 @@ $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
     ]);
 
 
+/*
 $punish_explanation = new ExplanationUI($_con, 'punish');
 $punish_explanation->add_page('ルール説明(罰則あり)', [
     ['explanation' => '同様の実験に罰則制度を設けてもう一度行います。'],
@@ -87,6 +89,7 @@ $pages[PAGE_PUNISH_EXPLANATION]->add(new ButtonUI($_con,
         }
     }
 ));
+*/
 
 
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
@@ -421,7 +424,8 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
                 } else {
                     initAllUsersData($con);
                     setValueToAllUsers($con, VAR_TOTAL_PROFIT, 0);
-                    redirectAllUsers($con, PAGE_PUNISH_EXPLANATION);
+                    //redirectAllUsers($con, PAGE_PUNISH_EXPLANATION);
+                    redirectAllUsers($con, PAGE_EXPERIMENT);
                 }
             }
             setValueToAllUsers($con, VAR_READY, false);
@@ -434,6 +438,7 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
 
 $pages[PAGE_GRAPH]->add(new StaticUI('Graph<br/>未実装です┌(^o^ ┐)┐'));
 
+/*
 $pages[PAGE_GRAPH]->add(new ScatterGraph(
     call_user_func(
         function()use($_con) {
@@ -465,6 +470,7 @@ $pages[PAGE_GRAPH]->add(new ScatterGraph(
     ),
     ['label' => ['x' => 'ターン', 'y' => '平均投資額']]
 ));
+*/
 
 
 // add all pages

@@ -38,6 +38,9 @@ define('VAR_PUNISH_PT', 'punish_pt');
 define('VAR_RECEIVED_PUNISH_PT', 'rec_punish_pt');
 define('VAR_READY', 'ready');
 
+// for graph
+define('ARRAY_INVEST_PT', 'array_invest_pt');
+
 
 // common functions 
 function setValueToAllUsers($con, $id, $val)
@@ -226,4 +229,11 @@ function changePhase($con)
         $current_phase = true;
     }
     $con->set(VAR_PUNISH_PHASE, $current_phase);
+}
+
+function appendInvestmentData($con, $pt)
+{
+    $array_invest_pt = $con->get_personal(ARRAY_INVEST_PT, []);
+    $array_invest_pt[] = $pt;
+    $con->set_personal(ARRAY_INVEST_PT, $array_invest_pt);
 }

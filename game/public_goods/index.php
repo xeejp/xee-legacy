@@ -41,8 +41,9 @@ $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest',
         }
 
         $_con->set_personal(VAR_INVEST_PT, $invest_pt);
-        $_con->set_personal(VAR_READY, true);
+        appendInvestmentData($_con, $invest_pt);
 
+        $_con->set_personal(VAR_READY, true); 
         if ( isReady(calcNumReadyUser($_con)) ) {
             setValueToAllUsers($_con, VAR_READY, false);
             redirectAllUsers($_con, PAGE_MIDDLE_RESULT);

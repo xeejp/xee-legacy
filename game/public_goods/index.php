@@ -35,10 +35,9 @@ $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
     ])->add_page('ルール説明', [
         ['explanation' => 'グループの各メンバーが投資額を決定したら、グループ全員の投資額を合計します。'],
         ['explanation' => '投資額合計を0.4倍したポイントがグループ内のメンバー全員に配られます。'],
-        ['explanation_sub' => '小数点以下切り捨てで整数で配られます。'],
         ['explanation' => 'つまり、あなたの利益は次のように計算されます。'],
         ['explanation_sub' => 'あなたの利益＝20ポイント−あなたの投資ポイント＋(0.4×グループ全員の合計投資ポイント)'],
-        ['explanation_sub' => '(なお、この実験では20pt以下の正の整数のみ入力できません。)'],
+        ['explanation_sub' => '(なお、この実験では20pt以下の正の整数のみ入力できます。)'],
     ])->add_page('ルール説明(投資例)', [
         ['explanation' => 'あなたの利益＝20ポイント−あなたの投資ポイント＋(0.4×グループ全員の合計投資ポイント)'],
         ['explanation_sub' => 'どのメンバーも投資しない場合：あなたの投資額は0、グループ全員の投資額合計は0。'],
@@ -48,7 +47,7 @@ $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
         ['explanation_sub' => '全メンバーが20pt全部を投資する場合：あなたの投資額は20、グループ全員の投資額合計は80。'],
         ['explanation_sub' => 'つまり、あなたの利益は32ptになります。'],
     ])->add_page('ルール説明', [
-        ['explanation' => 'この投資をメンバーを変えずに'. strval(intval($_con->get(VAR_TURN_NO_PUNISH, 0)) + intval($_con->get(VAR_TURN_PUNISH, 0))) .'ターン繰り返します。'],
+        ['explanation' => 'この投資をメンバーを変えずに'. strval(intval($_con->get(VAR_TURN_NO_PUNISH, 0))) .'ターン繰り返します。'],
         ['explanation_sub' => '投資できる最大額は毎ターン20ポイントです。'],
         ['explanation_sub' => '各ターンで得られた利益は、累積されてページ上部に表示されます。'],
         ['explanation_sub' => '各ターン毎に、他のユーザーの投資額が表示されます。'],

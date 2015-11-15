@@ -35,7 +35,7 @@ $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest',
     function($value)use($_con) {
         $invest_pt  = intval($value);
         $cur_pt     = $_con->get_personal(VAR_CUR_PT);
-        if ( $invest_pt < 0 || $invest_pt > $cur_pt ) {
+        if ( !isValidValue($invest_pt, 0, $cur_pt) ) {
             return;
         }
 
@@ -94,8 +94,9 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
         dump('[index.php new MultiSendingUI] sending is called.', true);
         dump('[index.php new MultiSendingUI] value:' . dump($value), true);
 
-        $total_punish = calcTotalPunishment($value);
-        if ( $total_punish < 0 || $total_punish > 10 ) {
+        $total_punish   = calcTotalPunishment($value);
+        $cur_punish_pt  = $_con->get_personal(VAR_CUR_PUNISH_PT);
+        if ( !isValidValue($total_punish, 0, $cur_punish_pt) ) {
             return;
         }
         $_con->set_personal(VAR_PUNISH_PT, $total_punish);

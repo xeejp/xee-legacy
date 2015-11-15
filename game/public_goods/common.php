@@ -144,3 +144,8 @@ function calcTotalPunishment($value)
     
     return $total_punish;
 }
+
+function isValidValue($value, $min, $max)
+{
+    return ($min <= $value && $value <= $max);
+}

@@ -128,7 +128,9 @@ TMPL
 ,   function()use($_con) { 
         $num_not_ready_user = NUM_PLAYER - calcNumReadyUser($_con);
 
-        return ['num_not_ready_user' => $num_not_ready_user];
+        return [
+            'num_not_ready_user'    => $num_not_ready_user
+        ];
     }
 ));
 

@@ -120,9 +120,21 @@ function inclementTurn($con)
     return $turn; 
 }
 
-function isFinish($turn)
+function isPunishPhase($con)
 {
-    return ($turn > MAX_TURN);
+    return $con->get(VAR_PUNISH_PHASE, false);
+}
+
+function isFinish($con, $turn)
+{
+    $punish_phase   = isPunishPhase($con);
+    $turn_no_punish = strval($_con->get(VAR_TURN_NO_PUNISH));
+    $turn_punish    = strval($_con->get(VAR_TURN_PUNISH));
+
+    return (
+        (!$punish_phase && $turn > $turn_no_punish)
+        || ($punish_phase && $turn > $turn_punish)
+    );
 }
 
 function sortProfitList($total_profit_list)
@@ -136,10 +148,6 @@ function sortProfitList($total_profit_list)
     return $total_profit_list;
 }
 
-function isPunishPhase($con)
-{
-    return $con->get(VAR_PUNISH_PHASE, false);
-}
 
 function isCurrentUser($con, $id)
 {

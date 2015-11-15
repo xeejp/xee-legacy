@@ -78,12 +78,12 @@ $pages[PAGE_PUNISH_EXPLANATION]->add(new ButtonUI($_con,
         return '確認';
     },
     function($con) { 
-        $_con->set_personal(VAR_READY, true); 
-        if ( isReady(calcNumReadyUser($_con)) ) {
-            setValueToAllUsers($_con, VAR_READY, false);
-            redirectAllUsers($_con, PAGE_EXPERIMENT);
+        $con->set_personal(VAR_READY, true); 
+        if ( isReady(calcNumReadyUser($con)) ) {
+            setValueToAllUsers($con, VAR_READY, false);
+            redirectAllUsers($con, PAGE_EXPERIMENT);
         } else {
-            redirectCurrentUser($_con, PAGE_WAIT_ACTION);
+            redirectCurrentUser($con, PAGE_WAIT_ACTION);
         }
     }
 ));

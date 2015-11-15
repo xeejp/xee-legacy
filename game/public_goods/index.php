@@ -10,7 +10,7 @@ $pages[PAGE_WAIT]               = new StaticUI('<div style="text-align: center;"
 <h1>公共財実験</h1>
 <hr/>
 実験開始までしばらくお待ちください。</div>');
-$pages[PAGE_EXPLANATION]        = new ExplanationUI($_con);
+$pages[PAGE_EXPLANATION]        = new ExplanationUI($_con, 'common');
 $pages[PAGE_PUNISH_EXPLANATION] = new NormalContainer();
 $pages[PAGE_EXPERIMENT]         = new NormalContainer();
 $pages[PAGE_PUNISHMENT]         = new NormalContainer();
@@ -58,8 +58,8 @@ $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
         ['explanation' => 'それでは実験開始までしばらくお待ち下さい。'],
     ]);
 
-/*
-$punish_explanation = new ExplanationUI($_con);
+
+$punish_explanation = new ExplanationUI($_con, 'punish');
 $punish_explanation->add_page('ルール説明(罰則あり)', [
     ['explanation' => '同様の実験に罰則制度を設けてもう一度行います。'],
     ['explanation' => 'グループの各メンバーはそれぞれ20ポイントずつ持っており、その一部または全部を投資するところまでは同じです。'],
@@ -73,10 +73,9 @@ $punish_explanation->add_page('ルール説明(罰則あり)', [
 ]);
 $pages[PAGE_PUNISH_EXPLANATION]->add($punish_explanation);
 
-
 $pages[PAGE_PUNISH_EXPLANATION]->add(new ButtonUI($_con,
     function($con) {
-        return 'OK';
+        return '確認';
     },
     function($con) { 
         $_con->set_personal(VAR_READY, true); 
@@ -88,7 +87,7 @@ $pages[PAGE_PUNISH_EXPLANATION]->add(new ButtonUI($_con,
         }
     }
 ));
-*/
+
 
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 <h1 style="text-align: center;">投資ポイント入力(罰則なし／あり実験)</h1>
@@ -422,7 +421,7 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
                 } else {
                     initAllUsersData($con);
                     setValueToAllUsers($con, VAR_TOTAL_PROFIT, 0);
-                    redirectAllUsers($con, PAGE_EXPERIMENT);
+                    redirectAllUsers($con, PAGE_PUNISH_EXPLANATION);
                 }
             }
             setValueToAllUsers($con, VAR_READY, false);

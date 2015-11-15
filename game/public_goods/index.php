@@ -267,7 +267,10 @@ TMPL
 
         $total_profit_list = sortProfitList($total_profit_list);
         
-        return ['id' => $_con->get_personal(VAR_CUR_ID, 0), 'total_profit_list' => $total_profit_list];
+        return [
+            'id'                => $_con->get_personal(VAR_CUR_ID, 0),
+            'total_profit_list' => $total_profit_list
+        ];
     }
 ));
 

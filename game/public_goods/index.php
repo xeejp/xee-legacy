@@ -275,7 +275,7 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
                 changePhase($con); 
                 initAllUsersData($con);
                 setValueToAllUsers($con, VAR_TOTAL_PROFIT, 0);
-                redirectAllUsers(PAGE_EXPERIMENT);
+                redirectAllUsers($con, PAGE_EXPERIMENT);
             }
             setValueToAllUsers($con, VAR_READY, false);
         } else {

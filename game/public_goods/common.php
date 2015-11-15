@@ -134,8 +134,8 @@ function isPunishPhase($con)
 function isFinishCurrentPhase($con, $turn)
 {
     $punish_phase   = isPunishPhase($con);
-    $turn_no_punish = strval($_con->get(VAR_TURN_NO_PUNISH));
-    $turn_punish    = strval($_con->get(VAR_TURN_PUNISH));
+    $turn_no_punish = strval($con->get(VAR_TURN_NO_PUNISH));
+    $turn_punish    = strval($con->get(VAR_TURN_PUNISH));
 
     return (
         (!$punish_phase && $turn > $turn_no_punish)
@@ -146,11 +146,11 @@ function isFinishCurrentPhase($con, $turn)
 function isFinishAllPhase($con)
 {
     $total_turn = $con->get(VAR_TOTAL_TURN);
-    $turn_no_punish = strval($_con->get(VAR_TURN_NO_PUNISH));
-    $turn_punish    = strval($_con->get(VAR_TURN_PUNISH));
+    $turn_no_punish = strval($con->get(VAR_TURN_NO_PUNISH));
+    $turn_punish    = strval($con->get(VAR_TURN_PUNISH));
 
 
-    return ($total_turn > ($turn_no_punis + $turn_no_punis));
+    return ($total_turn > ($turn_no_punish + $turn_no_punish));
 }
 
 function sortProfitList($total_profit_list)

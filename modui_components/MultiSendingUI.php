@@ -13,10 +13,10 @@ class MultiSendingUI extends ModUIComponent {
 
     public function get_templates($name) {
         $template = <<<TMPL
-<form id="{_name}">
+<fieldset id={_name}>
 {each list}{description}: <input name="{id}" type="text"><br/>{/each}
 <button id="{_name}-button">{button_title}</button><br/>
-</form>
+</fieldset>
 TMPL;
 
         return [$this->get_template_name($name) => $template];
@@ -29,11 +29,17 @@ TMPL;
     public function get_scripts($name){
         $value = <<<'JS'
 function(selector) {
-    var $form = $('#' + selector);
-    var arrVal = $form.serializeArray(); 
-    alert(arrVal);
+    var list = document.getElementById(selector);
+    var values = {};
+    for ( var i = 0; i < list.childNodes.length; i++ ) {
+        if ( list.childNodes[i].type == "text" ) {
+            var name = list.childNodes[i].name;
+            var value = list.childNodes[i].value;
+            values[name] = value;
+        }
+    }
 
-    return arrVal;
+    return values;
 }
 JS;
 
@@ -47,11 +53,7 @@ JS;
     }
 
     public function input($name, $value){
-        $list = [];
-        foreach ( $value as $line ) {
-            $list[strval($line['name'])] = strval($line['value']);
-        }
-        call_user_func($this->sending, $list);
+        call_user_func($this->sending, $value);
     }
 
 }

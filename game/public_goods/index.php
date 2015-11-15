@@ -47,7 +47,7 @@ $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
         ['explanation_sub' => '全メンバーが20pt全部を投資する場合：あなたの投資額は20、グループ全員の投資額合計は80。'],
         ['explanation_sub' => 'つまり、あなたの利益は32ptになります。'],
     ])->add_page('ルール説明', [
-        ['explanation' => 'この投資をメンバーを変えずに*'. $_con->get(VAR_TOTAL_TURN, 0) .'*ターン繰り返します。'],
+        ['explanation' => 'この投資をメンバーを変えずに'. strval(intval($_con->get(VAR_TURN_NO_PUNISH, 0)) + intval($_con->get(VAR_TURN_PUNISH, 0))) .'ターン繰り返します。'],
         ['explanation_sub' => '投資できる最大額は毎ターン20ポイントです。'],
         ['explanation_sub' => '各ターンで得られた利益は、累積されてページ上部に表示されます。'],
         ['explanation_sub' => '各ターン毎に、他のユーザーの投資額が表示されます。'],
@@ -331,7 +331,64 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
 ));
 
 
-$pages[PAGE_GRAPH]->add(new StaticUI('Graph'));
+$pages[PAGE_GRAPH]->add(new StaticUI('Graph<br/>未実装です┌(^o^ ┐)┐'));
+
+/*
+$pages[PAGE_GRAPH]->add(new TemplateUI(<<<TMPL
+{each invest_list}{pt}, {/each}
+<br/>
+TMPL
+,   function()use($_con) {
+        $invest_array   = splitInvestmentData($_con);
+        $invest_list    = [];
+        foreach ( $invest_array as $invest_pt ) {
+            $invest_list[] = ['pt' => $invest_pt];
+        }
+
+        return [
+            'invest_list' => $invest_list
+        ];
+    }
+));
+
+$pages[PAGE_GRAPH]->add(new ScatterGraph(
+    call_user_func(
+        function()use($_con) {
+            foreach ($_con->participants as $participant)
+    //            if ($_con->get_personal('finished', false, $participant['id']))
+                    switch($_con->get_personal('role', '', $participant['id'])) {
+                    case 'seller':
+                        $supply[] = $_con->get_personal('profit', 0, $participant['id']);
+                        break;
+                    case 'buyer':
+                        $demand[] = $_con->get_personal('profit', 0, $participant['id']);
+                        break;
+                    }
+
+            $data = [
+                'supply' => [
+                    'values' => [],
+                    'color' => 'green',
+                ],
+                'demand' => [
+                    'values' => [],
+                    'color' => 'red',
+                ],
+            ];
+            asort($supply);
+            arsort($demand);
+            $i = 1;
+            foreach ($supply as $val)
+                $data['supply']['values'][] = ['x' => $i++, 'y' => $val];
+            $i = 1;
+            foreach ($demand as $val)
+                $data['demand']['values'][] = ['x' => $i++, 'y' => $val];
+            return $data;
+        }
+    ),
+    ['label' => ['x' => '', 'y' => '価格']]
+));
+*/
 
 
 // add all pages

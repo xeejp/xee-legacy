@@ -152,7 +152,11 @@ TMPL
             $punish_list[] = ['id' => $id, 'pt' => $pt];
         } 
 
-        return ['turn' => $turn, 'id' => $_con->get_personal(VAR_CUR_ID), 'punish_list' => $punish_list];
+        return [
+            'turn'          => $turn,
+            'id'            => $_con->get_personal(VAR_CUR_ID),
+            'punish_list'   => $punish_list
+        ];
     }
 ));
 

@@ -4,7 +4,6 @@
 
 // experiment settings
 define('EXP_NO', 'password');
-define('NUM_PLAYER', 2);
 define('DEFAULT_NUM_PLAYER', 4);
 define('MAX_TURN', 6);
 define('DEFAULT_TURN', 6);
@@ -78,9 +77,10 @@ function redirectCurrentUser($con, $page_id)
     $con->set_personal(VAR_PAGE, $page_id);
 }
 
-function isReady($num_ready_user)
+function isReady($con, $num_ready_user)
 {
-    return ($num_ready_user == NUM_PLAYER);
+    $num_player = $con->get(VAR_NUM_PLAYER);
+    return ($num_ready_user == $num_player);
 }
 
 function calcTotalInvestment($con)
@@ -293,3 +293,4 @@ function isPunishmentData($con, $num)
 
     return ( $num > $turn_no_punish );
 }
+

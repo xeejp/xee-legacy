@@ -81,7 +81,7 @@ $pages[PAGE_PUNISH_EXPLANATION]->add(new ButtonUI($_con,
     },
     function($con) { 
         $con->set_personal(VAR_READY, true); 
-        if ( isReady(calcNumReadyUser($con)) ) {
+        if ( isReady($con, calcNumReadyUser($con)) ) {
             setValueToAllUsers($con, VAR_READY, false);
             redirectAllUsers($con, PAGE_EXPERIMENT);
         } else {
@@ -133,7 +133,7 @@ $pages[PAGE_EXPERIMENT]->add(new SendingUI('投資する',
         appendInvestmentData($_con, $invest_pt);
 
         $_con->set_personal(VAR_READY, true); 
-        if ( isReady(calcNumReadyUser($_con)) ) {
+        if ( isReady($_con, calcNumReadyUser($_con)) ) {
             setValueToAllUsers($_con, VAR_READY, false);
             redirectAllUsers($_con, PAGE_MIDDLE_RESULT);
         } else {
@@ -213,7 +213,7 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('罰則を与える',
         }
 
         $_con->set_personal(VAR_READY, true);
-        if ( isReady(calcNumReadyUser($_con)) ) {
+        if ( isReady($_con, calcNumReadyUser($_con)) ) {
             setValueToAllUsers($_con, VAR_READY, false);
             redirectAllUsers($_con, PAGE_PUNISHMENT_RESULT);
         } else {
@@ -229,7 +229,7 @@ $pages[PAGE_WAIT_ACTION]->add(new TemplateUI(<<<TMPL
 <center>あと{num_not_ready_user}名の入力を待っています。</center>
 TMPL
 ,   function()use($_con) { 
-        $num_not_ready_user = NUM_PLAYER - calcNumReadyUser($_con);
+        $num_not_ready_user = $_con->get(VAR_NUM_PLAYER, 0) - calcNumReadyUser($_con);
 
         return [
             'num_not_ready_user'    => $num_not_ready_user
@@ -286,7 +286,7 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
         reduceTotalProfit($con);
 
         $con->set_personal(VAR_READY, true);
-        if ( isReady(calcNumReadyUser($con)) ) {
+        if ( isReady($con, calcNumReadyUser($con)) ) {
             $turn = inclementTurn($con);
             if ( isFinishCurrentPhase($con, $turn) ) {
                 redirectAllUsers($con, PAGE_FINAL_RESULT); 
@@ -349,7 +349,7 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
         setTotalProfit($con);
 
         $con->set_personal(VAR_READY, true);
-        if ( isReady(calcNumReadyUser($con)) ) {
+        if ( isReady($con, calcNumReadyUser($con)) ) {
             if ( isPunishPhase($con) ) {
                 redirectAllUsers($con, PAGE_PUNISHMENT);
             } else {
@@ -413,7 +413,7 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
     },
     function($con) { 
         $con->set_personal(VAR_READY, true);
-        if ( isReady(calcNumReadyUser($con)) ) {
+        if ( isReady($con, calcNumReadyUser($con)) ) {
             $turn = $con->get(VAR_TURN, 0);
             if ( isFinishAllPhase($con, $turn) ) {
                 redirectAllUsers($con, PAGE_GRAPH);

@@ -260,6 +260,30 @@ TMPL
     }
 ));
 
+$pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
+    function($con) {
+        return 'OK';
+    },
+    function($con) { 
+        $con->set_personal(VAR_READY, true);
+        if ( isReady(calcNumReadyUser($con)) ) {
+            $turn = $con->get(VAR_TURN, 0);
+            if ( isFinishAllPhase($con, $turn) ) {
+                redirectAllUsers($con, PAGE_GRAPH);
+            } else {
+                $con->set(VAR_TURN, 1);
+                changePhase($con); 
+                initAllUsersData($con);
+                setValueToAllUsers($con, VAR_TOTAL_PROFIT, 0);
+                redirectAllUsers(PAGE_EXPERIMENT);
+            }
+            setValueToAllUsers($con, VAR_READY, false);
+        } else {
+            redirectCurrentUser($con, PAGE_WAIT_ACTION);
+        }
+    }
+));
+
 
 $pages[PAGE_GRAPH]->add(new StaticUI('Graph'));
 

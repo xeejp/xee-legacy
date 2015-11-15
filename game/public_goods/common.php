@@ -223,12 +223,17 @@ function calcReceivedPunishment($con, $id, $punish_pt)
 function changePhase($con)
 {
     $current_phase = $con->get(VAR_PUNISH_PHASE);
+    $turn;
     if ( $current_phase ) {
         $current_phase = false;
+        $turn = $con->get(VAR_TURN_NO_PUNISH);
     } else {
         $current_phase = true;
+        $turn = $con->get(VAR_TURN_PUNISH);
     }
     $con->set(VAR_PUNISH_PHASE, $current_phase);
+
+    return $turn;
 }
 
 function appendInvestmentData($con, $pt)

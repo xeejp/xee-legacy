@@ -273,10 +273,13 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
                 redirectAllUsers($con, PAGE_GRAPH);
             } else {
                 $con->set(VAR_TURN, 1);
-                changePhase($con); 
-                initAllUsersData($con);
-                setValueToAllUsers($con, VAR_TOTAL_PROFIT, 0);
-                redirectAllUsers($con, PAGE_EXPERIMENT);
+                if ( changePhase($con) == 0 ) {
+                    redirectAllUsers($con, PAGE_GRAPH);
+                } else {
+                    initAllUsersData($con);
+                    setValueToAllUsers($con, VAR_TOTAL_PROFIT, 0);
+                    redirectAllUsers($con, PAGE_EXPERIMENT);
+                }
             }
             setValueToAllUsers($con, VAR_READY, false);
         } else {

@@ -16,6 +16,7 @@ define('PAGE_WAIT_ACTION', 'waitAction');
 define('PAGE_PUNISHMENT_RESULT', 'punishmentResult');
 define('PAGE_MIDDLE_RESULT', 'middleResult');
 define('PAGE_FINAL_RESULT', 'finalResult');
+define('PAGE_GRAPH', 'graph');
 
 // variables
 define('VAR_ID', 'id');

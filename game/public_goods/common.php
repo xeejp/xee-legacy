@@ -143,6 +143,16 @@ function isFinishCurrentPhase($con, $turn)
     );
 }
 
+function isFinishAllPhase($con)
+{
+    $total_turn = $con->get(VAR_TOTAL_TURN);
+    $turn_no_punish = strval($_con->get(VAR_TURN_NO_PUNISH));
+    $turn_punish    = strval($_con->get(VAR_TURN_PUNISH));
+
+
+    return ($total_turn > ($turn_no_punis + $turn_no_punis));
+}
+
 function sortProfitList($total_profit_list)
 {
     usort($total_profit_list, 

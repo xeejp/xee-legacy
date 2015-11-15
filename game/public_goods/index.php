@@ -172,7 +172,7 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
             if ( isFinishCurrentPhase($con, $turn) ) {
                 redirectAllUsers($con, PAGE_FINAL_RESULT); 
             } else {
-                initCurrentUserData($con);
+                initAllUsersData($con);
                 redirectAllUsers($con, PAGE_EXPERIMENT);
             } 
             setValueToAllUsers($con, VAR_READY, false);
@@ -224,7 +224,7 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
                 if ( isFinishCurrentPhase($con, $turn) ) {
                     redirectAllUsers($con, PAGE_FINAL_RESULT); 
                 } else {
-                    initCurrentUserData($con);
+                    initAllUsersData($con);
                     redirectAllUsers($con, PAGE_EXPERIMENT);
                 } 
             }

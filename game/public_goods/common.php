@@ -83,7 +83,7 @@ function calcTotalInvestment($con)
 
 function calcProfit($con, $total_investment)
 {
-    $cur_pt = $con->get_personal(VAR_CUR_PT, 20);
+    $cur_pt = $con->get_personal(VAR_CUR_PT, 0);
     $invest_pt = $con->get_personal(VAR_INVEST_PT, 0);
 
     return $cur_pt - $invest_pt + 0.4*$total_investment;
@@ -99,7 +99,7 @@ function setTotalProfit($con)
 
 function inclementTurn($con)
 {
-    $turn = $con->get(VAR_TURN, 1);
+    $turn = $con->get(VAR_TURN, 0);
     ++$turn;
     $con->set(VAR_TURN, $turn);
 
@@ -129,7 +129,7 @@ function isPunishPhase($con)
 
 function isCurrentUser($con, $id)
 {
-    $cur_id = $con->get_personal(VAR_CUR_ID); 
+    $cur_id = $con->get_personal(VAR_CUR_ID, 0); 
 
     return ( strval($id) == strval($cur_id) );
 }

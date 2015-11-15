@@ -25,8 +25,8 @@ TMPL
         return [
             'turn'          => $_con->get(VAR_TURN, 0),
             'id'            => $_con->get_personal(VAR_CUR_ID, 0),
-            'cur_pt'        => $_con->get_personal(VAR_CUR_PT),
-            'total_profit'  => $_con->get_personal(VAR_TOTAL_PROFIT)
+            'cur_pt'        => $_con->get_personal(VAR_CUR_PT, 0),
+            'total_profit'  => $_con->get_personal(VAR_TOTAL_PROFIT, 0)
         ];
     }
 ));
@@ -34,7 +34,7 @@ TMPL
 $pages[PAGE_EXPERIMENT]->add(new SendingUI('invest', 
     function($value)use($_con) {
         $invest_pt  = intval($value);
-        $cur_pt     = $_con->get_personal(VAR_CUR_PT);
+        $cur_pt     = $_con->get_personal(VAR_CUR_PT, 0);
         if ( !isValidValue($invest_pt, 0, $cur_pt) ) {
             return;
         }
@@ -62,7 +62,7 @@ TMPL
         return [
             'turn'          => $_con->get(VAR_TURN, 0), 
             'id'            => $_con->get_personal(VAR_CUR_ID, 0), 
-            'punish_pt'     => $_con->get_personal(VAR_CUR_PUNISH_PT), 
+            'punish_pt'     => $_con->get_personal(VAR_CUR_PUNISH_PT, 0), 
         ]; 
     }
 ));
@@ -74,7 +74,7 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
             foreach ( $con->participants as $participant ) {
                 $id = $participant[VAR_ID];
                 if ( isCurrentUser($con, $id) ) {
-                    $cur_id = $con->get_personal(VAR_CUR_ID);
+                    $cur_id = $con->get_personal(VAR_CUR_ID, 0);
                     continue;
                 }
 
@@ -95,7 +95,7 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('OK',
         dump('[index.php new MultiSendingUI] value:' . dump($value), true);
 
         $total_punish   = calcTotalPunishment($value);
-        $cur_punish_pt  = $_con->get_personal(VAR_CUR_PUNISH_PT);
+        $cur_punish_pt  = $_con->get_personal(VAR_CUR_PUNISH_PT, 0);
         if ( !isValidValue($total_punish, 0, $cur_punish_pt) ) {
             return;
         }
@@ -145,7 +145,7 @@ Punishment Result<br/>
 {/each}
 TMPL
 ,   function()use($_con) {
-        $turn = $_con->get(VAR_TURN, 1);
+        $turn = $_con->get(VAR_TURN, 0);
         $punish_list = [];
         foreach ( $_con->participants as $participant ) {
             $id = $participant[VAR_ID];
@@ -155,7 +155,7 @@ TMPL
 
         return [
             'turn'          => $turn,
-            'id'            => $_con->get_personal(VAR_CUR_ID),
+            'id'            => $_con->get_personal(VAR_CUR_ID, 0),
             'punish_list'   => $punish_list
         ];
     }
@@ -166,9 +166,9 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
         return 'OK';
     },
     function($con) {
-        $total_profit = $con->get_personal(VAR_TOTAL_PROFIT);
-        $punish_pt = $con->get_personal(VAR_PUNISH_PT);
-        $received_punish_pt = $con->get_personal(VAR_RECEIVED_PUNISH_PT);
+        $total_profit = $con->get_personal(VAR_TOTAL_PROFIT, 0);
+        $punish_pt = $con->get_personal(VAR_PUNISH_PT, 0);
+        $received_punish_pt = $con->get_personal(VAR_RECEIVED_PUNISH_PT, 0);
         $con->set_personal(VAR_TOTAL_PROFIT, $total_profit - $punish_pt - $received_punish_pt);
 
         $con->set_personal(VAR_READY, true);

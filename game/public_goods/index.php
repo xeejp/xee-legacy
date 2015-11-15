@@ -434,25 +434,6 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
 
 $pages[PAGE_GRAPH]->add(new StaticUI('Graph<br/>未実装です┌(^o^ ┐)┐'));
 
-/*
-$pages[PAGE_GRAPH]->add(new TemplateUI(<<<TMPL
-{each invest_list}{pt}, {/each}
-<br/>
-TMPL
-,   function()use($_con) {
-        $invest_array   = splitInvestmentData($_con);
-        $invest_list    = [];
-        foreach ( $invest_array as $invest_pt ) {
-            $invest_list[] = ['pt' => $invest_pt];
-        }
-
-        return [
-            'invest_list' => $invest_list
-        ];
-    }
-));
- */
-
 $pages[PAGE_GRAPH]->add(new ScatterGraph(
     call_user_func(
         function()use($_con) {
@@ -469,20 +450,13 @@ $pages[PAGE_GRAPH]->add(new ScatterGraph(
                 ],
             ];
 
-            $i = 1;
-            foreach ($supply as $val)
-                $data['supply']['values'][] = ['x' => $i++, 'y' => $val];
-            $i = 1;
-            foreach ($demand as $val)
-                $data['demand']['values'][] = ['x' => $i++, 'y' => $val];
-
             $counter = 0;
             foreach ( $mean_invest_list as $mean_invest ) {
                 ++$counter;
                 if ( !isPunishmentData($_con, $counter) ) {
-                   $data['no_punish']['values'][] = ['x' => $counter, 'y' => $mean_invest_list]; 
+                   $data['no_punish']['values'][] = ['x' => $counter, 'y' => $mean_invest]; 
                 } else {
-                   $data['punish']['values'][] = ['x' => $counter, 'y' => $mean_invest_list];
+                   $data['punish']['values'][] = ['x' => $counter, 'y' => $mean_invest];
                 }
             }
 

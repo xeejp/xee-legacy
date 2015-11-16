@@ -47,6 +47,7 @@ define('ARRAY_INVEST_PT', 'array_invest_pt');
 
 // for multi user
 define('PUNCTUATION', ',');
+define('VAR_TOTAL_PLAYER', 'total_player');
 
 
 // common functions 

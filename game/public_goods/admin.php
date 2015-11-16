@@ -115,9 +115,15 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
 
             ++$num;
         }
-        $con->set(VAR_TURN, 1);
-        $con->set(VAR_TOTAL_TURN, 1);
-        $con->set(VAR_PUNISH_PHASE, false);
+        ++$num;
+        $con->set(VAR_TOTAL_PLAYER, $num);
+        $turn_array         = array_fill(0, $num, 1);
+        $total_turn_array   = array_fill(0, $num, 1); 
+        $punish_phase_array = array_fill(0, $num, 0);
+        
+        $con->set(VAR_TURN, implode(PUNCTUATION, $turn_array));
+        $con->set(VAR_TOTAL_TURN, implode(PUNCTUATION, $total_turn_array));
+        $con->set(VAR_PUNISH_PHASE, implode(PUNCTUATION, $punish_phase_array));
         $con->set(VAR_PAGE, 'ready');
 
         if ( $con->get(VAR_TURN_NO_PUNISH, 0) == 0 ) {

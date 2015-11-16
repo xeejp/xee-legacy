@@ -44,6 +44,9 @@ define('VAR_READY', 'ready');
 // for graph
 define('ARRAY_INVEST_PT', 'array_invest_pt');
 
+// for multi user
+define('PUNCTUATION', ',');
+
 
 // common functions 
 function setValueToAllUsers($con, $id, $val)
@@ -298,3 +301,17 @@ function isPunishmentData($con, $num)
     return ( $num > $turn_no_punish );
 }
 
+function getValueByString($data, $idx, $punc=PUNCTUATION)
+{
+    $data_array = explode($data, $punc);
+    
+    return $data_array[intval($idx)];
+}
+
+function setValueToString($data, $idx, $val, $punc=PUNCTUATION)
+{
+    $data_array = explode($punc, $data);
+    $data_array[intval($idx)] = strval($val);
+
+    return implode($punc, $data_array);
+}

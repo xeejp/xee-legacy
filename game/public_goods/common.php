@@ -53,7 +53,7 @@ define('VAR_TOTAL_PLAYER', 'total_player');
 // common functions 
 function getValueByString($data, $idx, $punc=PUNCTUATION)
 {
-    $data_array = explode($data, $punc);
+    $data_array = explode($punc, $data);
     
     return $data_array[intval($idx)];
 }
@@ -66,25 +66,25 @@ function setValueToString($data, $idx, $val, $punc=PUNCTUATION)
     return implode($punc, $data_array);
 }
 
-function setValueToAllUsers($con, $id, $val)
+function setValueToAllUsers($con, $name, $val)
 {
     $cur_group = $con->get_personal(VAR_GROUP, 0);
     foreach ( $con->participants as $participant ) {
         $id     = strval($participant[VAR_ID]);
         $group  = $con->get_personal(VAR_GROUP, 0, $id);
         if ( $group == $cur_group ) {
-            $con->set_personal($id, $val, strval($participant[VAR_ID]));
+            $con->set_personal($name, $val, strval($participant[VAR_ID]));
         }
     }
 }
 
 function calcNumReadyUser($con) {
-    $cur_group = $con->get_personal(VAR_GROUP, 0);
+    $cur_group      = $con->get_personal(VAR_GROUP, 0); 
     $num_ready_user = 0;
     foreach ( $con->participants as $participant ) {
-        $id     = strval($participant[VAR_ID]);
-        $group  = $con->get_personal(VAR_GROUP, 0, $id);
-        $is_ready = $con->get_personal(VAR_READY, false, strval($participant[VAR_ID]));
+        $id         = strval($participant[VAR_ID]);
+        $group      = $con->get_personal(VAR_GROUP, 0, $id);
+        $is_ready   = $con->get_personal(VAR_READY, false, strval($participant[VAR_ID]));
         if ( $group == $cur_group && $is_ready ) {
             ++$num_ready_user;
         }
@@ -99,7 +99,7 @@ function redirectAllUsers($con, $page_id)
     foreach( $con->participants as $participant ) {
         $id     = strval($participant[VAR_ID]);
         $group  = $con->get_personal(VAR_GROUP, 0, $id);
-        if ( $group == $cur_group && $is_ready ) {
+        if ( $group == $cur_group ) {
             $con->set_personal(VAR_PAGE, $page_id, strval($participant[VAR_ID])); 
         }
     }
@@ -113,6 +113,7 @@ function redirectCurrentUser($con, $page_id)
 function isReady($con, $num_ready_user)
 {
     $num_player = $con->get(VAR_NUM_PLAYER);
+
     return ($num_ready_user == $num_player);
 }
 
@@ -123,7 +124,7 @@ function calcTotalInvestment($con)
     foreach ( $con->participants as $participant ) {
         $id     = strval($participant[VAR_ID]);
         $group  = $con->get_personal(VAR_GROUP, 0, $id);
-        if ( $group == $cur_group && $is_ready ) {
+        if ( $group == $cur_group ) {
             $total += $con->get_personal(VAR_INVEST_PT, 0, strval($participant[VAR_ID]));
         }
     }

@@ -174,7 +174,7 @@ TMPL
 $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('罰則を与える',
     call_user_func(
         function($con) {
-            $cur_group  = intval($_con->get_personal(VAR_GROUP, 0));
+            $cur_group  = intval($con->get_personal(VAR_GROUP, 0));
             $list       = [];
             foreach ( $con->participants as $participant ) {
                 $id     = $participant[VAR_ID];

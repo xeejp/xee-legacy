@@ -162,12 +162,12 @@ function inclementTurn($con)
 {
     $cur_group      = intval($con->get_personal(VAR_GROUP, 0));
     $turn_string    = $con->get(VAR_TURN);
-    $turn = getValueByString($turn_string, $cur_group);
+    $turn           = intval(getValueByString($turn_string, $cur_group));
     ++$turn;
     $con->set(VAR_TURN, setValueToString($turn_string, $cur_group, $turn));
 
     $total_turn_string  = $con->get(VAR_TOTAL_TURN);
-    $total_turn         = getValueByString($total_turn_string, $cur_group);
+    $total_turn         = intval(getValueByString($total_turn_string, $cur_group));
     ++$total_turn;
     $con->set(VAR_TOTAL_TURN, setValueToString($total_turn_string, $cur_group, $total_turn));
 

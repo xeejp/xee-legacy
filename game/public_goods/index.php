@@ -442,11 +442,13 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
     function($con) { 
         $con->set_personal(VAR_READY, true);
         if ( isReady($con, calcNumReadyUser($con)) ) {
-            $turn = $con->get(VAR_TURN, 0);
+            $cur_group      = $con->get_personal(VAR_GROUP, 0);
+            $turn_string    = $con->get(VAR_TURN);
+            $turn           = intval(getValueByString($turn_string, $cur_group));
             if ( isFinishAllPhase($con, $turn) ) {
                 redirectAllUsers($con, PAGE_GRAPH);
             } else {
-                $con->set(VAR_TURN, 1);
+                $con->set(VAR_TURN, setValueToString($turn_string, $cur_group, 1));
                 if ( changePhase($con) == 0 ) {
                     redirectAllUsers($con, PAGE_GRAPH);
                 } else {

@@ -23,6 +23,7 @@ define('PAGE_GRAPH', 'graph');
 
 // variables
 define('VAR_ID', 'id');
+define('VAR_GROUP', 'group');
 define('VAR_ACTIVE', 'active');
 define('VAR_STATUS', 'status');
 define('VAR_PAGE', 'page');

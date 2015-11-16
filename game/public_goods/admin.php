@@ -86,16 +86,20 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
             }
         }
 
-        return ($num == $con->get(VAR_NUM_PLAYER, 0));
+        return ($num % $con->get(VAR_NUM_PLAYER, 1) == 0);
     },
     function($con) {
         $result = [];
+        $num    = 0;
         foreach ( $con->participants as $participant ) {
             $id     = $participant[VAR_ID];
             $active = $con->get_personal(VAR_ACTIVE, false, strval($id));
             if ( !$active ) {
                 continue;
             }
+
+            $group = $num/$con->get(VAR_NUM_PLAYER, 1);
+            $con->set_personal(VAR_GROUP, $group, strval($id));
 
             $con->set_personal(VAR_CUR_ID, $id, strval($id));
             $con->set_personal(VAR_CUR_PT, 20, strval($id));
@@ -108,6 +112,8 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
             $con->set_personal(ARRAY_INVEST_PT, '', strval($id));
 
             $con->set_personal(VAR_PAGE, PAGE_EXPLANATION, strval($id));
+
+            ++$num;
         }
         $con->set(VAR_TURN, 1);
         $con->set(VAR_TOTAL_TURN, 1);

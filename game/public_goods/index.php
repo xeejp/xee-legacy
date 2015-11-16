@@ -110,9 +110,10 @@ $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 プロジェクトに何ポイント投資しますか？<br/>
 TMPL
 ,   function()use($_con) {
+        $cur_group = intval($_con->get_personal(VAR_GROUP, 0));
         return [
-            'turn'          => $_con->get(VAR_TURN, 0),
-            'total_turn'    => $_con->get(VAR_TURN_NO_PUNISH, 0),
+            'turn'          => getValueByString($_con->get(VAR_TURN, 0), $cur_group),
+            'total_turn'    => getValueByString($_con->get(VAR_TURN_NO_PUNISH, 0), $cur_group),
             'left_turn'     => $_con->get(VAR_TURN_NO_PUNISH, 0) - $_con->get(VAR_TURN, 0) + 1,
             'id'            => $_con->get_personal(VAR_CUR_ID, 0),
             'cur_pt'        => $_con->get_personal(VAR_CUR_PT, 0),
@@ -161,8 +162,9 @@ $pages[PAGE_PUNISHMENT]->add(new TemplateUI(<<<TMPL
 それぞれのメンバーにいくらの罰則を与えますか。<br/><br/>
 TMPL
 ,   function()use($_con) {
+        $cur_group = intval($_con->get_personal(VAR_GROUP, 0));
         return [
-            'turn'          => $_con->get(VAR_TURN, 0), 
+            'turn'          => getValueByString($_con->get(VAR_TURN, 0), $cur_group),
             'id'            => $_con->get_personal(VAR_CUR_ID, 0), 
             'punish_pt'     => $_con->get_personal(VAR_CUR_PUNISH_PT, 0), 
         ]; 
@@ -172,9 +174,15 @@ TMPL
 $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('罰則を与える',
     call_user_func(
         function($con) {
-            $list = [];
+            $cur_group  = intval($_con->get_personal(VAR_GROUP, 0));
+            $list       = [];
             foreach ( $con->participants as $participant ) {
-                $id = $participant[VAR_ID];
+                $id     = $participant[VAR_ID];
+                $group  = $con->get_personal(VAR_GROUP, strval($id));
+                if ( $group != $cur_group) {
+                    continue;
+                }
+
                 if ( isCurrentUser($con, $id) ) {
                     $cur_id = $con->get_personal(VAR_CUR_ID, 0);
                     continue;
@@ -257,17 +265,24 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new TemplateUI(<<<TMPL
 <br/>
 TMPL
 ,   function()use($_con) {
-        $turn           = $_con->get(VAR_TURN, 0);
+        $cur_group      = intval($_con->get_personal(VAR_GROUP, 0));
+        $turn_string    = $_con->get(VAR_TURN);
+        $turn           = intval(getValueByString($turn_string, $cur_group));
         $punish_list    = [];
         foreach ( $_con->participants as $participant ) {
             $id             = $participant[VAR_ID];
+            $group          = $_con->get_personal(VAR_GROUP, 0);
+            if ( $cur_group != $group ) {
+                continue;
+            }
+
             $pt             = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id));
             $invest_pt      = $_con->get_personal(VAR_INVEST_PT, 0, strval($id));
-		if($participant[VAR_ID]== isCurrentUser($_con, $id)){
-			$punish_list[]  = ['id' => $id, 'pt' => $pt, 'invest' => $invest_pt, 'self' => true];
-		}else{
-			$punish_list[]  = ['id' => $id, 'pt' => $pt, 'invest' => $invest_pt, 'self' => false];
-		}
+            if($participant[VAR_ID]== isCurrentUser($_con, $id)){
+                $punish_list[]  = ['id' => $id, 'pt' => $pt, 'invest' => $invest_pt, 'self' => true];
+            }else{
+                $punish_list[]  = ['id' => $id, 'pt' => $pt, 'invest' => $invest_pt, 'self' => false];
+            }
         } 
 
         return [
@@ -320,17 +335,24 @@ $pages[PAGE_MIDDLE_RESULT]->add(new TemplateUI(<<<TMPL
 <br/>
 TMPL
 ,   function()use($_con) {
-        $turn           = $_con->get(VAR_TURN, 1);
+        $cur_group      = intval($_con->get_personal(VAR_GROUP, 0));
+        $turn_string    = $_con->get(VAR_TURN);
+        $turn           = intval(getValueByString($turn_string, $cur_group));
         $invest_list    = [];
         $self           = [];
         foreach ( $_con->participants as $participant ) {
             $id             = $participant[VAR_ID];
+            $group          = $_con->get_personal(VAR_GROUP, $cur_group);
+            if ( $cur_group != $group ) {
+                continue;
+            }
+
             $pt             = $_con->get_personal(VAR_INVEST_PT, 0, strval($id));
-		if($participant[VAR_ID]== isCurrentUser($_con, $id)){
-			$invest_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => true];
-		}else{
-			$invest_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => false];
-		}
+            if($participant[VAR_ID]== isCurrentUser($_con, $id)){
+                $invest_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => true];
+            }else{
+                $invest_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => false];
+            }
         } 
         return [
             'turn'          => $turn,
@@ -387,15 +409,21 @@ $pages[PAGE_FINAL_RESULT]->add(new TemplateUI(<<<TMPL
 <br/>
 TMPL
 ,   function()use($_con) {
-        $total_profit_list = [];
+        $cur_group          = intval($_con->get_personal(VAR_GROUP, 0));
+        $total_profit_list  = [];
         foreach ( $_con->participants as $participant ) {
             $id                     = $participant[VAR_ID];
+            $group                  = $_con->get_personal(VAR_GROUP, $cur_group);
+            if ( $cur_group != $group ) {
+                continue;
+            }
+
             $pt                     = $_con->get_personal(VAR_TOTAL_PROFIT, 0, strval($id));
-		if($participant[VAR_ID]== isCurrentUser($_con, $id)){
-			$total_profit_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => true];
-		}else{
-			$total_profit_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => false];
-		}
+            if($participant[VAR_ID]== isCurrentUser($_con, $id)){
+                $total_profit_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => true];
+            }else{
+                $total_profit_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => false];
+            }
         } 
 
         $total_profit_list = sortProfitList($total_profit_list);

@@ -98,7 +98,7 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
                 continue;
             }
 
-            $group = $num/$con->get(VAR_NUM_PLAYER, 1);
+            $group = intval($num/$con->get(VAR_NUM_PLAYER, 1));
             $con->set_personal(VAR_GROUP, $group, strval($id));
 
             $con->set_personal(VAR_CUR_ID, $id, strval($id));

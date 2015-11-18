@@ -14,9 +14,9 @@ $container->add(new MultiSendingUI('設定',
     call_user_func(
         function($con) {
             $list = [
-                ['id' => VAR_NUM_PLAYER,        'description' => '1グループあたりの人数',       'dvalue' => DEFAULT_NUM_PLAYER],
-                ['id' => VAR_TURN_NO_PUNISH,    'description' => '罰なし実験の繰り返し回数',    'dvalue' => $con->get(VAR_TURN_NO_PUNISH, 0)],
-                ['id' => VAR_TURN_PUNISH,       'description' => '罰あり実験の繰り返し回数',    'dvalue' => $con->get(VAR_TURN_PUNISH, 0)]
+                ['id' => VAR_NUM_PLAYER,        'description' => '1グループあたりの人数',       'dvalue' => $con->get(VAR_NUM_PLAYER, DEFAULT_NUM_PLAYER)],
+                ['id' => VAR_TURN_NO_PUNISH,    'description' => '罰なし実験の繰り返し回数',    'dvalue' => $con->get(VAR_TURN_NO_PUNISH, DEFAULT_TURN)],
+                ['id' => VAR_TURN_PUNISH,       'description' => '罰あり実験の繰り返し回数',    'dvalue' => $con->get(VAR_TURN_PUNISH, DEFAULT_TURN)]
             ];
 
             return $list;

@@ -22,7 +22,7 @@ $pages[PAGE_GRAPH]              = new NormalContainer();
 
 
 $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
-        ['explanation' => 'これからコンピュータがみなさんをランダムに4人1組のグループへ振り分けます。'],
+        ['explanation' => 'これからコンピュータがみなさんをランダムに'. strval($_con->get(VAR_NUM_PLAYER, 0)) .'人1組のグループへ振り分けます。'],
         ['explanation' => '「次へ」ボタンを押して実験相手を決定してください。'],
     ])->add_page('役割決め', [
         ['explanation' => 'あなたの実験相手が決まりました。'],
@@ -47,7 +47,7 @@ $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
         ['explanation_sub' => '全メンバーが20pt全部を投資する場合：あなたの投資額は20、グループ全員の投資額合計は80。'],
         ['explanation_sub' => 'つまり、あなたの利益は32ptになります。'],
     ])->add_page('ルール説明', [
-        ['explanation' => 'この投資をメンバーを変えずに'. strval(intval($_con->get(VAR_TURN_NO_PUNISH, 0))) .'ターン繰り返します。'],
+        ['explanation' => 'この投資をメンバーを変えずに'. strval($_con->get(VAR_TURN_NO_PUNISH, 0)) .'ターン繰り返します。'],
         ['explanation_sub' => '投資できる最大額は毎ターン20ポイントです。'],
         ['explanation_sub' => '各ターンで得られた利益は、累積されてページ上部に表示されます。'],
         ['explanation_sub' => '各ターン毎に、他のユーザーの投資額が表示されます。'],

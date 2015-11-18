@@ -257,30 +257,13 @@ TMPL
 $pages[PAGE_PUNISHMENT_RESULT]->add(new TemplateUI(<<<TMPL
 <h1 style="text-align: center;">第{turn}回の罰則結果</h1>
 <hr/><br/>
-<table  class="pure-table">
-<thead>
-<tr><th>あなたが使用した罰則ポイント</th><th>あなたが受けた罰則結果*</th></tr>
-</thead>
-<tbody align="right">
-<tr class="pure-table-odd">
-<td>{punish}ポイント</td><td>{received_punish}ポイント</td>
-</tr>
-</tbody>
-</table>
-* あなたがそれぞれのメンバーから受けた罰則ポイントを3倍したポイントのことで、累計ポイントから減算されるポイントです。<br/>
-<br/>
 TMPL
 ,   function()use($_con) {
         $cur_group      = intval($_con->get_personal(VAR_GROUP, 0));
         $turn_string    = $_con->get(VAR_TURN);
         $turn           = intval(getValueByString($turn_string, $cur_group));
-        $punish_pt      = $_con->get_personal(VAR_PUNISH_PT, 0);
-        $pt             = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0);
-
         return [
             'turn'              => $turn,
-            'punish'            => $punish_pt,
-            'received_punish'   => $pt,
         ];
     }
 ));
@@ -308,49 +291,43 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new ButtonUI($_con,
     }
 ));
 
+$pages[PAGE_PUNISHMENT_RESULT]->add(new TemplateUI(<<<TMPL
+<p></p>
+<table  class="pure-table">
+<thead>
+<tr><th>あなたが使用した罰則ポイント</th><th>あなたが受けた罰則結果*</th></tr>
+</thead>
+<tbody align="right">
+<tr class="pure-table-odd">
+<td>{punish}ポイント</td><td>{received_punish}ポイント</td>
+</tr>
+</tbody>
+</table>
+* あなたがそれぞれのメンバーから受けた罰則ポイントを3倍したポイントのことで、累計ポイントから減算されるポイントです。<br/>
+<br/>
+TMPL
+,   function()use($_con) {
+        $punish_pt      = $_con->get_personal(VAR_PUNISH_PT, 0);
+        $pt             = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0);
+
+        return [
+            'punish'            => $punish_pt,
+            'received_punish'   => $pt,
+        ];
+    }
+));
+
 
 $pages[PAGE_MIDDLE_RESULT]->add(new TemplateUI(<<<TMPL
 <h1 style="text-align: center;">第{turn}回の結果</h1>
 <hr/><br/>
-<table  class="pure-table">
-<thead>
-<tr><th>メンバーのID</th><th>投資ポイント</th><th>備考</th></tr>
-</thead>
-<tbody align="right">
-{each invest_list}
-<tr{if self} class="pure-table-odd"{/if}>
-<td>{id}</td><td>{pt}ポイント</td><td>{if self}あなた{/if}</td>
-</tr>
-{/each}
-</tbody>
-</table>
-<br/>
 TMPL
 ,   function()use($_con) {
         $cur_group      = intval($_con->get_personal(VAR_GROUP, 0));
         $turn_string    = $_con->get(VAR_TURN);
         $turn           = intval(getValueByString($turn_string, $cur_group));
-        $invest_list    = [];
-        $self           = [];
-        foreach ( $_con->participants as $participant ) {
-            $id             = $participant[VAR_ID];
-            $group          = $_con->get_personal(VAR_GROUP, 0, $id);
-            if ( $cur_group != $group ) {
-                continue;
-            }
-
-            $pt             = $_con->get_personal(VAR_INVEST_PT, 0, strval($id));
-            if($participant[VAR_ID]== isCurrentUser($_con, $id)){
-                $invest_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => true];
-            }else{
-                $invest_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => false];
-            }
-        } 
         return [
             'turn'          => $turn,
-            'id'            => $_con->get_personal(VAR_CUR_ID, 0),
-            'invest_list'   => $invest_list,
-            'self'          => $self
         ];
     }
 ));
@@ -382,18 +359,16 @@ $pages[PAGE_MIDDLE_RESULT]->add(new ButtonUI($_con,
     }
 ));
 
-
-$pages[PAGE_FINAL_RESULT]->add(new TemplateUI(<<<TMPL
-<h1 style="text-align: center;">最終結果</h1>
-<hr/><br/>
-<table  class="pure-table">
+$pages[PAGE_MIDDLE_RESULT]->add(new TemplateUI(<<<TMPL
+<p></p>
+<table class="pure-table">
 <thead>
-<tr><th>メンバーのID</th><th>累計ポイント</th><th>総投資ポイント</th><th>投資率</th><th>総罰則ポイント</th><th>備考</th></tr>
+<tr><th>メンバーのID</th><th>投資ポイント</th><th>備考</th></tr>
 </thead>
 <tbody align="right">
-{each total_profit_list}
+{each invest_list}
 <tr{if self} class="pure-table-odd"{/if}>
-<td>{id}</td><td>{pt}ポイント</td><td>xxxポイント</td><td>xx.x%</td><td>xxxポイント</td><td>{if self}あなた{/if}</td>
+<td>{id}</td><td>{pt}ポイント</td><td>{if self}あなた{/if}</td>
 </tr>
 {/each}
 </tbody>
@@ -401,30 +376,36 @@ $pages[PAGE_FINAL_RESULT]->add(new TemplateUI(<<<TMPL
 <br/>
 TMPL
 ,   function()use($_con) {
-        $cur_group          = intval($_con->get_personal(VAR_GROUP, 0));
-        $total_profit_list  = [];
+        $cur_group      = intval($_con->get_personal(VAR_GROUP, 0));
+        $invest_list    = [];
+        $self           = [];
         foreach ( $_con->participants as $participant ) {
-            $id                     = $participant[VAR_ID];
-            $group                  = $_con->get_personal(VAR_GROUP, 0, $id);
+            $id             = $participant[VAR_ID];
+            $group          = $_con->get_personal(VAR_GROUP, 0, $id);
             if ( $cur_group != $group ) {
                 continue;
             }
 
-            $pt                     = $_con->get_personal(VAR_TOTAL_PROFIT, 0, strval($id));
+            $pt             = $_con->get_personal(VAR_INVEST_PT, 0, strval($id));
             if($participant[VAR_ID]== isCurrentUser($_con, $id)){
-                $total_profit_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => true];
+                $invest_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => true];
             }else{
-                $total_profit_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => false];
+                $invest_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => false];
             }
         } 
-
-        $total_profit_list = sortProfitList($total_profit_list);
-        
         return [
-            'id'                => $_con->get_personal(VAR_CUR_ID, 0),
-            'total_profit_list' => $total_profit_list
+            'id'            => $_con->get_personal(VAR_CUR_ID, 0),
+            'invest_list'   => $invest_list,
+            'self'          => $self
         ];
     }
+));
+
+
+$pages[PAGE_FINAL_RESULT]->add(new StaticUI(<<<TMPL
+<h1 style="text-align: center;">最終結果</h1>
+<hr/><br/>
+TMPL
 ));
 
 $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
@@ -461,6 +442,43 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
         } else {
             redirectCurrentUser($con, PAGE_WAIT_ACTION);
         }
+    }
+));
+
+$pages[PAGE_FINAL_RESULT]->add(new TemplateUI(<<<TMPL
+<p></p>
+<table  class="pure-table">
+<thead>
+<tr><th>メンバーのID</th><th>累計ポイント</th><th>総投資ポイント</th><th>投資率</th><th>総罰則ポイント</th><th>備考</th></tr>
+</thead>
+<tbody align="right">
+{each total_profit_list}
+<tr{if self} class="pure-table-odd"{/if}>
+<td>{id}</td><td>{pt}ポイント</td><td>xxxポイント</td><td>xx.x%</td><td>xxxポイント</td><td>{if self}あなた{/if}</td>
+</tr>
+{/each}
+</tbody>
+</table>
+<br/>
+TMPL
+,   function()use($_con) {
+        $total_profit_list  = [];
+        foreach ( $_con->participants as $participant ) {
+            $id                     = $participant[VAR_ID];
+            $pt                     = $_con->get_personal(VAR_TOTAL_PROFIT, 0, strval($id));
+            if ( isCurrentUser($_con, $id) ) {
+                $total_profit_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => true];
+            } else {
+                $total_profit_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => false];
+            }
+        } 
+
+        $total_profit_list = sortProfitList($total_profit_list);
+        
+        return [
+            'id'                => $_con->get_personal(VAR_CUR_ID, 0),
+            'total_profit_list' => $total_profit_list
+        ];
     }
 ));
 

@@ -259,44 +259,28 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new TemplateUI(<<<TMPL
 <hr/><br/>
 <table  class="pure-table">
 <thead>
-<tr><th>メンバーのID</th><th>投資ポイント</th><th>罰則結果*</th><th>備考</th></tr>
+<tr><th>あなたが使用した罰則ポイント</th><th>あなたが受けた罰則結果*</th></tr>
 </thead>
 <tbody align="right">
-{each punish_list}
-<tr{if self} class="pure-table-odd"{/if}>
-<td>{id}</td><td>{invest}ポイント</td><td>{pt}ポイント</td><td>{if self}あなた{/if}</td>
+<tr class="pure-table-odd">
+<td>{punish}ポイント</td><td>{received_punish}ポイント</td>
 </tr>
-{/each}
 </tbody>
 </table>
-* あなたがそれぞれのメンバーから受けた罰則ポイントを3倍したポイントのことで、累計ポイントから減算されたポイントです。<br/>
+* あなたがそれぞれのメンバーから受けた罰則ポイントを3倍したポイントのことで、累計ポイントから減算されるポイントです。<br/>
 <br/>
 TMPL
 ,   function()use($_con) {
         $cur_group      = intval($_con->get_personal(VAR_GROUP, 0));
         $turn_string    = $_con->get(VAR_TURN);
         $turn           = intval(getValueByString($turn_string, $cur_group));
-        $punish_list    = [];
-        foreach ( $_con->participants as $participant ) {
-            $id             = $participant[VAR_ID];
-            $group          = $_con->get_personal(VAR_GROUP, 0, $id);
-            if ( $cur_group != $group ) {
-                continue;
-            }
-
-            $pt             = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id));
-            $invest_pt      = $_con->get_personal(VAR_INVEST_PT, 0, strval($id));
-            if($participant[VAR_ID]== isCurrentUser($_con, $id)){
-                $punish_list[]  = ['id' => $id, 'pt' => $pt, 'invest' => $invest_pt, 'self' => true];
-            }else{
-                $punish_list[]  = ['id' => $id, 'pt' => $pt, 'invest' => $invest_pt, 'self' => false];
-            }
-        } 
+        $punish_pt      = $_con->get_personal(VAR_PUNISH_PT, 0);
+        $pt             = $_con->get_personal(VAR_RECEIVED_PUNISH_PT, 0);
 
         return [
-            'turn'          => $turn,
-            'id'            => $_con->get_personal(VAR_CUR_ID, 0),
-            'punish_list'   => $punish_list
+            'turn'              => $turn,
+            'punish'            => $punish_pt,
+            'received_punish'   => $pt,
         ];
     }
 ));

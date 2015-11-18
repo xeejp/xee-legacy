@@ -465,7 +465,7 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
 ));
 
 
-$pages[PAGE_GRAPH]->add(new StaticUI('Graph<br/>未実装です┌(^o^ ┐)┐'));
+$pages[PAGE_GRAPH]->add(new StaticUI('最終結果'));
 
 $pages[PAGE_GRAPH]->add(new ScatterGraph(
     call_user_func(
@@ -483,13 +483,14 @@ $pages[PAGE_GRAPH]->add(new ScatterGraph(
                 ],
             ];
 
-            $counter = 0;
+            $counter        = 0;
+            $turn_no_punish = intval($_con->get(VAR_TURN_NO_PUNISH, 0));
             foreach ( $mean_invest_list as $mean_invest ) {
                 ++$counter;
                 if ( !isPunishmentData($_con, $counter) ) {
                    $data['no_punish']['values'][] = ['x' => $counter, 'y' => $mean_invest]; 
                 } else {
-                   $data['punish']['values'][] = ['x' => $counter, 'y' => $mean_invest];
+                   $data['punish']['values'][] = ['x' => $counter - $turn_no_punish, 'y' => $mean_invest];
                 }
             }
 

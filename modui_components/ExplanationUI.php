@@ -3,10 +3,12 @@
 class ExplanationUI extends ModUIComponent{
     private $controller;
     private $pages=[], $no;
+    private $variable_name;
 
-    public function __construct ($controller) {
+    public function __construct ($controller, $id='') {
         $this->controller = $controller;
-        $this->no = $this->controller->get_personal('ExpUI::no', 0);
+        $this->variable_name = 'ExpUI::no' . '_' . $id;
+        $this->no = $this->controller->get_personal($this->variable_name, 0);
     }
 
     public function get_template_name ($name) {
@@ -83,6 +85,6 @@ JS
     public function input($name, $value){
         if (isset($this->pages[$value]))
             $this->no = $value;
-        $this->controller->set_personal('ExpUI::no', $this->no);
+        $this->controller->set_personal($this->variable_name, $this->no);
     }
 }

@@ -268,7 +268,7 @@ TMPL
         $punish_list    = [];
         foreach ( $_con->participants as $participant ) {
             $id             = $participant[VAR_ID];
-            $group          = $_con->get_personal(VAR_GROUP, 0);
+            $group          = $_con->get_personal(VAR_GROUP, 0, $id);
             if ( $cur_group != $group ) {
                 continue;
             }

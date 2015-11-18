@@ -178,7 +178,7 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('罰則を与える',
             $list       = [];
             foreach ( $con->participants as $participant ) {
                 $id     = $participant[VAR_ID];
-                $group  = $con->get_personal(VAR_GROUP, strval($id));
+                $group  = $con->get_personal(VAR_GROUP, 0, strval($id));
                 if ( $group != $cur_group) {
                     continue;
                 }
@@ -342,7 +342,7 @@ TMPL
         $self           = [];
         foreach ( $_con->participants as $participant ) {
             $id             = $participant[VAR_ID];
-            $group          = $_con->get_personal(VAR_GROUP, $cur_group);
+            $group          = $_con->get_personal(VAR_GROUP, 0, $id);
             if ( $cur_group != $group ) {
                 continue;
             }
@@ -413,7 +413,7 @@ TMPL
         $total_profit_list  = [];
         foreach ( $_con->participants as $participant ) {
             $id                     = $participant[VAR_ID];
-            $group                  = $_con->get_personal(VAR_GROUP, $cur_group);
+            $group                  = $_con->get_personal(VAR_GROUP, 0, $id);
             if ( $cur_group != $group ) {
                 continue;
             }

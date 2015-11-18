@@ -10,8 +10,7 @@ $pages[PAGE_WAIT]               = new StaticUI('<div style="text-align: center;"
 <h1>公共財実験</h1>
 <hr/>
 実験開始までしばらくお待ちください。</div>');
-//$pages[PAGE_EXPLANATION]        = new ExplanationUI($_con, 'common');
-$pages[PAGE_EXPLANATION]        = new ExplanationUI($_con);
+$pages[PAGE_EXPLANATION]        = new ExplanationUI($_con, 'common');
 $pages[PAGE_PUNISH_EXPLANATION] = new NormalContainer();
 $pages[PAGE_EXPERIMENT]         = new NormalContainer();
 $pages[PAGE_PUNISHMENT]         = new NormalContainer();
@@ -59,7 +58,6 @@ $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
     ]);
 
 
-/*
 $punish_explanation = new ExplanationUI($_con, 'punish');
 $punish_explanation->add_page('ルール説明(罰則あり)', [
     ['explanation' => '同様の実験に罰則制度を設けてもう一度行います。'],
@@ -71,7 +69,7 @@ $punish_explanation->add_page('ルール説明(罰則あり)', [
     ['explanation_sub' => '罰則によって自分、もしくは相手の利益がマイナスになることがあります。'],
     ['explanation' => '最終的に、あなたの利益は次のように計算されます。'],
     ['explanation_sub' => 'あなたの利益=20pt-あなたの投資額+(0.4×グループ全員の投資額合計)-あなたが使った罰則ポイント-相手から受けた罰則ポイント'],
-    ['explanation' => 'この罰則ありの投資をメンバーを変えずに'. strval(intval($_con->get(VAR_TURN_PUNISH, 0))) .'ターン繰り返します。'],
+    ['explanation' => 'この罰則ありの投資をメンバーを変えずに'. strval($_con->get(VAR_TURN_PUNISH, 0)) .'ターン繰り返します。'],
 ]);
 $pages[PAGE_PUNISH_EXPLANATION]->add($punish_explanation);
 
@@ -89,7 +87,6 @@ $pages[PAGE_PUNISH_EXPLANATION]->add(new ButtonUI($_con,
         }
     }
 ));
-*/
 
 
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
@@ -454,8 +451,7 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
                 } else {
                     initAllUsersData($con);
                     setValueToAllUsers($con, VAR_TOTAL_PROFIT, 0);
-                    //redirectAllUsers($con, PAGE_PUNISH_EXPLANATION);
-                    redirectAllUsers($con, PAGE_EXPERIMENT);
+                    redirectAllUsers($con, PAGE_PUNISH_EXPLANATION);
                 }
             }
             setValueToAllUsers($con, VAR_READY, false);

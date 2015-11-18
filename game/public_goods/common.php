@@ -23,6 +23,7 @@ define('PAGE_GRAPH', 'graph');
 
 // variables
 define('VAR_ID', 'id');
+define('VAR_GROUP', 'group');
 define('VAR_ACTIVE', 'active');
 define('VAR_STATUS', 'status');
 define('VAR_PAGE', 'page');
@@ -44,20 +45,47 @@ define('VAR_READY', 'ready');
 // for graph
 define('ARRAY_INVEST_PT', 'array_invest_pt');
 
+// for multi user
+define('PUNCTUATION', ',');
+define('VAR_TOTAL_PLAYER', 'total_player');
+
 
 // common functions 
-function setValueToAllUsers($con, $id, $val)
+function getValueByString($data, $idx, $punc=PUNCTUATION)
 {
+    $data_array = explode($punc, $data);
+    
+    return $data_array[intval($idx)];
+}
+
+function setValueToString($data, $idx, $val, $punc=PUNCTUATION)
+{
+    $data_array = explode($punc, $data);
+    $data_array[intval($idx)] = strval($val);
+
+    return implode($punc, $data_array);
+}
+
+function setValueToAllUsers($con, $name, $val)
+{
+    $cur_group = $con->get_personal(VAR_GROUP, 0);
     foreach ( $con->participants as $participant ) {
-        $con->set_personal($id, $val, strval($participant[VAR_ID]));
+        $id     = strval($participant[VAR_ID]);
+        $group  = $con->get_personal(VAR_GROUP, 0, $id);
+        if ( $group == $cur_group ) {
+            $con->set_personal($name, $val, strval($participant[VAR_ID]));
+        }
     }
 }
 
 function calcNumReadyUser($con) {
+    $cur_group      = $con->get_personal(VAR_GROUP, 0); 
     $num_ready_user = 0;
     foreach ( $con->participants as $participant ) {
-        $is_ready = $con->get_personal(VAR_READY, false, strval($participant[VAR_ID]));
-        if ( $is_ready ) {
+        $id         = strval($participant[VAR_ID]);
+        $group      = $con->get_personal(VAR_GROUP, 0, $id);
+        $is_ready   = $con->get_personal(VAR_READY, false, strval($participant[VAR_ID]));
+        if ( $group == $cur_group && $is_ready ) {
             ++$num_ready_user;
         }
     }
@@ -67,8 +95,13 @@ function calcNumReadyUser($con) {
 
 function redirectAllUsers($con, $page_id)
 {
+    $cur_group = $con->get_personal(VAR_GROUP, 0);
     foreach( $con->participants as $participant ) {
-        $con->set_personal(VAR_PAGE, $page_id, strval($participant[VAR_ID])); 
+        $id     = strval($participant[VAR_ID]);
+        $group  = $con->get_personal(VAR_GROUP, 0, $id);
+        if ( $group == $cur_group ) {
+            $con->set_personal(VAR_PAGE, $page_id, strval($participant[VAR_ID])); 
+        }
     }
 }
 
@@ -80,14 +113,20 @@ function redirectCurrentUser($con, $page_id)
 function isReady($con, $num_ready_user)
 {
     $num_player = $con->get(VAR_NUM_PLAYER);
+
     return ($num_ready_user == $num_player);
 }
 
 function calcTotalInvestment($con)
 {
+    $cur_group = $con->get_personal(VAR_GROUP, 0);
     $total = 0;
     foreach ( $con->participants as $participant ) {
-        $total += $con->get_personal(VAR_INVEST_PT, 0, strval($participant[VAR_ID]));
+        $id     = strval($participant[VAR_ID]);
+        $group  = $con->get_personal(VAR_GROUP, 0, $id);
+        if ( $group == $cur_group ) {
+            $total += $con->get_personal(VAR_INVEST_PT, 0, strval($participant[VAR_ID]));
+        }
     }
 
     return $total;
@@ -122,20 +161,26 @@ function reduceTotalProfit($con)
 
 function inclementTurn($con)
 {
-    $turn = $con->get(VAR_TURN, 0);
+    $cur_group      = intval($con->get_personal(VAR_GROUP, 0));
+    $turn_string    = $con->get(VAR_TURN);
+    $turn           = intval(getValueByString($turn_string, $cur_group));
     ++$turn;
-    $con->set(VAR_TURN, $turn);
+    $con->set(VAR_TURN, setValueToString($turn_string, $cur_group, $turn));
 
-    $total_turn = $con->get(VAR_TOTAL_TURN, 0);
+    $total_turn_string  = $con->get(VAR_TOTAL_TURN);
+    $total_turn         = intval(getValueByString($total_turn_string, $cur_group));
     ++$total_turn;
-    $con->set(VAR_TOTAL_TURN, $total_turn);
+    $con->set(VAR_TOTAL_TURN, setValueToString($total_turn_string, $cur_group, $total_turn));
 
     return $turn; 
 }
 
 function isPunishPhase($con)
 {
-    return $con->get(VAR_PUNISH_PHASE, false);
+    $cur_group = intval($con->get_personal(VAR_GROUP, 0)); 
+    $punish_phase_string = $con->get(VAR_PUNISH_PHASE);
+
+    return (bool)getValueByString($punish_phase_string, $cur_group);
 }
 
 function isFinishCurrentPhase($con, $turn)
@@ -152,7 +197,10 @@ function isFinishCurrentPhase($con, $turn)
 
 function isFinishAllPhase($con)
 {
-    $total_turn = $con->get(VAR_TOTAL_TURN);
+    $cur_group          = intval($con->get_personal(VAR_GROUP, 0)); 
+    $total_turn_string  = $con->get(VAR_TOTAL_TURN);
+    $total_turn         = getValueByString($total_turn_string, $cur_group);
+
     $turn_no_punish = strval($con->get(VAR_TURN_NO_PUNISH));
     $turn_punish    = strval($con->get(VAR_TURN_PUNISH));
 
@@ -196,24 +244,12 @@ function isValidValue($value, $min, $max)
 }
 
 function initAllUsersData($con)
-{
-    foreach ( $con->participants as $participant ) {
-        $id = strval($participant[VAR_ID]);
-        setValueToAllUsers($con, VAR_CUR_PT, 20, $id);
-        setValueToAllUsers($con, VAR_CUR_PUNISH_PT, 10, $id);
-        setValueToAllUsers($con, VAR_INVEST_PT, 0, $id);
-        setValueToAllUsers($con, VAR_PUNISH_PT, 0, $id);
-        setValueToAllUsers($con, VAR_RECEIVED_PUNISH_PT, 0, $id);
-    }
-}
-
-function initCurrentUserData($con)
-{
+{ 
     setValueToAllUsers($con, VAR_CUR_PT, 20);
     setValueToAllUsers($con, VAR_CUR_PUNISH_PT, 10);
     setValueToAllUsers($con, VAR_INVEST_PT, 0);
     setValueToAllUsers($con, VAR_PUNISH_PT, 0);
-    setValueToAllUsers($con, VAR_RECEIVED_PUNISH_PT, 0); 
+    setValueToAllUsers($con, VAR_RECEIVED_PUNISH_PT, 0);
 }
 
 function calcReceivedPunishment($con, $id, $punish_pt)
@@ -226,7 +262,9 @@ function calcReceivedPunishment($con, $id, $punish_pt)
 
 function changePhase($con)
 {
-    $current_phase = $con->get(VAR_PUNISH_PHASE);
+    $cur_group              = intval($con->get_personal(VAR_GROUP, 0)); 
+    $current_phase_string   = $con->get(VAR_PUNISH_PHASE);
+    $current_phase          = getValueByString($current_phase_string, $cur_group);
     $turn;
     if ( $current_phase ) {
         $current_phase = false;
@@ -235,7 +273,8 @@ function changePhase($con)
         $current_phase = true;
         $turn = $con->get(VAR_TURN_PUNISH);
     }
-    $con->set(VAR_PUNISH_PHASE, $current_phase);
+    $current_phase_string = setValueToString($current_phase_string, $cur_group, (int)$current_phase);
+    $con->set(VAR_PUNISH_PHASE, $current_phase_string);
 
     return $turn;
 }
@@ -297,4 +336,3 @@ function isPunishmentData($con, $num)
 
     return ( $num > $turn_no_punish );
 }
-

@@ -429,6 +429,14 @@ TMPL
 
 $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
     function($con) {
+        $cur_group      = $con->get_personal(VAR_GROUP, 0);
+        $turn_string    = $con->get(VAR_TURN);
+        $turn           = intval(getValueByString($turn_string, $cur_group));
+        $turn_punish    = intval($con->get(VAR_TURN_PUNISH));
+        if ( !isPunishPhase($con) && $turn_punish > 0 ) {
+            return '次の実験へ';
+        }
+
         return '実験を終了する';
     },
     function($con) { 

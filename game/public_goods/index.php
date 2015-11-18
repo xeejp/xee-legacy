@@ -90,7 +90,7 @@ $pages[PAGE_PUNISH_EXPLANATION]->add(new ButtonUI($_con,
 
 
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
-{if punish==0}
+{if punish}
 <h1 style="text-align: center;">投資ポイント入力(罰則なし実験)</h1>
 {else}
 <h1 style="text-align: center;">投資ポイント入力(罰則あり実験)</h1>
@@ -106,7 +106,7 @@ $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 {cur_pt}ポイントをそのまま持っておく分と、プロジェクトに投資する分に分けてください。<br/>
 <br/>
 入力すると、グループの他のメンバーの投資額を計算したあとで、あなたの利益は次のように計算されます。<br/><br/>
-{if punish==0}
+{if punish}
 <center><i><b>あなたの利益＝{cur_pt}−あなたの投資ポイント＋(0.4×グループ全員の合計投資ポイント)</b></i></center>
 {else}
 <center><i><b>あなたの利益＝{cur_pt}−あなたの投資ポイント＋(0.4×グループ全員の合計投資ポイント) - 罰則に用いたポイント - (3×他のメンバーから受けた合計罰則ポイント)</b></i></center>
@@ -119,7 +119,7 @@ TMPL
         $is_punish = isPunishPhase($_con);
         $turn_id   = $is_punish ? VAR_TURN_PUNISH : VAR_TURN_NO_PUNISH;
         return [
-            'punish'        => intval($is_punish),
+            'punish'        => !$is_punish,
             'turn'          => getValueByString($_con->get(VAR_TURN, 0), $cur_group),
             'total_turn'    => getValueByString($_con->get($turn_id, 0), $cur_group),
             'left_turn'     => $_con->get($turn_id, 0) - $_con->get(VAR_TURN, 0) + 1,

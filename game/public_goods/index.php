@@ -211,9 +211,6 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('罰則を与える',
         $_con
     ),
     function($value)use($_con) {
-        dump('[index.php new MultiSendingUI] sending is called.', true);
-        dump('[index.php new MultiSendingUI] value:' . dump($value), true);
-
         $total_punish   = calcTotalPunishment($value);
         $cur_punish_pt  = $_con->get_personal(VAR_CUR_PUNISH_PT, 0);
         if ( !isValidValue($total_punish, 0, $cur_punish_pt) ) {

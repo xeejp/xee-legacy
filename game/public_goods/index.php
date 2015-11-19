@@ -98,7 +98,7 @@ $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 <hr/><br/>
 現在のターン数は{turn}回目です。<br/>
 この実験は全部で{total_turn}回行います。<br/>
-{if left_turn==0}このターンが最後の回です。<br/>
+{if is_last}このターンが最後の回です。<br/>
 {else}残りのターン数はこのターンを含めて{left_turn}回です。<br/>{/if}
 <br/><hr/><br/>
 あなたは{cur_pt}ポイント持っています。<br/>
@@ -118,11 +118,14 @@ TMPL
         $cur_group = intval($_con->get_personal(VAR_GROUP, 0));
         $is_punish = isPunishPhase($_con);
         $turn_id   = $is_punish ? VAR_TURN_PUNISH : VAR_TURN_NO_PUNISH;
+        $left_turn = $_con->get($turn_id, 0) - $_con->get(VAR_TURN, 0) + 1;
+
         return [
             'punish'        => !$is_punish,
             'turn'          => getValueByString($_con->get(VAR_TURN, 0), $cur_group),
+            'is_last'       => $left_turn == 1,
             'total_turn'    => getValueByString($_con->get($turn_id, 0), $cur_group),
-            'left_turn'     => $_con->get($turn_id, 0) - $_con->get(VAR_TURN, 0) + 1,
+            'left_turn'     => $left_turn,
             'id'            => $_con->get_personal(VAR_CUR_ID, 0),
             'cur_pt'        => $_con->get_personal(VAR_CUR_PT, 0),
         ];

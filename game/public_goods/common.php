@@ -186,8 +186,8 @@ function isPunishPhase($con)
 function isFinishCurrentPhase($con, $turn)
 {
     $punish_phase   = isPunishPhase($con);
-    $turn_no_punish = strval($con->get(VAR_TURN_NO_PUNISH));
-    $turn_punish    = strval($con->get(VAR_TURN_PUNISH));
+    $turn_no_punish = intval($con->get(VAR_TURN_NO_PUNISH));
+    $turn_punish    = intval($con->get(VAR_TURN_PUNISH));
 
     return (
         (!$punish_phase && $turn > $turn_no_punish)
@@ -199,13 +199,16 @@ function isFinishAllPhase($con)
 {
     $cur_group          = intval($con->get_personal(VAR_GROUP, 0)); 
     $total_turn_string  = $con->get(VAR_TOTAL_TURN);
-    $total_turn         = getValueByString($total_turn_string, $cur_group);
+    $total_turn         = intval(getValueByString($total_turn_string, $cur_group));
 
-    $turn_no_punish = strval($con->get(VAR_TURN_NO_PUNISH));
-    $turn_punish    = strval($con->get(VAR_TURN_PUNISH));
+    $turn_no_punish = intval($con->get(VAR_TURN_NO_PUNISH));
+    $turn_punish    = intval($con->get(VAR_TURN_PUNISH));
 
+    dump('[isFinishAllPhase] total_turn: ' . strval($total_turn), true);
+    dump('[isFinishAllPhase] turn_no_punish: ' . strval($turn_no_punish), true);
+    dump('[isFinishAllPhase] turn_punish: ' . strval($turn_punish), true);
 
-    return ($total_turn > ($turn_no_punish + $turn_no_punish));
+    return ($total_turn > ($turn_punish + $turn_no_punish));
 }
 
 function sortProfitList($total_profit_list)

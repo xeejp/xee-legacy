@@ -50,17 +50,19 @@ $templates['experiment']['list'] = <<<'TMPL'
 {if list}
 <hr/><br/>
 他の参加者は次の金額を提案しています。<br/>
-<table class="pure-table">
-<thead><tr><th>買値</th><th>売値</th><th>成立価格</th></tr></thead>
-<tbody style="text-align: right;">
-{each list}
+<table class="">
 <tr>
-{each buy}<td{if self} style="background-color: #ccc;"{/if}>{if value}{value}円{/if}</td>{/each}
-{each sell}<td{if self} style="background-color: #ccc;"{/if}>{if value}{value}円{/if}</td>{/each}
-{each finished}<td>{if value}{value}円{/if}</td>{/each}
-</tr>
-{/each}
+{each list}
+<td style="vertical-align:top;">
+<table class="pure-table">
+<thead><tr><th>{head}</th></tr></thead>
+<tbody style="text-align: right;">
+{each body}<tr><td{if self} style="background-color: #ccc;"{/if}>{if price}{price}円{/if}</td></tr>{/each}
 </tbody>
+</table>
+</td>
+{/each}
+</tr>
 </table>
 <br/>
 {/if}
@@ -121,9 +123,13 @@ $templates['result']['ranking'] = <<<'TMPL'
 {/each}
 </tbody>
 <tfoot align="right">
-{each average}
-<tr><td>平均</td><td>{profit}円</td><td align="center">-</td><td align="center">-</td><td>{price}円</td></tr>
-{/each}
+<tr>
+<td>結果<br/>理論値</td>
+<td>{each profit}<span style="float:left">(総余剰)</span><span style="float:right">{result}円</span><br/><span style="float:left">(総余剰)</span> {theorical}円{/each}<a style="clear:both"></a></td>
+<td></td>
+<td></td>
+<td>{each price}<span style="float:left">(平均)</span><span style="float:right">{result}円</span><br/><span style="float:left">(平均)</span><span style="float:right">{theorical}円</span>{/each}<a style="clear:both"></a></td>
+</tr>
 </tfoot>
 </table>
 <br/>
@@ -316,8 +322,8 @@ $experiment->add(new ButtonUI($_con,
     function ($_con) {
         $_con->set_personal('caution', '価格の提示を取り下げました。');
         $_con->lock();
-        if (!$_con->get_personal('finished', false))
-            $_con->set_personal('price', null);
+            if (!$_con->get_personal('finished', false))
+                $_con->set_personal('price', null);
         $_con->unlock();
     }
 ));
@@ -332,45 +338,39 @@ $experiment_list = new TemplateUI($templates['experiment']['list'], function () 
     $buy_list = [];
     $sell_list = [];
     $finished_list = [];
-    foreach ($_con->participants as $participant) {
-        $price = $_con->get_personal('price', 0, $participant['id']);
-        if ($price <= 0) continue;
-        if (!$_con->get_personal('finished', false, $participant['id']))
-            switch ($_con->get_personal('role', null, $participant['id'])) {
-            case 'seller':
-                $sell_list[] = ['value' => $price] + (($_con->participant['id'] == $participant['id'])? ['self' => true]: []);
-                break;
-            case 'buyer':
-                $buy_list[] = ['value' => $price] + (($_con->participant['id'] == $participant['id'])? ['self' => true]: []);
-                break;
-            }
-        else
-            if ($_con->get_personal('role', '', $participant['id']) == 'buyer')
-                $finished_list[] = ['value' => $price];
-    }
+    $_con->lock();
+        foreach ($_con->participants as $participant) {
+            $price = $_con->get_personal('price', 0, $participant['id']);
+            if ($price <= 0) continue;
+            if (!$_con->get_personal('finished', false, $participant['id']))
+                switch ($_con->get_personal('role', '', $participant['id'])) {
+                case 'seller':
+                    $sell_list[$participant['id']] = $price;
+                    break;
+                case 'buyer':
+                    $buy_list[$participant['id']] = $price;
+                    break;
+                }
+            else
+                if ($_con->get_personal('role', '', $participant['id']) == $_con->get_personal('role', '', $_con->participant['id']))
+                    $finished_list[$participant['id']] = $price;
+        }
+    $_con->unlock();
     arsort($buy_list);
     asort($sell_list);
 
-    $list = [];
-    while (true) {
-        $prices = [];
-        $prices['buy'] = array_shift($buy_list);
-        $prices['sell'] = array_shift($sell_list);
-        $prices['finished'] = array_shift($finished_list);
-        if ((!$prices['buy']) &&
-            (!$prices['sell']) &&
-            (!$prices['finished'])
-        ) break;
-        if (!$prices['buy']) $prices['buy'] = ['value' => null];
-        if (!$prices['sell']) $prices['sell'] = ['value' => null];
-        if (!$prices['finished']) $prices['finished'] = ['value' => null];
-        $list[] = [
-            'buy' => [$prices['buy']],
-            'sell' => [$prices['sell']],
-            'finished' => [$prices['finished']],
-        ];
-    }
-    return ['list' => $list, 'update' => count($list)];
+    $list = [
+        'buy' => ['head' => '買値', 'body' => []],
+        'sell' => ['head' => '売値', 'body' => []],
+        'finished' => ['head' => '成立価格', 'body' => []],
+    ];
+    foreach ($buy_list as $id => $price)
+        $list['buy']['body'][] = ['price' => $price] + (($id == $_con->participant['id'])? ['self' => true]: []);
+    foreach ($sell_list as $id => $price)
+        $list['sell']['body'][] = ['price' => $price] + (($id == $_con->participant['id'])? ['self' => true]: []);
+    foreach ($finished_list as $id => $price)
+        $list['finished']['body'][] = ['price' => $price] + (($id == $_con->participant['id'])? ['self' => true]: []);
+    return ['list' => [$list['buy'], $list['sell'], $list['finished']], 'update' => (count($list['buy']) + count($list['sell']) + count($list['finished']))];
 });
 $experiment->add($experiment_list);
 
@@ -407,7 +407,9 @@ $result->add(new TemplateUI($templates['result']['ranking'],
         arsort($profits);
         $rank = 1;
         $ranking = [];
-        $average = ['profit' => 0, 'price' => 0];
+        $foot = [];
+        $result_profit = 0;
+        $result_price = 0;
         foreach ($profits as $id => $profit) {
             $ranking[] = [
                 'no' => $rank++,
@@ -417,12 +419,15 @@ $result->add(new TemplateUI($templates['result']['ranking'],
                 'price' => $_con->get_personal('price', 0, $id),
                 'profit' => $profit,
             ] + (($id == $_con->participant['id'])? ['self' => true]: []);
-            $average['profit'] += $profit;
-            $average['price'] += $_con->get_personal('price', 0, $id);
+            $result_profit += $profit;
+            $result_price += $_con->get_personal('price', 0, $id);
         }
-        $average['profit'] /= count($profits);
-        $average['price'] /= count($profits);
-        return ['ranking' => $ranking, 'average' => [$average]];
+        $n = $_con->get('join_num', 2);
+        $n -= $n%2;
+        $foot['profit'][] = ['theorical' => (100 * $n*$n/4), 'result' => $result_profit];
+        $foot['price'][] = ['theorical' => (100 * (1 + $n)/2), 'result' => round($result_price / count($profits))];
+
+        return ['ranking' => $ranking, 'profit' => $foot['profit'], 'price' => $foot['price']];
     }, function () {
         return ['event' => <<<'JS'
 function(selector, update){
@@ -440,10 +445,10 @@ $result->add(new ScatterGraph(
         foreach ($_con->participants as $participant) {
             switch($_con->get_personal('role', '', $participant['id'])) {
             case 'seller':
-                $supply[] = $_con->get_personal('profit', 0, $participant['id']);
+                $supply[] = $_con->get_personal('cost', 0, $participant['id']);
                 break;
             case 'buyer':
-                $demand[] = $_con->get_personal('profit', 0, $participant['id']);
+                $demand[] = $_con->get_personal('money', 0, $participant['id']);
                 break;
             }
         }

@@ -111,9 +111,9 @@ $modulator->add_page('wait', new MatchingButton($_con,
     },
     function ($_con) {
         $_con->lock();
+            $result = [];
             $count = 1;
             $count_max = count($_con->participants) - count($_con->participants)%2;
-            $result = [];
             $participants = $_con->participants;
             shuffle($participants);
             foreach($participants as $participant){
@@ -142,6 +142,7 @@ $modulator->add_page('wait', new MatchingButton($_con,
                     $_con->set_personal('page', 'wait', $participant['id']);
                 $count++;
             }
+            $_con->set('join_num', $count);
             $_con->set('status', 'ready');
         $_con->unlock();
         return $result;

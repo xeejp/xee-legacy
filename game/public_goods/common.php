@@ -207,10 +207,6 @@ function isFinishAllPhase($con)
     $turn_no_punish = intval($con->get(VAR_TURN_NO_PUNISH));
     $turn_punish    = intval($con->get(VAR_TURN_PUNISH));
 
-    dump('[isFinishAllPhase] total_turn: ' . strval($total_turn), true);
-    dump('[isFinishAllPhase] turn_no_punish: ' . strval($turn_no_punish), true);
-    dump('[isFinishAllPhase] turn_punish: ' . strval($turn_punish), true);
-
     return ($total_turn > ($turn_punish + $turn_no_punish));
 }
 

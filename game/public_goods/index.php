@@ -10,8 +10,9 @@ $pages[PAGE_WAIT]               = new StaticUI('<div style="text-align: center;"
 <h1>公共財実験</h1>
 <hr/>
 実験開始までしばらくお待ちください。</div>');
-$pages[PAGE_EXPLANATION]        = new ExplanationUI($_con, 'common');
-$pages[PAGE_PUNISH_EXPLANATION] = new NormalContainer();
+//$pages[PAGE_EXPLANATION]        = new ExplanationUI($_con, 'common');
+$pages[PAGE_EXPLANATION]        = new ExplanationUI($_con);
+// $pages[PAGE_PUNISH_EXPLANATION] = new NormalContainer();
 $pages[PAGE_EXPERIMENT]         = new NormalContainer();
 $pages[PAGE_PUNISHMENT]         = new NormalContainer();
 $pages[PAGE_WAIT_ACTION]        = new NormalContainer();
@@ -51,6 +52,7 @@ $pages[PAGE_EXPLANATION]->add_page('グループ分け', [
     ]);
 
 
+/*
 $punish_explanation = new ExplanationUI($_con, 'punish');
 $punish_explanation->add_page('ルール説明(罰則あり)', [
     ['explanation' => '同様の実験に罰則制度を設けてもう一度行います。'],
@@ -80,6 +82,7 @@ $pages[PAGE_PUNISH_EXPLANATION]->add(new ButtonUI($_con,
         }
     }
 ));
+*/
 
 
 $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
@@ -458,7 +461,8 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
                     setValueToAllUsers2($con, VAR_TOTAL_INVEST, 0);
                     setValueToAllUsers2($con, VAR_TOTAL_PUNISH, 0);
                     setValueToAllUsers2($con, VAR_FINISH, false);
-                    redirectAllUsers2($con, PAGE_PUNISH_EXPLANATION);
+                    //redirectAllUsers2($con, PAGE_PUNISH_EXPLANATION);
+                    redirectAllUsers2($con, PAGE_EXPERIMENT);
                 }
             }
             setValueToAllUsers2($con, VAR_READY, false);

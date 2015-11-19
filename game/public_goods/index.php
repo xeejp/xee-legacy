@@ -124,7 +124,7 @@ TMPL
             'punish'        => !$is_punish,
             'turn'          => getValueByString($_con->get(VAR_TURN, 0), $cur_group),
             'is_last'       => $left_turn == 1,
-            'total_turn'    => getValueByString($_con->get($turn_id, 0), $cur_group),
+            'total_turn'    => $_con->get($turn_id, 0),
             'left_turn'     => $left_turn,
             'id'            => $_con->get_personal(VAR_CUR_ID, 0),
             'cur_pt'        => $_con->get_personal(VAR_CUR_PT, 0),

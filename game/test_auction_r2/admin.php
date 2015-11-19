@@ -110,36 +110,40 @@ $modulator->add_page('wait', new MatchingButton($_con,
         return $num > 0;
     },
     function ($_con) {
-        $count = 1;
-        $count_max = count($_con->participants) - count($_con->participants)%2;
-        $result = [];
-        foreach($_con->participants as $participant){
-            if ($count > $count_max || !$_con->get_personal('active', true, $participant['id'])) {
-                $_con->set_personal('page', 'wait', $participant['id']);
-                $_con->set_personal('init', false, $participant['id']);
-                continue;
+        $_con->lock();
+            $count = 1;
+            $count_max = count($_con->participants) - count($_con->participants)%2;
+            $result = [];
+            $participants = $_con->participants;
+            shuffle($participants);
+            foreach($participants as $participant){
+                if ($count > $count_max || !$_con->get_personal('active', true, $participant['id'])) {
+                    $_con->set_personal('page', 'wait', $participant['id']);
+                    $_con->set_personal('init', false, $participant['id']);
+                    continue;
+                }
+                $_con->set_personal('ExpUI::no', 0, $participant['id']);
+                if ($count % 2 == 1) {
+                    $_con->set_personal('role', 'seller', $participant['id']);
+                    $_con->set_personal('money', 0, $participant['id']);
+                    $_con->set_personal('cost', $count * 100, $participant['id']);
+                } else {
+                    $_con->set_personal('role', 'buyer', $participant['id']);
+                    $_con->set_personal('money', $count * 100, $participant['id']);
+                    $_con->set_personal('cost', 0, $participant['id']);
+                }
+                $_con->set_personal('price', 0, $participant['id']);
+                $_con->set_personal('profit', 0, $participant['id']);
+                $_con->set_personal('finished', false, $participant['id']);
+                $_con->set_personal('init', true, $participant['id']);
+                if ($_con->get('enable_exp', true))
+                    $_con->set_personal('page', 'ready', $participant['id']);
+                else
+                    $_con->set_personal('page', 'wait', $participant['id']);
+                $count++;
             }
-            $_con->set_personal('ExpUI::no', 0, $participant['id']);
-            if ($count % 2 == 1) {
-                $_con->set_personal('role', 'seller', $participant['id']);
-                $_con->set_personal('money', 0, $participant['id']);
-                $_con->set_personal('cost', $count * 100, $participant['id']);
-            } else {
-                $_con->set_personal('role', 'buyer', $participant['id']);
-                $_con->set_personal('money', $count * 100, $participant['id']);
-                $_con->set_personal('cost', 0, $participant['id']);
-            }
-            $_con->set_personal('price', 0, $participant['id']);
-            $_con->set_personal('profit', 0, $participant['id']);
-            $_con->set_personal('finished', false, $participant['id']);
-            $_con->set_personal('init', true, $participant['id']);
-            if ($_con->get('enable_exp', true))
-                $_con->set_personal('page', 'ready', $participant['id']);
-            else
-                $_con->set_personal('page', 'wait', $participant['id']);
-            $count++;
-        }
-        $_con->set('status', 'ready');
+            $_con->set('status', 'ready');
+        $_con->unlock();
         return $result;
     }
 ));

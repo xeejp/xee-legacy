@@ -140,6 +140,7 @@ $pages[PAGE_EXPERIMENT]->add(new SendingUI('投資する',
 
         $_con->set_personal(VAR_INVEST_PT, $invest_pt);
         appendInvestmentData($_con, $invest_pt);
+        addTotalInvestment($_con, $invest_pt);
 
         $_con->set_personal(VAR_READY, true); 
         if ( isReady($_con, calcNumReadyUser($_con)) ) {
@@ -219,6 +220,7 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('罰則を与える',
             return;
         }
         $_con->set_personal(VAR_PUNISH_PT, $total_punish);
+        addTotalPunishment($_con, $total_punish);
 
         foreach ( $value as $id => $punish_pt ) {
             if ( isCurrentUser($_con, $id) ) {
@@ -435,6 +437,9 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
                 } else {
                     initAllUsersData($con);
                     setValueToAllUsers($con, VAR_TOTAL_PROFIT, 0);
+                    setValueToAllUsers($con, VAR_TOTAL_INVEST, 0);
+                    setValueToAllUsers($con, VAR_TOTAL_PUNISH, 0);
+                    setValueToAllUsers($con, VAR_FINISH, false);
                     redirectAllUsers($con, PAGE_PUNISH_EXPLANATION);
                 }
             }
@@ -454,7 +459,7 @@ $pages[PAGE_FINAL_RESULT]->add(new TemplateUI(<<<TMPL
 <tbody align="right">
 {each total_profit_list}
 <tr{if self} class="pure-table-odd"{/if}>
-<td>{id}</td><td>{pt}ポイント</td><td>xxxポイント</td><td>xx.x%</td><td>xxxポイント</td><td>{if self}あなた{/if}</td>
+<td>{id}</td><td>{pt}ポイント</td><td>{total_invest}ポイント</td><td>{invest_rate}%</td><td>{total_punish}ポイント</td><td>{if self}あなた{/if}</td>
 </tr>
 {/each}
 </tbody>
@@ -462,14 +467,25 @@ $pages[PAGE_FINAL_RESULT]->add(new TemplateUI(<<<TMPL
 <br/>
 TMPL
 ,   function()use($_con) {
+        $_con->set_personal(VAR_FINISH, true);
         $total_profit_list  = [];
         foreach ( $_con->participants as $participant ) {
-            $id                     = $participant[VAR_ID];
-            $pt                     = $_con->get_personal(VAR_TOTAL_PROFIT, 0, strval($id));
-            if ( isCurrentUser($_con, $id) ) {
-                $total_profit_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => true];
-            } else {
-                $total_profit_list[]  = [VAR_ID => $id, 'pt' => $pt, 'self' => false];
+            $id         = $participant[VAR_ID];
+            $is_finish  = $_con->get_personal(VAR_FINISH, false, strval($id));
+            if ( $is_finish ) {
+                $pt             = $_con->get_personal(VAR_TOTAL_PROFIT, 0, strval($id));
+                $total_invest   = $_con->get_personal(VAR_TOTAL_INVEST, 0, strval($id));
+                $invest_rate    = $total_invest / (intval($_con->get(isPunishPhase($_con) ? VAR_TURN_PUNISH : VAR_TURN_NO_PUNISH, 1)) * 20) * 100.0;
+                $total_punish   = $_con->get_personal(VAR_TOTAL_PUNISH, 0, strval($id));
+                $is_self        = isCurrentUser($_con, $id);
+                $total_profit_list[]  = [
+                    'id'            => $id, 
+                    'pt'            => $pt, 
+                    'total_invest'  => $total_invest,
+                    'invest_rate'   => $invest_rate,
+                    'total_punish'  => $total_punish,
+                    'self'          => (bool)$is_self
+                ];
             }
         } 
 

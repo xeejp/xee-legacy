@@ -110,6 +110,9 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
             $con->set_personal(VAR_RECEIVED_PUNISH_PT, 0, strval($id)); 
             $con->set_personal(VAR_READY, false, strval($id));
             $con->set_personal(ARRAY_INVEST_PT, '', strval($id));
+            $con->set_personal(VAR_TOTAL_INVEST, 0, strval($id));
+            $con->set_personal(VAR_TOTAL_PUNISH, 0, strval($id));
+            $con->set_personal(VAR_FINISH, false, strval($id));
 
             $con->set_personal(VAR_PAGE, PAGE_EXPLANATION, strval($id));
 

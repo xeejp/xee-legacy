@@ -40,7 +40,10 @@ define('VAR_TOTAL_PROFIT', 'total_profit');
 define('VAR_INVEST_PT', 'invest_pt');
 define('VAR_PUNISH_PT', 'punish_pt');
 define('VAR_RECEIVED_PUNISH_PT', 'rec_punish_pt');
+define('VAR_TOTAL_INVEST', 'total_invest');
+define('VAR_TOTAL_PUNISH', 'total_punish');
 define('VAR_READY', 'ready');
+define('VAR_FINISH', 'finish');
 
 // for graph
 define('ARRAY_INVEST_PT', 'array_invest_pt');
@@ -338,4 +341,18 @@ function isPunishmentData($con, $num)
     $turn_no_punish = $con->get(VAR_TURN_NO_PUNISH, 0);
 
     return ( $num > $turn_no_punish );
+}
+
+function addTotalInvestment($con, $pt)
+{
+    $total_invest = intval($con->get_personal(VAR_TOTAL_INVEST, 0));
+    $total_invest += $pt;
+    $con->set_personal(VAR_TOTAL_INVEST, $total_invest);
+}
+
+function addTotalPunishment($con, $pt)
+{
+    $total_punish = intval($con->get_personal(VAR_TOTAL_PUNISH, 0));
+    $total_punish += $pt;
+    $con->set_personal(VAR_TOTAL_PUNISH, $total_punish);
 }

@@ -9,7 +9,7 @@ class DataController {
 
     public function __construct ($_con, $name) {
         $this->_con = $_con;
-        $this->data = new DataIO($_con, 'con_'. $name);
+        $this->data = new DataIO($_con, 'con_'. $_con->experiment['password'] .'_'. $name);
         $this->is_lock = false;
         if (!is_array($this->data->get()))
             $this->data->set([]);
@@ -43,7 +43,7 @@ class DataController {
             $this->temp_values[$name] = $value;
         }
     }
-    public function get ($name, $default_value) {
+    public function get ($name, $default_value=null) {
         if (!$this->is_lock) {
             $values = $this->data->get();
             return isset($values[$name])? $values[$name]: $default_value;
@@ -56,7 +56,7 @@ class DataController {
             $participant_id = $this->participant['id'];
         $this->set('_participant_'. $participant_id .'_'. $name, $value);
     }
-    public function get_personal ($name, $default_value, $participant_id=null) {
+    public function get_personal ($name, $default_value=null, $participant_id=null) {
         if (is_null($participant_id))
             $participant_id = $this->participant['id'];
         return $this->get('_participant_'. $participant_id .'_'. $name, $default_value);

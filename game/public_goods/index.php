@@ -263,10 +263,10 @@ $pages[PAGE_WAIT_FINISH]->add(new TemplateUI(<<<TMPL
 <center>あと{num_not_finish_user}名の終了を待っています。</center>
 TMPL
 ,   function()use($_con) { 
-        $num_not_finish_user = $_con->get(VAR_TOTAL_PLAYER, 0) - calcNumFinishUser($_con);
+        $num_not_finish_user = $_con->get(VAR_TOTAL_PLAYER, 0) - calcNumReadyUser2($_con);
 
         return [
-            'num_not_finish_user'    => $num_not_finish_user
+            'num_not_finish_user'    => $num_not_finish_user,
         ];
     }
 ));

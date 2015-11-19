@@ -4,7 +4,7 @@ class DataIO {
     private $name, $handle, $is_lock;
 
     public function __construct ($con, $name) {
-        $this->name = DIR_ROOT .'game/'. $con->game['directory'] .'/'. array_pop(explode('/', $name)) .'.json';
+        $this->name = DIR_ROOT .'game/'. $con->game['directory'] .'/data_'. basename($name) .'.json';
         $this->handle = fopen($this->name, 'cb+');
         $this->is_lock = false;
     }

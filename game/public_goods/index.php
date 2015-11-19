@@ -472,12 +472,12 @@ $pages[PAGE_FINAL_RESULT]->add(new TemplateUI(<<<TMPL
 <p></p>
 <table  class="pure-table">
 <thead>
-<tr><th>メンバーのID</th><th>累計ポイント</th><th>総投資ポイント</th><th>投資率</th><th>総罰則ポイント</th><th>備考</th></tr>
+<tr><th>メンバーのID</th><th>累計ポイント</th><th>総投資ポイント</th><th>投資率</th>{if is_punish}<th>総罰則ポイント</th>{/if}<th>備考</th></tr>
 </thead>
 <tbody align="right">
 {each total_profit_list}
 <tr{if self} class="pure-table-odd"{/if}>
-<td>{id}</td><td>{pt}ポイント</td><td>{total_invest}ポイント</td><td>{invest_rate}%</td><td>{total_punish}ポイント</td><td>{if self}あなた{/if}</td>
+<td>{id}</td><td>{pt}ポイント</td><td>{total_invest}ポイント</td><td>{invest_rate}%</td>{if is_punish2}<td>{total_punish}ポイント</td>{/if}<td>{if self}あなた{/if}</td>
 </tr>
 {/each}
 </tbody>
@@ -490,6 +490,7 @@ TMPL
         foreach ( $_con->participants as $participant ) {
             $id         = $participant[VAR_ID];
             $is_finish  = $_con->get_personal(VAR_FINISH, false, strval($id));
+            $is_punish  = isPunishPhase($_con);
             if ( $is_finish ) {
                 $pt             = $_con->get_personal(VAR_TOTAL_PROFIT, 0, strval($id));
                 $total_invest   = $_con->get_personal(VAR_TOTAL_INVEST, 0, strval($id));
@@ -501,6 +502,7 @@ TMPL
                     'pt'            => $pt, 
                     'total_invest'  => $total_invest,
                     'invest_rate'   => $invest_rate,
+                    'is_punish2'    => $is_punish,
                     'total_punish'  => $total_punish,
                     'self'          => (bool)$is_self
                 ];
@@ -510,7 +512,7 @@ TMPL
         $total_profit_list = sortProfitList($total_profit_list);
         
         return [
-            'id'                => $_con->get_personal(VAR_CUR_ID, 0),
+            'is_punish'         => $is_punish,
             'total_profit_list' => $total_profit_list
         ];
     }

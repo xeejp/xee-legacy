@@ -111,7 +111,7 @@ TMPL
         $cur_group = intval($_con->get_personal(VAR_GROUP, 0));
         $is_punish = isPunishPhase($_con);
         $turn_id   = $is_punish ? VAR_TURN_PUNISH : VAR_TURN_NO_PUNISH;
-        $left_turn = $_con->get($turn_id, 0) - $_con->get(VAR_TURN, 0) + 1;
+        $left_turn = $_con->get($turn_id, 0) - getValueByString($_con->get(VAR_TURN, 0), $cur_group) + 1;
 
         return [
             'punish'        => !$is_punish,

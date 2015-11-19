@@ -15,6 +15,7 @@ $pages[PAGE_PUNISH_EXPLANATION] = new NormalContainer();
 $pages[PAGE_EXPERIMENT]         = new NormalContainer();
 $pages[PAGE_PUNISHMENT]         = new NormalContainer();
 $pages[PAGE_WAIT_ACTION]        = new NormalContainer();
+$pages[PAGE_WAIT_FINISH]        = new NormalContainer();
 $pages[PAGE_PUNISHMENT_RESULT]  = new NormalContainer();
 $pages[PAGE_MIDDLE_RESULT]      = new NormalContainer();
 $pages[PAGE_FINAL_RESULT]       = new NormalContainer(); 
@@ -256,6 +257,21 @@ TMPL
 ));
 
 
+$pages[PAGE_WAIT_FINISH]->add(new TemplateUI(<<<TMPL
+<h1 style="text-align: center;">終了待ち</h1>
+<hr/><br/>
+<center>あと{num_not_finish_user}名の終了を待っています。</center>
+TMPL
+,   function()use($_con) { 
+        $num_not_finish_user = $_con->get(VAR_TOTAL_PLAYER, 0) - calcNumFinishUser($_con);
+
+        return [
+            'num_not_finish_user'    => $num_not_finish_user
+        ];
+    }
+));
+
+
 $pages[PAGE_PUNISHMENT_RESULT]->add(new TemplateUI(<<<TMPL
 <h1 style="text-align: center;">第{turn}回の罰則結果</h1>
 <hr/><br/>
@@ -456,7 +472,7 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
             }
             setValueToAllUsers2($con, VAR_READY, false);
         } else {
-            redirectCurrentUser($con, PAGE_WAIT_ACTION);
+            redirectCurrentUser($con, PAGE_WAIT_FINISH);
         }
     }
 ));

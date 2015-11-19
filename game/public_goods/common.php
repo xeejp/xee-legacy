@@ -16,6 +16,7 @@ define('PAGE_REJECT', 'reject');
 define('PAGE_EXPERIMENT', 'experiment');
 define('PAGE_PUNISHMENT', 'punishment');
 define('PAGE_WAIT_ACTION', 'waitAction');
+define('PAGE_WAIT_FINISH', 'waitFinish');
 define('PAGE_PUNISHMENT_RESULT', 'punishmentResult');
 define('PAGE_MIDDLE_RESULT', 'middleResult');
 define('PAGE_FINAL_RESULT', 'finalResult');

@@ -81,6 +81,14 @@ function setValueToAllUsers($con, $name, $val)
     }
 }
 
+function setValueToAllUsers2($con, $name, $val)
+{
+    foreach ( $con->participants as $participant ) {
+        $id     = strval($participant[VAR_ID]);
+        $con->set_personal($name, $val, strval($participant[VAR_ID]));
+    }
+}
+
 function calcNumReadyUser($con) {
     $cur_group      = $con->get_personal(VAR_GROUP, 0); 
     $num_ready_user = 0;
@@ -96,6 +104,32 @@ function calcNumReadyUser($con) {
     return $num_ready_user;
 }
 
+function calcNumReadyUser2($con) {
+    $num_ready_user = 0;
+    foreach ( $con->participants as $participant ) {
+        $id         = $participant[VAR_ID];
+        $is_ready   = $con->get_personal(VAR_READY, false, strval($id));
+        if ( $is_ready ) {
+            ++$num_ready_user;
+        }
+    }
+    
+    return $num_ready_user;
+}
+
+function calcNumFinishUser($con) {
+    $num_finish_user = 0;
+    foreach ( $con->participants as $participant ) {
+        $id         = $participant[VAR_ID];
+        $is_finish  = $con->get_personal(VAR_FINISH, false, strval($id));
+        if ( $is_finish ) {
+            ++$num_finish_user;
+        }
+    }
+    
+    return $num_finish_user;
+}
+
 function redirectAllUsers($con, $page_id)
 {
     $cur_group = $con->get_personal(VAR_GROUP, 0);
@@ -105,6 +139,14 @@ function redirectAllUsers($con, $page_id)
         if ( $group == $cur_group ) {
             $con->set_personal(VAR_PAGE, $page_id, strval($participant[VAR_ID])); 
         }
+    }
+}
+
+function redirectAllUsers2($con, $page_id)
+{
+    foreach( $con->participants as $participant ) {
+        $id     = $participant[VAR_ID];
+        $con->set_personal(VAR_PAGE, $page_id, strval($id)); 
     }
 }
 
@@ -118,6 +160,13 @@ function isReady($con, $num_ready_user)
     $num_player = $con->get(VAR_NUM_PLAYER);
 
     return ($num_ready_user == $num_player);
+}
+
+function isFinish($con, $num_finish_user)
+{
+    $total_player = $con->get(VAR_TOTAL_PLAYER);
+
+    return ($num_finish_user == $total_player);
 }
 
 function calcTotalInvestment($con)
@@ -254,6 +303,15 @@ function initAllUsersData($con)
     setValueToAllUsers($con, VAR_RECEIVED_PUNISH_PT, 0);
 }
 
+function initAllUsersData2($con)
+{ 
+    setValueToAllUsers2($con, VAR_CUR_PT, 20);
+    setValueToAllUsers2($con, VAR_CUR_PUNISH_PT, 10);
+    setValueToAllUsers2($con, VAR_INVEST_PT, 0);
+    setValueToAllUsers2($con, VAR_PUNISH_PT, 0);
+    setValueToAllUsers2($con, VAR_RECEIVED_PUNISH_PT, 0);
+}
+
 function calcReceivedPunishment($con, $id, $punish_pt)
 {
     $pt                 = intval($punish_pt); 
@@ -264,9 +322,8 @@ function calcReceivedPunishment($con, $id, $punish_pt)
 
 function changePhase($con)
 {
-    $cur_group              = intval($con->get_personal(VAR_GROUP, 0)); 
     $current_phase_string   = $con->get(VAR_PUNISH_PHASE);
-    $current_phase          = getValueByString($current_phase_string, $cur_group);
+    $current_phase          = getValueByString($current_phase_string, 0);
     $turn;
     if ( $current_phase ) {
         $current_phase = false;
@@ -275,8 +332,9 @@ function changePhase($con)
         $current_phase = true;
         $turn = $con->get(VAR_TURN_PUNISH);
     }
-    $current_phase_string = setValueToString($current_phase_string, $cur_group, (int)$current_phase);
-    $con->set(VAR_PUNISH_PHASE, $current_phase_string);
+
+    $punish_phase_array = array_fill(0, $con->get(VAR_TOTAL_PLAYER, 0), intval($current_phase));
+    $con->set(VAR_PUNISH_PHASE, implode(PUNCTUATION, $punish_phase_array));
 
     return $turn;
 }

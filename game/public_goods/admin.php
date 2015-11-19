@@ -118,7 +118,6 @@ $modulator->add_page(PAGE_WAIT, new MatchingButton($_con,
 
             ++$num;
         }
-        ++$num;
         $con->set(VAR_TOTAL_PLAYER, $num);
         $turn_array         = array_fill(0, $num, 1);
         $total_turn_array   = array_fill(0, $num, 1); 

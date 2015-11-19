@@ -404,10 +404,20 @@ TMPL
 ));
 
 
-$pages[PAGE_FINAL_RESULT]->add(new StaticUI(<<<TMPL
+$pages[PAGE_FINAL_RESULT]->add(new TemplateUI(<<<TMPL
 <h1 style="text-align: center;">最終結果</h1>
+<h2 style="text-align: center;">{total_player}人中{num_finish}人が実験終了しています</h2>
 <hr/><br/>
 TMPL
+,   function()use($_con) {
+        $total_player   = $_con->get(VAR_TOTAL_PLAYER, 0);
+        $num_finish     = calcNumFinishUser($_con);
+
+        return [
+            'total_player'  => $total_player,
+            'num_finish'    => $num_finish,
+        ];
+    }
 ));
 
 $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
@@ -424,26 +434,27 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
     },
     function($con) { 
         $con->set_personal(VAR_READY, true);
-        if ( isReady($con, calcNumReadyUser($con)) ) {
+        if ( isFinish($con, calcNumReadyUser2($con)) ) {
             $cur_group      = $con->get_personal(VAR_GROUP, 0);
             $turn_string    = $con->get(VAR_TURN);
             $turn           = intval(getValueByString($turn_string, $cur_group));
             if ( isFinishAllPhase($con, $turn) ) {
-                redirectAllUsers($con, PAGE_GRAPH);
+                redirectAllUsers2($con, PAGE_GRAPH);
             } else {
-                $con->set(VAR_TURN, setValueToString($turn_string, $cur_group, 1));
+                $turn_array = array_fill(0, $con->get(VAR_TOTAL_PLAYER, 0), 1);
+                $con->set(VAR_TURN, implode(PUNCTUATION, $turn_array));
                 if ( changePhase($con) == 0 ) {
-                    redirectAllUsers($con, PAGE_GRAPH);
+                    redirectAllUsers2($con, PAGE_GRAPH);
                 } else {
-                    initAllUsersData($con);
-                    setValueToAllUsers($con, VAR_TOTAL_PROFIT, 0);
-                    setValueToAllUsers($con, VAR_TOTAL_INVEST, 0);
-                    setValueToAllUsers($con, VAR_TOTAL_PUNISH, 0);
-                    setValueToAllUsers($con, VAR_FINISH, false);
-                    redirectAllUsers($con, PAGE_PUNISH_EXPLANATION);
+                    initAllUsersData2($con);
+                    setValueToAllUsers2($con, VAR_TOTAL_PROFIT, 0);
+                    setValueToAllUsers2($con, VAR_TOTAL_INVEST, 0);
+                    setValueToAllUsers2($con, VAR_TOTAL_PUNISH, 0);
+                    setValueToAllUsers2($con, VAR_FINISH, false);
+                    redirectAllUsers2($con, PAGE_PUNISH_EXPLANATION);
                 }
             }
-            setValueToAllUsers($con, VAR_READY, false);
+            setValueToAllUsers2($con, VAR_READY, false);
         } else {
             redirectCurrentUser($con, PAGE_WAIT_ACTION);
         }

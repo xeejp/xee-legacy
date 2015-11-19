@@ -256,62 +256,69 @@ $experiment->add(new SendingUI('提案', function ($value) use ($_con) {
             break;
         }
     }
-    // set price
     $_con->set_personal('caution', '価格を提示しました。');
-    $_con->set_personal('price', $value);
-    // trade
-    switch ($_con->get_personal('role', '')) {
-    case 'seller':
-        // trade check
-        $list = [];
-        foreach ($_con->participants as $participant) {
-            if (($_con->get_personal('finished', false, $participant['id']))
-                || ($_con->get_personal('role', '', $participant['id']) != 'buyer')
-                || (($price = $_con->get_personal('price', 0, $participant['id'])) <= 0)
-            ) continue;
-            $list[$participant['id']] = $price;
+    try {
+        $_con->lock();
+        // set price
+        $_con->set_personal('price', $value);
+        // trade
+        switch ($_con->get_personal('role', '')) {
+        case 'seller':
+            // trade check
+            $list = [];
+            foreach ($_con->participants as $participant) {
+                if (($_con->get_personal('finished', false, $participant['id']))
+                    || ($_con->get_personal('role', '', $participant['id']) != 'buyer')
+                    || (($price = $_con->get_personal('price', 0, $participant['id'])) <= 0)
+                ) continue;
+                $list[$participant['id']] = $price;
+            }
+            if ($list == []) return;
+            arsort($list);
+            if (!($value <= current($list))) return;
+            // success
+            $buyer = key($list);
+            $seller = $_con->participant['id'];
+            break;
+        case 'buyer':
+            // trade check
+            $list = [];
+            foreach ($_con->participants as $participant) {
+                if (($_con->get_personal('finished', false, $participant['id']))
+                    || ($_con->get_personal('role', '', $participant['id']) != 'seller')
+                    || (($price = $_con->get_personal('price', 0, $participant['id'])) <= 0)
+                ) continue;
+                $list[$participant['id']] = $price;
+            }
+            if ($list == []) return;
+            asort($list);
+            if (!($value >= current($list))) return;
+            // success
+            $buyer = $_con->participant['id'];
+            $seller = key($list);
+            break;
         }
-        if ($list == []) return;
-        arsort($list);
-        if (!($value <= current($list))) return;
         // success
-        $buyer = key($list);
-        $seller = $_con->participant['id'];
-        break;
-    case 'buyer':
-        // trade check
-        $list = [];
-        foreach ($_con->participants as $participant) {
-            if (($_con->get_personal('finished', false, $participant['id']))
-                || ($_con->get_personal('role', '', $participant['id']) != 'seller')
-                || (($price = $_con->get_personal('price', 0, $participant['id'])) <= 0)
-            ) continue;
-            $list[$participant['id']] = $price;
-        }
-        if ($list == []) return;
-        asort($list);
-        if (!($value >= current($list))) return;
-        // success
-        $buyer = $_con->participant['id'];
-        $seller = key($list);
-        break;
+        $_con->set_personal('finished', true, $buyer);
+        $_con->set_personal('finished', true, $seller);
+        $_con->set_personal('page', 'finished', $buyer);
+        $_con->set_personal('page', 'finished', $seller);
+        $_con->set_personal('price', $value, $buyer);
+        $_con->set_personal('price', $value, $seller);
+        $_con->set_personal('profit', $_con->get_personal('money', 0, $buyer) - $value, $buyer);
+        $_con->set_personal('profit', $value - $_con->get_personal('cost', 0, $seller), $seller);
+    } finally {
+        $_con->unlock();
     }
-    // success
-    $_con->set_personal('finished', true, $buyer);
-    $_con->set_personal('finished', true, $seller);
-    $_con->set_personal('page', 'finished', $buyer);
-    $_con->set_personal('page', 'finished', $seller);
-    $_con->set_personal('price', $value, $buyer);
-    $_con->set_personal('price', $value, $seller);
-    $_con->set_personal('profit', $_con->get_personal('money', 0, $buyer) - $value, $buyer);
-    $_con->set_personal('profit', $value - $_con->get_personal('cost', 0, $seller), $seller);
 }));
 $experiment->add(new ButtonUI($_con,
     function ($_con) { return '取り消し'; },
     function ($_con) {
         $_con->set_personal('caution', '価格の提示を取り下げました。');
+        $_con->lock();
         if (!$_con->get_personal('finished', false))
             $_con->set_personal('price', null);
+        $_con->unlock();
     }
 ));
 $experiment->add(new TemplateUI($templates['experiment']['caution'], function () use ($_con) {
@@ -430,16 +437,16 @@ $result->add(new ScatterGraph(
     call_user_func(function () use ($_con) {
         $supply = [];
         $demand = [];
-        foreach ($_con->participants as $participant)
-//            if ($_con->get_personal('finished', false, $participant['id']))
-                switch($_con->get_personal('role', '', $participant['id'])) {
-                case 'seller':
-                    $supply[] = $_con->get_personal('profit', 0, $participant['id']);
-                    break;
-                case 'buyer':
-                    $demand[] = $_con->get_personal('profit', 0, $participant['id']);
-                    break;
-                }
+        foreach ($_con->participants as $participant) {
+            switch($_con->get_personal('role', '', $participant['id'])) {
+            case 'seller':
+                $supply[] = $_con->get_personal('profit', 0, $participant['id']);
+                break;
+            case 'buyer':
+                $demand[] = $_con->get_personal('profit', 0, $participant['id']);
+                break;
+            }
+        }
 
         $data = [
             'supply' => [

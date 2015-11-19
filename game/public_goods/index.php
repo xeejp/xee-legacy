@@ -451,9 +451,8 @@ $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
     function($con) { 
         $con->set_personal(VAR_READY, true);
         if ( isFinish($con, calcNumReadyUser2($con)) ) {
-            $cur_group      = $con->get_personal(VAR_GROUP, 0);
             $turn_string    = $con->get(VAR_TURN);
-            $turn           = intval(getValueByString($turn_string, $cur_group));
+            $turn           = intval(getValueByString($turn_string, 0));
             if ( isFinishAllPhase($con, $turn) ) {
                 redirectAllUsers2($con, PAGE_GRAPH);
             } else {

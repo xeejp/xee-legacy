@@ -85,8 +85,8 @@ function setValueToAllUsers($con, $name, $val)
 function setValueToAllUsers2($con, $name, $val)
 {
     foreach ( $con->participants as $participant ) {
-        $id     = strval($participant[VAR_ID]);
-        $con->set_personal($name, $val, strval($participant[VAR_ID]));
+        $id = strval($participant[VAR_ID]);
+        $con->set_personal($name, $val, $id);
     }
 }
 
@@ -324,7 +324,7 @@ function calcReceivedPunishment($con, $id, $punish_pt)
 function changePhase($con)
 {
     $current_phase_string   = $con->get(VAR_PUNISH_PHASE);
-    $current_phase          = getValueByString($current_phase_string, 0);
+    $current_phase          = (bool)getValueByString($current_phase_string, 0);
     $turn;
     if ( $current_phase ) {
         $current_phase = false;

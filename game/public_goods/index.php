@@ -518,6 +518,7 @@ TMPL
 
 
 $pages[PAGE_GRAPH]->add(new StaticUI('最終結果'));
+$pages[PAGE_GRAPH]->add(new StaticUI('<br/><div style="text-align: center;">緑色：罰則無し</div><div style="text-align: center;">赤色：罰則あり</div>'));
 
 $pages[PAGE_GRAPH]->add(new ScatterGraph(
     call_user_func(

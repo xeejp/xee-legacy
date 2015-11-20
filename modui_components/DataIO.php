@@ -4,7 +4,7 @@ class DataIO {
     private $name, $handle, $is_lock;
 
     public function __construct ($con, $name) {
-        $this->name = DIR_ROOT .'game/'. $con->game['directory'] .'/data_'. basename($name) .'.json';
+        $this->name = DIR_ROOT .'game/'. $con->game['directory'] .'/'. $_con->experiment['password'] .'_'. basename($name) .'.json';
         $this->handle = fopen($this->name, 'cb+');
         $this->is_lock = false;
     }
@@ -23,8 +23,9 @@ class DataIO {
         $this->write(json_encode($data));
     }
     public function lock () {
-        flock($this->handle, LOCK_SH);
         $this->is_lock = true;
+        flock($this->handle, LOCK_EX);
+        flock($this->handle, LOCK_SH);
     }
     public function unlock () {
         flock($this->handle, LOCK_UN);

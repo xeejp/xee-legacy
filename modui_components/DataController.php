@@ -9,7 +9,7 @@ class DataController {
 
     public function __construct ($_con, $name) {
         $this->_con = $_con;
-        $this->data = new DataIO($_con, 'con_'. $_con->experiment['password'] .'_'. $name);
+        $this->data = new DataIO($_con, 'con_'. $name);
         $this->is_lock = false;
         if (!is_array($this->data->get()))
             $this->data->set([]);
@@ -22,14 +22,14 @@ class DataController {
     }
 
     public function lock () {
-        $this->data->lock();
         $this->is_lock = true;
+        $this->data->lock();
         $this->temp_values = $this->data->get();
     }
     public function unlock () {
         $this->data->set($this->temp_values);
-        $this->is_lock = false;
         $this->data->unlock();
+        $this->is_lock = false;
     }
 
     public function set ($name, $value) {

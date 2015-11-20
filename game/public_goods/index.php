@@ -108,6 +108,8 @@ $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 <center><i><b>あなたの利益＝{cur_pt}−あなたの投資ポイント＋(0.4×グループ全員の合計投資ポイント) - 罰則に用いたポイント - (3×他のメンバーから受けた合計罰則ポイント)</b></i></center>
 {/if}
 <br/><hr/><br/>
+<h2 style="text-align: left;">なお、現在の累計ポイント数は{total_profit}ポイントです。</h2>
+<br/><hr/><br/>
 プロジェクトに何ポイント投資しますか？<br/>
 TMPL
 ,   function()use($_con) {
@@ -124,6 +126,7 @@ TMPL
             'left_turn'     => $left_turn,
             'id'            => $_con->get_personal(VAR_CUR_ID, 0),
             'cur_pt'        => $_con->get_personal(VAR_CUR_PT, 0),
+            'total_profit'  => $_con->get_personal(VAR_TOTAL_PROFIT, 0),
         ];
     }
 ));
@@ -148,16 +151,6 @@ $pages[PAGE_EXPERIMENT]->add(new SendingUI('投資する',
         } else {
             redirectCurrentUser($_con, PAGE_WAIT_ACTION);
         }
-    }
-));
-$pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
-<br/><br/><hr/>
-<div style="text-align: right;">なお、現在の累計ポイント数は{total_profit}ポイントです。</div>
-TMPL
-,   function()use($_con) {
-        return [
-            'total_profit'  => $_con->get_personal(VAR_TOTAL_PROFIT, 0)
-        ];
     }
 ));
 

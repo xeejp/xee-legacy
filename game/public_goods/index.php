@@ -114,7 +114,7 @@ $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 <br/><hr/><br/>
 TMPL
 ,   function()use($_con) {
-        $cur_group = intval($_con->get_personal(VAR_GROUP, 0));
+        $cur_group = intval($_con->get_personal(VAR_GROUP, -1));
         $is_punish = isPunishPhase($_con);
         $turn_id   = $is_punish ? VAR_TURN_PUNISH : VAR_TURN_NO_PUNISH;
         $left_turn = $_con->get($turn_id, 0) - getValueByString($_con->get(VAR_TURN, 0), $cur_group) + 1;
@@ -164,7 +164,7 @@ $pages[PAGE_PUNISHMENT]->add(new TemplateUI(<<<TMPL
 それぞれのメンバーにいくらの罰則を与えますか。<br/><br/>
 TMPL
 ,   function()use($_con) {
-        $cur_group = intval($_con->get_personal(VAR_GROUP, 0));
+        $cur_group = intval($_con->get_personal(VAR_GROUP, -1));
         return [
             'turn'          => getValueByString($_con->get(VAR_TURN, 0), $cur_group),
             'id'            => $_con->get_personal(VAR_CUR_ID, 0), 
@@ -176,11 +176,14 @@ TMPL
 $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('罰則を与える',
     call_user_func(
         function($con) {
-            $cur_group  = intval($con->get_personal(VAR_GROUP, 0));
+            $cur_group  = intval($con->get_personal(VAR_GROUP, -1));
             $list       = [];
             foreach ( $con->participants as $participant ) {
                 $id     = $participant[VAR_ID];
-                $group  = $con->get_personal(VAR_GROUP, 0, strval($id));
+                $group  = $con->get_personal(VAR_GROUP, -1, strval($id));
+                if ( $group == -1 ) {
+                    continue;
+                }
                 if ( $group != $cur_group) {
                     continue;
                 }
@@ -266,7 +269,7 @@ $pages[PAGE_PUNISHMENT_RESULT]->add(new TemplateUI(<<<TMPL
 <hr/><br/>
 TMPL
 ,   function()use($_con) {
-        $cur_group      = intval($_con->get_personal(VAR_GROUP, 0));
+        $cur_group      = intval($_con->get_personal(VAR_GROUP, -1));
         $turn_string    = $_con->get(VAR_TURN);
         $turn           = intval(getValueByString($turn_string, $cur_group));
         return [
@@ -330,7 +333,7 @@ $pages[PAGE_MIDDLE_RESULT]->add(new TemplateUI(<<<TMPL
 <hr/><br/>
 TMPL
 ,   function()use($_con) {
-        $cur_group      = intval($_con->get_personal(VAR_GROUP, 0));
+        $cur_group      = intval($_con->get_personal(VAR_GROUP, -1));
         $turn_string    = $_con->get(VAR_TURN);
         $turn           = intval(getValueByString($turn_string, $cur_group));
         return [
@@ -383,12 +386,15 @@ $pages[PAGE_MIDDLE_RESULT]->add(new TemplateUI(<<<TMPL
 <br/>
 TMPL
 ,   function()use($_con) {
-        $cur_group      = intval($_con->get_personal(VAR_GROUP, 0));
+        $cur_group      = intval($_con->get_personal(VAR_GROUP, -1));
         $invest_list    = [];
         $self           = [];
         foreach ( $_con->participants as $participant ) {
             $id             = $participant[VAR_ID];
-            $group          = $_con->get_personal(VAR_GROUP, 0, $id);
+            $group          = $_con->get_personal(VAR_GROUP, -1, $id);
+            if ( $group == -1 ) {
+                continue;
+            }
             if ( $cur_group != $group ) {
                 continue;
             }
@@ -427,7 +433,7 @@ TMPL
 
 $pages[PAGE_FINAL_RESULT]->add(new ButtonUI($_con,
     function($con) {
-        $cur_group      = $con->get_personal(VAR_GROUP, 0);
+        $cur_group      = $con->get_personal(VAR_GROUP, -1);
         $turn_string    = $con->get(VAR_TURN);
         $turn           = intval(getValueByString($turn_string, $cur_group));
         $turn_punish    = intval($con->get(VAR_TURN_PUNISH));
@@ -487,6 +493,10 @@ TMPL
         $total_profit_list  = [];
         foreach ( $_con->participants as $participant ) {
             $id         = $participant[VAR_ID];
+            $group      = $_con->get_personal(VAR_GROUP, -1, strval($id));
+            if ( $group == -1 ) {
+                continue;
+            }
             $is_finish  = $_con->get_personal(VAR_FINISH, false, strval($id));
             $is_punish  = isPunishPhase($_con);
             if ( $is_finish ) {

@@ -158,6 +158,12 @@ $_ready->add(new ButtonUI($_con,
     function($_con) {
         $_con->set(VAR_PAGE, PAGE_EXPERIMENT);
         foreach ($_con->participants as $participant) {
+            $id = $participant[VAR_ID];
+            $group = $_con->get_personal(VAR_GROUP, -1, strval($id));
+            if ( $group == -1 ) {
+                continue;
+            }
+
             if ($_con->get_personal(VAR_ACTIVE, false, strval($participant[VAR_ID]))) {
                 $_con->set_personal(VAR_PAGE, PAGE_EXPERIMENT, strval($participant[VAR_ID]));
             } else {

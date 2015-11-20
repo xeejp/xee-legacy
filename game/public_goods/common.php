@@ -128,6 +128,10 @@ function calcNumReadyUser2($con) {
     $num_ready_user = 0;
     foreach ( $con->participants as $participant ) {
         $id         = $participant[VAR_ID];
+        $group      = $con->get_personal(VAR_GROUP, -1, strval($id));
+        if ( $group == -1 ) {
+            continue;
+        }
         $is_ready   = $con->get_personal(VAR_READY, false, strval($id));
         if ( $is_ready ) {
             ++$num_ready_user;

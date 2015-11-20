@@ -197,7 +197,7 @@ $pages[PAGE_PUNISHMENT]->add(new MultiSendingUI('罰則を与える',
                 }
 
                 $invest_pt      = $con->get_personal(VAR_INVEST_PT, 0, strval($id));
-                $description    = 'IDが' . $id . 'のメンバー(' . $invest_pt . 'ポイント投資)に対する罰則ポイント';
+                $description    = '投資額が' . $invest_pt . 'のメンバーに対する罰則ポイント';
                 $list[] = [
                     'id'            => $id,
                     'description'   => $description,

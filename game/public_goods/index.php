@@ -97,6 +97,8 @@ $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 {if is_last}このターンが最後の回です。<br/>
 {else}残りのターン数はこのターンを含めて{left_turn}回です。<br/>{/if}
 <br/><hr/><br/>
+<div style="text-align: left;">現在の総利得ポイントは<strong>{total_profit}ポイント</strong>です。</div>
+<br/>
 あなたは{cur_pt}ポイント持っています。<br/>
 {cur_pt}ポイントのうち、一部または全部をグループで実施するプロジェクトのために投資することができます。<br/>
 {cur_pt}ポイントをそのまま持っておく分と、プロジェクトに投資する分に分けてください。<br/>
@@ -107,10 +109,9 @@ $pages[PAGE_EXPERIMENT]->add(new TemplateUI(<<<TMPL
 {else}
 <center><i><b>あなたの利益＝{cur_pt}−あなたの投資ポイント＋(0.4×グループ全員の合計投資ポイント) - 罰則に用いたポイント - (3×他のメンバーから受けた合計罰則ポイント)</b></i></center>
 {/if}
+<br/>
+プロジェクトに何ポイント投資しますか？
 <br/><hr/><br/>
-<h2 style="text-align: left;">なお、現在の累計ポイント数は{total_profit}ポイントです。</h2>
-<br/><hr/><br/>
-プロジェクトに何ポイント投資しますか？<br/>
 TMPL
 ,   function()use($_con) {
         $cur_group = intval($_con->get_personal(VAR_GROUP, 0));

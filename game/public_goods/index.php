@@ -498,7 +498,7 @@ TMPL
             if ( $is_finish ) {
                 $pt             = $_con->get_personal(VAR_TOTAL_PROFIT, 0, strval($id));
                 $total_invest   = $_con->get_personal(VAR_TOTAL_INVEST, 0, strval($id));
-                $invest_rate    = $total_invest / (intval($_con->get(isPunishPhase($_con) ? VAR_TURN_PUNISH : VAR_TURN_NO_PUNISH, 1)) * 20) * 100.0;
+                $invest_rate    = round($total_invest / (intval($_con->get(isPunishPhase($_con) ? VAR_TURN_PUNISH : VAR_TURN_NO_PUNISH, 1)) * 20) * 100.0, 0);
                 $total_punish   = $_con->get_personal(VAR_TOTAL_PUNISH, 0, strval($id));
                 $is_self        = isCurrentUser($_con, $id);
                 $total_profit_list[]  = [

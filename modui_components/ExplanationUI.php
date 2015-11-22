@@ -3,10 +3,12 @@
 class ExplanationUI extends ModUIComponent{
     private $controller;
     private $pages=[], $no;
+    private $variable_name;
 
-    public function __construct ($controller) {
+    public function __construct ($controller, $id='') {
         $this->controller = $controller;
-        $this->no = $this->controller->get_personal('ExpUI::no', 0);
+        $this->variable_name = 'ExpUI::no' . '_' . $id;
+        $this->no = $this->controller->get_personal($this->variable_name, 0);
     }
 
     public function get_template_name ($name) {
@@ -20,12 +22,10 @@ class ExplanationUI extends ModUIComponent{
 
     public function get_templates($name){
         $template = <<<'TMPL'
-<div class="pure-g-r" style="padding: 1em 3em; box-sizing: border-box;">
- <div class="pure-u-1">
-  <h1>{title}</h1>
- </div>
- <div class="pure-u-1" style="margin: 1em; border: solid 1px;">
-  <ul>
+<h1>{title}</h1>
+<div style="padding: 1em;">
+ <div class="pure-u-1" style="border: solid 1px; margin: 0em;">
+  <ul style="padding: 1em 2em 0em;">
 {each explanations}
 {if explanation}<li>{explanation}</li>
 {elif explanation_sub}<li style="margin-left: 1em; font-size: small;">{explanation_sub}</li>
@@ -34,11 +34,11 @@ class ExplanationUI extends ModUIComponent{
 {/each}
   </ul>
  </div>
- <div class="pure-u-1">
+</div>
+<div class="pure-u-1">
 {if has_prev}<button id="{_name}-prev" class="pure-button" style="color: #fff; border-color: #1f8dd6; background-color: #1f8dd6; font-size: 125%; float: left;">前へ</a>{/if}
 {if has_next}<button id="{_name}-next" class="pure-button" style="color: #fff; border-color: #1f8dd6; background-color: #1f8dd6; font-size: 125%; float: right;">次へ</a>{/if}
-  <a style="clear: both;"></a>
- </div>
+ <a style="clear: both;"></a>
 </div>
 TMPL;
         return [$this->get_template_name($name) => $template];
@@ -83,6 +83,6 @@ JS
     public function input($name, $value){
         if (isset($this->pages[$value]))
             $this->no = $value;
-        $this->controller->set_personal('ExpUI::no', $this->no);
+        $this->controller->set_personal($this->variable_name, $this->no);
     }
 }

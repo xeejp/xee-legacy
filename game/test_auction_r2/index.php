@@ -267,23 +267,37 @@ $experiment->add(new SendingUI('提案', function ($value) use ($_con) {
         $_con->lock();
         // set price
         $_con->set_personal('price', $value);
+        $_con->set_personal('ask_time', microtime(true));
         // trade
         switch ($_con->get_personal('role', '')) {
         case 'seller':
             // trade check
             $list = [];
+            $sort_arr = ['price' => [], 'time' => []];
             foreach ($_con->participants as $participant) {
                 if (($_con->get_personal('finished', false, $participant['id']))
                     || ($_con->get_personal('role', '', $participant['id']) != 'buyer')
                     || (($price = $_con->get_personal('price', 0, $participant['id'])) <= 0)
                 ) continue;
-                $list[$participant['id']] = $price;
+                $list[] = [
+                    'id' => $participant['id'],
+                    'price' => $price,
+                    'time' => $_con->get_personal('ask_time', 0, $participant['id']),
+                ];
             }
             if ($list == []) return;
-            arsort($list);
-            if (!($value <= current($list))) return;
+            $prices = [];
+            $times = [];
+            foreach ($list as $key => $val) {
+                $prices[$key] = $val['price'];
+                $times[$key] = $val['time'];
+            }
+            array_multisort($prices, SORT_DESC, SORT_NUMERIC,
+                              $times, SORT_ASC, SORT_NUMERIC,
+                              $list);
+            if (!($value <= current($list)['price'])) return;
             // success
-            $buyer = key($list);
+            $buyer = current($list)['id'];
             $seller = $_con->participant['id'];
             break;
         case 'buyer':
@@ -294,14 +308,26 @@ $experiment->add(new SendingUI('提案', function ($value) use ($_con) {
                     || ($_con->get_personal('role', '', $participant['id']) != 'seller')
                     || (($price = $_con->get_personal('price', 0, $participant['id'])) <= 0)
                 ) continue;
-                $list[$participant['id']] = $price;
+                $list[] = [
+                    'id' => $participant['id'],
+                    'price' => $price,
+                    'time' => $_con->get_personal('ask_time', 0, $participant['id']),
+                ];
             }
             if ($list == []) return;
-            asort($list);
-            if (!($value >= current($list))) return;
+            $prices = [];
+            $times = [];
+            foreach ($list as $key => $val) {
+                $prices[$key] = $val['price'];
+                $times[$key] = $val['time'];
+            }
+            array_multisort($prices, SORT_ASC, SORT_NUMERIC,
+                              $times, SORT_ASC, SORT_NUMERIC,
+                              $list);
+            if (!($value >= current($list)['price'])) return;
             // success
             $buyer = $_con->participant['id'];
-            $seller = key($list);
+            $seller = current($list)['id'];
             break;
         }
         // success

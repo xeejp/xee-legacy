@@ -16,15 +16,15 @@ class ParticipantModel extends Model{
     }
 
     function get_all($experiment_id){
-        return $this->con->fetchAll('SELECT `id`, `experiment_id`, `last_access` FROM `participant` WHERE `experiment_id` = ?', $experiment_id);
+        return $this->con->fetchAll('SELECT `id`, `name`, `experiment_id`, `last_access` FROM `participant` WHERE `experiment_id` = ?', $experiment_id);
     }
 
     function get($id){
-        return $this->con->fetch('SELECT `id`, `experiment_id`, `last_access` FROM `participant` WHERE `id` = ?', $id);
+        return $this->con->fetch('SELECT `id`, `name`, `experiment_id`, `last_access` FROM `participant` WHERE `id` = ?', $id);
     }
 
     function get_by_name($experiment_id, $name){
-        return $this->con->fetch('SELECT `id`, `experiment_id`, `last_access` FROM `participant` WHERE `experiment_id` = ? AND `name` = ?', $experiment_id, $name);
+        return $this->con->fetch('SELECT `id`, `name`, `experiment_id`, `last_access` FROM `participant` WHERE `experiment_id` = ? AND `name` = ?', $experiment_id, $name);
     }
 
     function check_name($experiment_id, $name){

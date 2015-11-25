@@ -2,9 +2,21 @@
 
 $games = [
     [
-        'directory' => 'double_auction'
+        'directory' => 'double_auction',
         'name' => 'Double Auction',
-    ]
+    ],
+    [
+        'directory' => 'test_auction',
+        'name' => 'Test Auction',
+    ],
+    [
+        'directory' => 'premade_test_auction',
+        'name' => 'Parsed Test Auction',
+    ],
+    [
+        'directory' => 'board',
+        'name' => 'Board',
+    ],
 ];
 
 foreach($games as $game){

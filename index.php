@@ -35,6 +35,7 @@ Setting::$_database_dsn = Setting::$_database_user = Setting::$_database_passwor
 $_vdb = new VarDB($_pdo, null);
 
 require __DIR__ . '/tables.php';
+require __DIR__ . '/games.php';
 
 $_request = new Request(_URL);
 $_session = new Session();

@@ -21,6 +21,6 @@
 
 <!-- Interactive Login - END -->
 <div align="right" valign="bottom">
-<button type="button" class="pure-button pure-warning">実験作成</button>
+<a class="pure-button pure-warning" href="host">実験作成</a>
 </div>
 </div>

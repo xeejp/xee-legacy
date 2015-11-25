@@ -75,38 +75,11 @@
 			border-width: 3px;
 		}
 
-		*{
+		#toolbox #dropbox{
 			-webkit-user-select: none;
 			user-select: none;
 		}
 
-/*タブメニュー*/
-/*		.tabMenu{
-			overflow:hidden;
-		}
-
-		.tabMenu li{
-			background: #ccc;
-			padding: 5px 25px;
-			float: left;
-			margin-right: 1px;
-			list-style:none;
-		}
-
-		.tabMenu li .select{
-			background: #eee;
-		}
-
-		.tabContent li{
-			background: #eee;
-			padding: 20px;
-			list-style:none;
-		}
-
-		.hide{display:none;}
-
-		.active{display:block;}*/
-/*-------------------------*/
          span.demo1 {
             background-color:yellow;
             margin-right:20px;
@@ -119,46 +92,40 @@
 	<script type="text/javascript">
 		window.onload = function(){
 			var tools = [];
-			tools[tools.length] = { 'name': 'if', 'functionName': 'if', 'class': 'tool' };
-			tools[tools.length] = { 'name': 'else', 'functionName': 'else', 'class': 'tool' };
-			tools[tools.length] = { 'name': 'switch', 'functionName': 'switch', 'class': 'tool' };
-			tools[tools.length] = { 'name': 'case', 'functionName': 'case', 'class': 'tool' };
-			tools[tools.length] = { 'name': '$users', 'functionName': '$users', 'class': 'value' };
-			tools[tools.length] = { 'name': '$users[$i]', 'functionName': '$users[$i]', 'class': 'value' };
-			tools[tools.length] = { 'name': '$wtp', 'functionName': '$wtp', 'class': 'value' };
-			tools[tools.length] = { 'name': '$cost', 'functionName': '$cost', 'class': 'value' };
-			tools[tools.length] = { 'name': '$price', 'functionName': '$price', 'class': 'value' };
-			tools[tools.length] = { 'name': 'Loop', 'functionName': 'loop', 'class':'tool'};
-			tools[tools.length] = { 'name': 'Make', 'functionName': 'make', 'class': 'tool' };
+			tools[tools.length] = { 'functionName': 'if', 'class': 'tool' };
+			tools[tools.length] = { 'functionName': 'else', 'class': 'tool' };
+			tools[tools.length] = { 'functionName': 'switch', 'class': 'tool' };
+			tools[tools.length] = { 'functionName': 'case', 'class': 'tool' };
+			tools[tools.length] = { 'functionName': '$users', 'class': 'value' };
+			tools[tools.length] = { 'functionName': '$users[$i]', 'class': 'value' };
+			tools[tools.length] = { 'functionName': '$wtp', 'class': 'value' };
+			tools[tools.length] = { 'functionName': '$cost', 'class': 'value' };
+			tools[tools.length] = { 'functionName': '$price', 'class': 'value' };
+			tools[tools.length] = { 'functionName': 'loop', 'class':'tool'};
+			tools[tools.length] = { 'functionName': 'make', 'class': 'tool' };
 
 /*---toolboxをクラスごとに振り分けするための変数---*/
 			var div_mem = [];
-
+			$('#toolbox').append($('<div>').attr('id','tab'));
+			$('.tab').append('<ul>');
 /*-------------------------------------------------*/
 
 			for (var i = 0; i < tools.length; i++) {
-
 /*---toolをクラス別に振り分け---*/
 				if($.inArray(tools[i]['class'],div_mem) < 0){
 					div_mem.push(tools[i]['class']);
-					$('#toolbox').append($('<tr>').append(tools[i]['class']));
-					var  box= $('<tr>').attr('id','toolbox_' +tools[i]['class']);
+					$('.tab ul').append($('<li>').append(tools[i]['class']));
+					var  box= $('<div>').attr('id','toolbox_' +tools[i]['class']);
 					$('#toolbox').append(box);
 				};
 
 /*------------------------------*/
 
 //---f_createtool(tools[i]['name'],'toolbox', tools[i]['functionName'], tools[i]['class']);
-				f_createtool(tools[i]['name'],'toolbox_' + tools[i]['class'], tools[i]['functionName'], tools[i]['class']);
+				f_createtool(tools[i]['functionName'],'toolbox_' + tools[i]['class'], tools[i]['functionName'], tools[i]['class']);
 			};
 
-			var data = document.getElementById('databox').innerHTML;
-			var drops = data.split(',');
-			for (var i = 1; i < drops.length; i++) {
-				f_createtool(drops[i]['name'], 'dropbox', drops[i]['functionName'], drops[i]['class']);
-			};
-
-/*---doropboxの右クリックメニュー---*/
+/*---doropboxの右クリックメニュー,toolboxのinput入力不可---*/
 //dropbox右クリック追加の仕方
 //1:<body>内のdropBoxMenuに<li>を追加する
 //2:'dropboxMenuメニュー<li>のid' : function(t) {idの実行したい処理},　を下記のbindings内に追加
@@ -169,8 +136,10 @@
 				'redo': function(t) {redo();},
 			}})
 			.click(function(){f_click(event)});
+		
+	//		$('#tab').tabs();
+			$('#toolbox input').prop('disabled',true)
 		};
-
 /*----------------------------------*/
 
 		var toolnum = 0;
@@ -206,7 +175,7 @@
 					break;
 			}
 
-			document.getElementById('databox').innerHTML = '<textarea cols=200 rows=10>' + document.getElementById('dropbox').innerHTML + '</textarea>';
+			Jsonset();
 /*---inputが変更された時もundoの対象にする---*/
 			undo_set();
 /*-------------------------------------------*/
@@ -264,6 +233,7 @@
 			pre_drop_parent = id_name.slice(0, 7);
 			pst_drop = evt.target.id;
 			pst_drop_parent = evt.currentTarget.id;
+console.log($(evt.target).width());
 
 /*---例外となる位置にドロップした場合---*/
 		//ドロップ先
@@ -344,18 +314,9 @@
 				var parentTop = data.getBoundingClientRect().top;
 				var json_stringify_allow = ["id", "innerHTML"];
 
-
-				document.getElementById('databox').innerHTML = '{<br />&nbsp;';
-				for (var i = 1; i < data.childNodes.length; i++) {
-					document.getElementById('databox').innerHTML += '"id' + i + '":';				
-					document.getElementById('databox').innerHTML += JSON.stringify(data.childNodes.item(i), json_stringify_allow);
-					document.getElementById('databox').innerHTML += data.childNodes.item(i).offsetLeft - parentLeft + ', ';
-					document.getElementById('databox').innerHTML += data.childNodes.item(i).offsetTop - parentTop;
-					document.getElementById('databox').innerHTML += ',<br />&nbsp;';
 				}
-				document.getElementById('databox').innerHTML += '<br />}<br />';
 */
-				document.getElementById('databox').innerHTML = '<textarea cols=200 rows=10>' + document.getElementById('dropbox').innerHTML + '</textarea>';
+
 /*---undoにデータセット---*/
 				undo_set();
 /*------------------------*/
@@ -368,14 +329,13 @@
 			$('.selected').removeClass('selected');
 			if($(select).hasClass('item')){
 				$(select).addClass('selected');
-			};
-		};
+			}
+		}
 /*------------------------------*/
 
 		function f_createtool(elmName, parentId, functionName, className){
 			var obj = document.createElement('div');
 			var elm = document.getElementById(parentId);
-
 			switch(functionName){
 				case 'loop':
 					obj.innerHTML = 'Loop<input name="count" id="input_' + parentId + '_' + toolnum + '" size="1" onchange="f_setValue(\'input_' + parentId + '_' + toolnum + '\', this.value)" value="">times';
@@ -398,36 +358,34 @@
 			obj.setAttribute('ondragover', 'f_dragover(event)');
 			obj.setAttribute('ondrop', 'f_drop(event)');
 
-/*---inputを入力不可、jQueryに書き換え---*/
-			$(obj).children('input').prop('disabled',true);
+/*---jQueryに書き換え---*/
+			if(parentId != 'dropbox') $(obj).children('input');
 			$(elm).append(obj);
 			//elm.appendChild(obj);
 /*----------------------*/
 			toolnum++;
 			return obj.getAttribute('id');
-		};
+		}
 
 
 /*---新たに追加した関数---*/
 		//toolにイベントを追加(イベントを追加したい要素)
 		function addEvent(box){
 			$(box).contextMenu('toolMenu',{bindings: {
-                		'copy': function(t) {copy(box);},
+                		'copy': function(t) {if(confirm('cut?')){copy(box);}},
 				'delete': function(t){box.remove();},
 			}});
-			$(box).children('input').focus(function(){input_focus = true;}).blur(function(){input_focus = false;}).prop('disabled',false);
 			$(box).attr('onclick', 'f_click(event)');
-			if($(box).children('div').attr('id')){addEvent($(box).children('div'))};
-		};
+			if($(box).children('div').attr('id')){addEvent($(box).children('div'))}
+		}
 
 		//データコピー(コピーの対象となる要素)
 		function copy(evt){
-			if(!confirm('copy?')) return;
 			if(evt.length  != 0){
 				copy_data = $(evt).clone();
 				$(copy_data).removeClass('selected');
-			};
-		};
+			}
+		}
 
 		//データペースト(貼り付けたい要素,貼り付け位置のx,y)
 		function peast(p_data,eX,eY){
@@ -441,8 +399,8 @@
 				$(p_data).css({top: new_tool_top +'px' , left: new_tool_left + 'px',position : 'absolute'});
 				$('#dropbox').append(p_data);
 				undo_set();
-			}else{alert('No data');};
-		};
+			}else{alert('No data');}
+		}
 
 		//id書き換え(書き換えの対象となる要素,第１引数の新たな親要素のId,boolean 番号の振り直しの有無)
 		function id_reset(des,parentId,newId){
@@ -451,13 +409,13 @@
 			}else{
 				var numSplit = $(des).attr('id').split('_');
 				var selfNum = numSplit[numSplit.length - 1];
-			};
+			}
 			$(des).attr('id',parentId + '_' + selfNum);
 			var selfId = $(des).attr('id');
 			if($(des).children('input').attr('id') != null){
 				$(des).children('input').attr('id','input_' + selfId );
 				$(des).children('input').attr('onchange',"f_setValue('input_" + selfId + "', this.value)");
-			};
+			}
 			if(newId) toolnum++;
 			if($(des).children('div').attr('id') != null){
 				des = $(des).children('div');
@@ -465,19 +423,19 @@
 				for(var i=0;i<des.length;i++){
 					var childId = $(des[i]).attr('id');
 					id_reset(des[i],Id,newId);
-				};
-			};
-		};
+				}
+			}
+		}
 
 		//自身にドロップしてないかチェック(ドロップした要素のid,ドロップ先の要素)
 		function parentcheck(myId,drp){
 			var drpId = $(drp).attr('id');
-			if(myId == drpId){return true;};
+			if(myId == drpId){return true;}
 			if($(drp).parent().attr('id') != undefined){
 				if(parentcheck(myId,$(drp).parent())) return true;
-			};
+			}
 			return false;
-		};
+		}
 
 		//アンドゥ
 		function undo_set(){
@@ -485,7 +443,7 @@
 				undo_data.unshift(document.getElementById('dropbox').innerHTML);
 				undo_data[4] = null;
 			}
-		};
+		}
 		function undo(){
 			if(undo_data[1] != null){
 				redo_data.unshift(undo_data[0]);
@@ -494,9 +452,8 @@
 				addEvent($('#dropbox').children('div'));
 				undo_data.shift();
 				$('.selected').removeClass('selected');
-				document.getElementById('databox').innerHTML = '<textarea cols=200 rows=10>' + document.getElementById('dropbox').innerHTML + '</textarea>';
 			}
-		};
+		}
 
 		//リドゥ
 		function redo(){
@@ -507,9 +464,12 @@
 				redo_data.shift();
 				undo_set();
 				$('.selected').removeClass('selected');
-				document.getElementById('databox').innerHTML = '<textarea cols=200 rows=10>' + document.getElementById('dropbox').innerHTML + '</textarea>';
 			}
-		};
+		}
+
+		//inputまたはtextareaがfocus時キーイベントの禁止
+		$(document).on('focus','input,textarea',function(){input_focus = true;})
+			.on('blur','input,textarea',function(){input_focus = false;});
 
 		//キーボード操作
 		var input_focus = false;
@@ -517,30 +477,34 @@
 			if (!input_focus){
 			//ctrlキーと同時押し
 				if(event.ctrlKey){
+					
 					keychar = String.fromCharCode(event.keyCode).toUpperCase();
 					switch(keychar){
-						case 'C': copy($('.selected'));
+						case 'C': if(confirm('copy?')){
+								copy($('.selected'));
+							}
 							break;
 						case 'V': peast(copy_data,$('#dropbox').offset().left,$('#dropbox').offset().top);
 							break;
-						case 'X': if(!confirm('cut?')){
+						case 'X': if(confirm('cut?')){
 								copy($('.selected'));
 								$('.selected').remove();
-							};
+							}
 							break;
 						case 'Y': redo();
 							break;
 						case 'Z': undo();
 							break;
-					};
-				};
+					}
+					return false;
+				}
 			//deleteキーが押されたとき
 				if(event.keyCode == 46){
 					$('.selected').remove();
 					undo_set();
-				};
-			};
-		};
+				}
+			}
+		}
 
 		//JSONに変換
 		function json_convert(prtId){
@@ -551,36 +515,89 @@
 			for(var i=0;i<box.length;i++){
 				var convertData = new Object();
 				convertData['functionname'] = $(box[i]).attr('functionname');
-				convertData['id'] = $(box[i]).attr('id');
-				convertData['class'] = $(box[i]).attr('class');
-			//dropbox直下の場合のみ座標取得
-				if(prtId == '#dropbox'){
-					convertData['top'] = $(box[i]).position().top;
-					convertData['left'] = $(box[i]).position().left;
-				};
+				//convertData['id'] = $(box[i]).attr('id');
+				convertData['className'] = $(box[i]).attr('className');
+				convertData['left'] = Math.ceil($(box[i]).position().left);
+				convertData['top'] = Math.ceil($(box[i]).position().top);
 			//inputboxを持っている場合の中身取得
 				if($(box[i]).children('input').attr('id') != null){
 					var inputData = new Object;
 					inputData['name'] = $(box[i]).children('input').attr('name');
-					inputData['id'] = $(box[i]).children('input').attr('id');
+					//inputData['id'] = $(box[i]).children('input').attr('id');
 					inputData['value'] = $(box[i]).children('input').attr('value');
 					convertData['input'] = inputData;
 				}else{
 					convertData['input'] = null;
-				};
+				}
 			//子要素がある場合
 				if($(box[i]).children('div').attr('id') != null){
 					convertData['nest'] = json_convert($(box[i]));
 				}else{
 					convertData['nest'] = null;
-				};
+				}
 				sameHierarchy.push(convertData);
-			};
+			}
+			//dropboxの左から順に整列(leftが等しい場合はtopが小さい順)
+			sameHierarchy.sort(function(a,b){
+						if(a.left < b.left) return -1;
+						if(a.left > b.left) return 1;
+						if(a.top < b.top) return -1;
+						if(a.top > b.top) return 1;
+						return 0;
+			});
 			return sameHierarchy;
-		};
+		}
 		
 		//JSONを出力
-		function jsonprint(){if($('#databox').text() != ''){$('#jsoncheck').text(JSON.stringify(json_convert('#dropbox')));};};
+		function JsonExport(){
+				$('#databox').val('');
+				if($('#dropbox').text() != ''){
+					$('#databox').val(JSON.stringify(json_convert('#dropbox')));
+				}
+		}
+
+		//JSONを入力
+		function JsonImport() {
+			var getValue = $('#databox')[0].value;
+			try {
+				var obj = $.parseJSON(getValue);
+			} catch (e) {
+				alert('不正なオブジェクト文字列が入力されましたStackTrace:' + e);
+				return false;
+			}
+			$('#dropbox').empty();
+			for (i in obj) {
+				var boxId = '#' + f_createtool(obj[i].functionname, "dropbox", obj[i].functionname, obj[i].className);
+				$(document).ready(function () {
+					if($(boxId).children('input').attr('id') != null)$(boxId).children('input').attr('value',obj[i].input.value);
+					$(boxId).addClass('item');
+					$(boxId).css('position', 'absolute');
+					$(boxId).css('top', obj[i].top);
+					$(boxId).css('left', obj[i].left);
+					$(boxId).css('float', 'right');
+					if(obj[i].nest != null){nestOpen(obj[i].nest,$(boxId).attr('id'));};
+					addEvent(boxId);
+				});
+			}
+			redo_data.length = 0;
+			undo_data.length = 0;
+			undo_set();
+			return true;
+		}
+
+		function nestOpen(nestdata,prtId){
+			for (i in nestdata){
+				var boxId = '#' + f_createtool(nestdata[i].functionname,prtId, nestdata[i].functionname, nestdata[i].className);
+				if($(boxId).children('input').attr('id') != null)$(boxId).children('input').attr('value',nestdata[i].input.value);
+				$(boxId).addClass('item');
+				$(boxId).css('position', 'relative');
+				$(boxId).css('top','5px');
+				$(boxId).css('left','5px');
+				$(boxId).css('margin','4px');
+				$(boxId).css('float', 'right');
+				if(nestdata[i].nest != null){nestOpen(nestdata[i].nest,$(boxId).attr('id'));};
+			}
+		}
 
 /*---------------------------------------------*/
 	</script>
@@ -592,7 +609,7 @@
 		<div>DropBox</div>
 		<div id="dropbox" class="gridbg" ondragover="f_dragover(event)" ondrop="f_drop(event)"></div>
 		<div>DataBox</div>
-<!--新たに追加した部分（右クリックのメニュー）-->
+<!--新たに追加した部分-->
 	<div class="contextMenu" id="toolMenu"><ul>
 		<li id="copy">Copy</li>
 		<li id="delete">Delete</li>
@@ -602,9 +619,9 @@
 		<li id="undo">Undo</li>
 		<li id="redo">Redo</li>
 	</ul></div>
+			<textarea id='databox'></textarea>
+<input type="button" onClick="JsonExport()" value ="convert">
+<input type="button" onClick="JsonImport()" value ="import">
 <!---------------------------------------------->
-			<div id="databox"></div>
-<input type="button" onClick="jsonprint()" value ="JSON convert">
-<div id="jsoncheck"></div>
 </body>
 </html>

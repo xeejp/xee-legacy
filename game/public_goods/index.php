@@ -1,6 +1,7 @@
 <?php
 
 require 'common.php';
+DataController::replace_con($_con, 'global');
 
 // page settings
 $pages = [];

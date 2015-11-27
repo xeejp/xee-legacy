@@ -80,6 +80,12 @@
 			user-select: none;
 		}
 
+		li {
+			list-style-type: none;
+			float:left;
+			width:100%;
+		}
+
          span.demo1 {
             background-color:yellow;
             margin-right:20px;
@@ -106,16 +112,16 @@
 
 /*---toolboxをクラスごとに振り分けするための変数---*/
 			var div_mem = [];
-			$('#toolbox').append($('<div>').attr('id','tab'));
-			$('.tab').append('<ul>');
+			//$('#toolbox').append($('<ul>').attr('id','tab'));
+			//$('.tab').append('<ul>');
 /*-------------------------------------------------*/
 
 			for (var i = 0; i < tools.length; i++) {
 /*---toolをクラス別に振り分け---*/
 				if($.inArray(tools[i]['class'],div_mem) < 0){
 					div_mem.push(tools[i]['class']);
-					$('.tab ul').append($('<li>').append(tools[i]['class']));
-					var  box= $('<div>').attr('id','toolbox_' +tools[i]['class']);
+					$('#toolbox').append($('<li>').append(tools[i]['class']));
+					var  box= $('<li>').attr('id','toolbox_' +tools[i]['class']);
 					$('#toolbox').append(box);
 				};
 
